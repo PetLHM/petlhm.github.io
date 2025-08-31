@@ -28,8 +28,8 @@
         }
 
         .output-box {
-            width: 100%;
-            height: 200px;
+            width: 150%;
+            height: 250px;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
@@ -89,7 +89,8 @@
         function myButtonClick() {
             // 获取输出框元素
             const outputDiv = document.getElementById('output');
-            
+
+             outputDiv.textContent = ''; 
             // 方法 1: 使用 innerHTML (可以包含HTML标签)
             // outputDiv.innerHTML += "<p><strong>1</strong></p>"; // 每次点击添加一行
             
