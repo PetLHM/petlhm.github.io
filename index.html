@@ -6,13 +6,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Inter:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --main-bg: #151a1e;
-            --sidebar-bg: rgba(24,29,34,0.98);
-            --container-bg: rgba(32,36,44,0.98);
-            --accent: #ffca3a;
-            --primary: #0097a7;
-            --text: #e6edf3;
-            --card-radius: 7px;
+            --main-bg: #0d1117;
+            --sidebar-bg: #161b22;
+            --container-bg: #21262c;
+            --accent: #f9e06f;
+            --primary: #238636;
+            --border: #30363d;
+            --text: #c9d1d9;
+            --code-bg: #161b22;
+            --card-radius: 8px;
+            --shadow: 0 8px 28px 0 rgba(1, 4, 9, 0.32);
         }
         html, body {
             margin: 0;
@@ -21,72 +24,41 @@
             background: var(--main-bg);
             color: var(--text);
             min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-        /* 星空背景 */
-        .star-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none;
-            background: radial-gradient(ellipse at 70% 20%, #323755 0%, transparent 60%),
-                        radial-gradient(ellipse at 20% 80%, #1e2240 0%, transparent 65%);
-            z-index: 0;
-        }
-        .star {
-            position: absolute;
-            border-radius: 50%;
-            background: #fff;
-            opacity: 0.8;
-        }
-        /* 星座层 - z-index低于内容区 */
-        .constellation {
-            position: fixed;
-            pointer-events: auto;
-            z-index: 1;
-            cursor: pointer;
-            transition: box-shadow 0.25s;
-        }
-        .constellation svg {
-            opacity: 0.79;
-            filter: drop-shadow(0 0 7px #ffca3a99);
-        }
-        .constellation.active {
-            box-shadow: 0 0 16px 4px #ffca3a55;
         }
         .navbar {
             width: 100%;
             background: var(--sidebar-bg);
-            box-shadow: 0 2px 8px rgba(10,22,40,0.13);
-            height: 54px;
+            border-bottom: 1.3px solid var(--border);
+            height: 56px;
             display: flex;
             align-items: center;
             padding-left: 38px;
-            z-index: 4;
+            z-index: 10;
             position: relative;
+            box-shadow: 0 2px 6px rgba(21,26,30,0.11);
         }
         .navbar-title {
             font-size: 22px;
             color: var(--accent);
             font-weight: 700;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             font-family: 'Inter', Arial, sans-serif;
         }
         .main-container {
             display: flex;
-            max-width: 740px;
-            min-height: 520px;
-            margin: 54px auto 0 auto;
+            max-width: 900px;
+            min-height: 500px;
+            margin: 46px auto 0 auto;
             border-radius: var(--card-radius);
-            box-shadow: 0 8px 38px 4px rgba(10,22,40,0.28);
+            box-shadow: var(--shadow);
             background: var(--container-bg);
             overflow: visible;
             position: relative;
-            z-index: 3;
         }
         .sidebar {
-            width: 148px;
+            width: 180px;
             background: var(--sidebar-bg);
+            border-right: 1.7px solid var(--border);
             padding: 28px 0 28px 0;
             display: flex;
             flex-direction: column;
@@ -94,141 +66,97 @@
         .sidebar-list {
             list-style: none;
             margin: 0;
-            padding: 0 0 0 8px;
+            padding: 0 0 0 2px;
         }
         .sidebar-item {
-            padding: 10px 12px;
-            border-radius: 0 var(--card-radius) var(--card-radius) 0;
+            padding: 11px 18px;
+            border-radius: var(--card-radius);
             cursor: pointer;
-            color: #b3c2d6;
+            color: #7ee787;
             font-size: 15px;
             font-family: 'Roboto Mono', monospace;
-            font-weight: 600;
-            margin-bottom: 8px;
-            border-left: 3px solid transparent;
+            font-weight: 500;
+            margin-bottom: 7px;
             background: transparent;
-            transition: background 0.18s, color 0.18s, border-left 0.18s;
+            border: 1.2px solid transparent;
+            transition: background 0.15s, color 0.15s, border 0.15s;
         }
         .sidebar-item.active, .sidebar-item:hover {
-            background: linear-gradient(90deg, #23272e 60%, #181d22 100%);
-            color: var(--accent);
-            border-left: 3px solid var(--accent);
+            background: var(--code-bg);
+            color: var(--primary);
+            border: 1.2px solid var(--primary);
         }
         .content-panel {
             flex: 1;
-            padding: 30px 18px 24px 18px;
+            padding: 32px 30px 26px 30px;
             display: flex;
             flex-direction: column;
             background: transparent;
             position: relative;
-            z-index: 4;
         }
         .content-title {
-            font-size: 17px;
+            font-size: 20px;
             color: var(--accent);
             font-family: 'Inter', Arial, sans-serif;
             font-weight: 700;
             margin-bottom: 10px;
             letter-spacing: 1px;
         }
+        .info-bar {
+            font-size: 14px;
+            color: #6e7681;
+            margin-bottom: 9px;
+            margin-left: 2px;
+            font-family: 'Inter', Arial, sans-serif;
+        }
         .code-card {
-            background: #181d22ee;
+            background: var(--code-bg);
             border-radius: var(--card-radius);
-            box-shadow: 0 2px 12px rgba(10,22,40,0.09);
-            padding: 18px 13px;
-            font-size: 15.5px;
-            color: #e6edf3;
+            box-shadow: 0 2px 12px rgba(10,22,40,0.07);
+            padding: 18px 13px 18px 18px;
+            font-size: 16px;
+            color: var(--text);
             font-family: 'Roboto Mono', monospace;
-            min-height: 70px;
-            margin-bottom: 8px;
-            line-height: 2;
-            letter-spacing: 0.7px;
-            border: 1.1px solid #23272e;
+            line-height: 1.95;
+            letter-spacing: 0.4px;
+            border: 1.2px solid var(--border);
             transition: box-shadow 0.2s;
             position: relative;
-            max-width: 340px;
-            margin-left: 2px;
+            margin-bottom: 12px;
+            max-width: 390px;
         }
         .code-card::before {
-            content: "Python 代码";
+            content: "Python";
             position: absolute;
             top: 6px;
-            left: 8px;
-            font-size: 11px;
-            color: #82aaff;
+            left: 11px;
+            font-size: 12px;
+            color: var(--primary);
             font-family: 'Inter', Arial, sans-serif;
             letter-spacing: 1px;
-            opacity: 0.80;
+            opacity: 0.87;
         }
-        .info-bar {
-            font-size: 12px;
-            color: #b3c2d6;
-            margin-bottom: 7px;
+        .github-style {
+            margin-top: 13px;
+            font-size: 13px;
+            color: #7d8590;
+            font-family: 'Inter', Arial, sans-serif;
+        }
+        .github-link {
+            color: #2f81f7;
+            text-decoration: underline;
+            font-weight: 500;
             margin-left: 2px;
         }
-        .constellation-label {
-            color: #b3c2d6;
-            font-size: 12px;
-            font-family: 'Inter', Arial, sans-serif;
-            margin-left: 3px;
-            margin-bottom: 2px;
-            margin-top: 1px;
-        }
-        @media (max-width: 800px) {
-            .main-container { flex-direction: column; max-width: 97vw; }
-            .sidebar { width: 100%; flex-direction: row; border-right: 0; border-bottom: 2px solid #23272e; padding: 12px 0;}
-            .content-panel { padding: 10px 2px; }
-            .code-card { max-width: 98vw; }
+        @media (max-width: 900px) {
+            .main-container { flex-direction: column; max-width: 99vw; }
+            .sidebar { width: 100%; flex-direction: row; border-right: 0; border-bottom: 2px solid var(--border); padding: 12px 0;}
+            .content-panel { padding: 12px 4px 16px 4px; }
+            .code-card { max-width: 99vw; }
         }
     </style>
 </head>
 <body>
-    <!-- 星空背景层 -->
-    <div class="star-bg" id="starBg"></div>
-    <!-- 星座SVG层（可拖动） -->
-    <div class="constellation" id="cancer" style="top:110px;left:38vw;">
-        <!-- 巨蟹座 -->
-        <svg width="80" height="40" viewBox="0 0 80 40">
-            <circle cx="12" cy="35" r="3" fill="#fff"/>
-            <circle cx="22" cy="16" r="2.5" fill="#fff"/>
-            <circle cx="36" cy="12" r="2.5" fill="#fff"/>
-            <circle cx="60" cy="24" r="3" fill="#fff"/>
-            <circle cx="68" cy="7" r="2" fill="#fff"/>
-            <polyline points="12,35 22,16 36,12 60,24 68,7" stroke="#ffca3a" stroke-width="1.4" fill="none" />
-        </svg>
-    </div>
-    <div class="constellation" id="leo" style="top:280px;left:64vw;">
-        <!-- 狮子座 -->
-        <svg width="70" height="42" viewBox="0 0 70 42">
-            <circle cx="8" cy="38" r="2.3" fill="#fff"/>
-            <circle cx="24" cy="29" r="2.5" fill="#fff"/>
-            <circle cx="40" cy="17" r="3" fill="#fff"/>
-            <circle cx="65" cy="10" r="2.7" fill="#fff"/>
-            <polyline points="8,38 24,29 40,17 65,10" stroke="#ffca3a" stroke-width="1.3" fill="none" />
-        </svg>
-    </div>
-    <div class="constellation" id="aquarius" style="top:390px;left:22vw;">
-        <!-- 水瓶座 -->
-        <svg width="80" height="28" viewBox="0 0 80 28">
-            <circle cx="14" cy="21" r="2.5" fill="#fff"/>
-            <circle cx="25" cy="14" r="2.5" fill="#fff"/>
-            <circle cx="38" cy="7" r="2.5" fill="#fff"/>
-            <circle cx="58" cy="18" r="2.5" fill="#fff"/>
-            <circle cx="70" cy="7" r="2.5" fill="#fff"/>
-            <polyline points="14,21 25,14 38,7 58,18 70,7" stroke="#ffca3a" stroke-width="1.2" fill="none" />
-        </svg>
-    </div>
-    <div class="constellation" id="libra" style="top:180px;left:70vw;">
-        <!-- 天秤座 -->
-        <svg width="70" height="32" viewBox="0 0 70 32">
-            <circle cx="7" cy="27" r="2.3" fill="#fff"/>
-            <circle cx="22" cy="22" r="2.5" fill="#fff"/>
-            <circle cx="36" cy="13" r="3" fill="#fff"/>
-            <circle cx="55" cy="30" r="2.7" fill="#fff"/>
-            <circle cx="62" cy="8" r="2.7" fill="#fff"/>
-            <polyline points="7,27 22,22 36,13 55,30 62,8" stroke="#ffca3a" stroke-width="1.1" fill="none" />
-        </svg>
-    </div>
     <div class="navbar">
         <span class="navbar-title">PET 云空间 · Python内置代码演示</span>
     </div>
@@ -246,31 +174,20 @@
         </div>
         <!-- 内容区 -->
         <div class="content-panel">
+            <span class="content-title">代码片段展示区</span>
             <span class="info-bar">选择左侧代码片段，自动展示 Python 代码示例</span>
-            <span class="constellation-label">星座装点星空：巨蟹座、狮子座、水瓶座、天秤座。鼠标碰触可拖动！</span>
             <div class="code-card" id="output">
 <pre><code>print(1)</code></pre>
+            </div>
+            <div class="github-style">
+                <span>样式致敬</span>
+                <a href="https://github.com/" target="_blank" class="github-link">GitHub</a>
+                <span>·</span>
+                <a href="https://www.python.org/" target="_blank" class="github-link">Python.org</a>
             </div>
         </div>
     </div>
     <script>
-        // 随机星星生成
-        function createStars(num) {
-            const starBg = document.getElementById('starBg');
-            for(let i=0; i<num; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                const size = Math.random() * 2.2 + 0.7;
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-                star.style.top = `${Math.random()*100}vh`;
-                star.style.left = `${Math.random()*100}vw`;
-                star.style.opacity = Math.random()*0.7+0.2;
-                starBg.appendChild(star);
-            }
-        }
-        createStars(110);
-
         // 代码内容
         const codes = [
 `print(1)`,
@@ -286,35 +203,6 @@
             items.forEach((el, i) => el.classList.toggle('active', i === idx));
             document.getElementById('output').innerHTML = `<pre><code>${codes[idx]}</code></pre>`;
         }
-
-        // 星座拖动
-        function makeDraggable(id) {
-            const el = document.getElementById(id);
-            let active = false, offsetX = 0, offsetY = 0;
-            el.addEventListener('mousedown', function(e) {
-                active = true;
-                el.classList.add('active');
-                const rect = el.getBoundingClientRect();
-                offsetX = e.clientX - rect.left;
-                offsetY = e.clientY - rect.top;
-                document.body.style.cursor = 'grabbing';
-            });
-            document.addEventListener('mousemove', function(e) {
-                if (active) {
-                    el.style.left = (e.clientX - offsetX) + 'px';
-                    el.style.top = (e.clientY - offsetY) + 'px';
-                }
-            });
-            document.addEventListener('mouseup', function() {
-                active = false;
-                el.classList.remove('active');
-                document.body.style.cursor = '';
-            });
-        }
-        makeDraggable('cancer');
-        makeDraggable('leo');
-        makeDraggable('aquarius');
-        makeDraggable('libra');
     </script>
 </body>
 </html>
