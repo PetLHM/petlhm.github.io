@@ -5,161 +5,210 @@
     <title>PET 创想空间 · 云互动橙米</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --main-bg: #161b22;
+            --container-bg: #23283a;
+            --card-bg: #23283a;
+            --primary: #2ea4b7;
+            --accent: #ff9100;
+            --text: #e4eaf1;
+            --sidebar-bg: #23283a;
+            --card-radius: 12px;
+        }
         body {
             margin: 0;
             font-family: 'Inter', '微软雅黑', Arial, sans-serif;
-            background: linear-gradient(120deg, #161b22 0%, #23283a 100%);
+            background: var(--main-bg);
             min-height: 100vh;
-            color: #f4f7fa;
+            color: var(--text);
+            transition: background 0.3s;
         }
-
-        /* 顶部导航栏 */
         .navbar {
             width: 100%;
-            background: #23283a;
+            background: var(--container-bg);
             box-shadow: 0 2px 8px rgba(10,22,40,0.09);
-            padding: 0 0 0 36px;
             height: 54px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            padding: 0 38px;
         }
         .navbar-title {
             font-size: 22px;
-            color: #ff9100;
+            color: var(--accent);
             font-weight: 700;
             letter-spacing: 2px;
             font-family: 'Inter', Arial, sans-serif;
         }
-
-        /* 布局大容器 */
+        .color-toggle-btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 6px 18px;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: inherit;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(46,164,183,0.15);
+            transition: background 0.2s;
+        }
+        .color-toggle-btn:hover {
+            background: var(--accent);
+        }
         .main-container {
             display: flex;
-            max-width: 1120px;
+            max-width: 1200px;
             min-height: 600px;
-            margin: 40px auto 0 auto;
+            margin: 38px auto 0 auto;
             border-radius: 18px;
             box-shadow: 0 6px 32px rgba(10,22,40,0.12);
-            background: rgba(30,34,51,0.98);
+            background: var(--container-bg);
             overflow: hidden;
         }
-
-        /* 侧边栏 */
         .sidebar {
             width: 220px;
-            background: linear-gradient(120deg, #23283a 80%, #161b22 100%);
-            padding: 38px 0 38px 0;
+            background: var(--sidebar-bg);
+            padding: 32px 0 32px 0;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 24px;
         }
         .sidebar-list {
             list-style: none;
             margin: 0;
-            padding: 0 0 0 32px;
+            padding: 0 0 0 26px;
         }
         .sidebar-item {
-            padding: 12px 18px;
-            border-radius: 10px;
+            padding: 10px 14px;
+            border-radius: 6px;
             cursor: pointer;
             color: #b3c2d6;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 500;
             margin-bottom: 10px;
             transition: background 0.18s, color 0.18s;
+            border-left: 3px solid transparent;
         }
         .sidebar-item.active, .sidebar-item:hover {
-            background: linear-gradient(90deg, #2c344c 60%, #23283a 100%);
-            color: #ff9100;
+            background: linear-gradient(90deg, #2c344c 70%, var(--sidebar-bg) 100%);
+            color: var(--accent);
+            border-left: 3px solid var(--accent);
         }
-
-        /* 内容区 */
+        .sidebar-divider {
+            height: 1px;
+            background: #2ea4b7;
+            margin: 24px 0 12px 0;
+            opacity: 0.14;
+        }
         .content-panel {
             flex: 1;
-            padding: 44px 54px 44px 54px;
+            padding: 46px 64px 38px 64px;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
             background: transparent;
             position: relative;
         }
-
-        .content-title {
-            font-size: 26px;
-            color: #f4f7fa;
-            font-weight: 700;
-            margin-bottom: 18px;
-            letter-spacing: 1px;
-        }
-
-        .content-box {
-            background: rgba(24,28,44,0.92);
-            border-radius: 14px;
-            box-shadow: 0 2px 12px rgba(10,22,40,0.10);
-            padding: 26px 24px;
-            font-size: 16px;
-            color: #e4eaf1;
-            min-height: 160px;
-            margin-bottom: 32px;
-            transition: box-shadow 0.2s;
-        }
-
-        /* 图片按钮区 */
         .widget-bar {
             display: flex;
-            gap: 32px;
-            margin-bottom: 12px;
+            gap: 28px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
         }
         .widget-btn {
-            background: linear-gradient(135deg, #23283a 60%, #2c344c 100%);
-            border: 2px solid #2ea4b7;
-            border-radius: 50%;
-            width: 74px;
-            height: 74px;
+            background: var(--card-bg);
+            border: 2px solid var(--primary);
+            border-radius: var(--card-radius);
+            width: 100px;
+            height: 110px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 14px rgba(46,164,183,0.13);
+            box-shadow: 0 2px 14px rgba(46,164,183,0.09);
             cursor: pointer;
-            transition: border 0.18s, box-shadow 0.18s;
+            transition: border 0.18s, box-shadow 0.18s, background 0.18s;
             position: relative;
         }
-        .widget-btn:active, .widget-btn:hover {
-            border: 2px solid #ff9100;
-            box-shadow: 0 6px 24px rgba(255,145,0,0.18);
+        .widget-btn:active, .widget-btn:focus, .widget-btn:hover {
+            border: 2px solid var(--accent);
+            box-shadow: 0 6px 24px rgba(255,145,0,0.14);
+            background: #23283a;
         }
         .widget-btn img {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+            border-radius: 7px;
             object-fit: cover;
             background: #fff;
+            margin-bottom: 8px;
         }
         .widget-label {
-            font-size: 13px;
+            font-size: 15px;
             color: #b3c2d6;
             font-weight: 500;
-            margin-top: 6px;
             text-align: center;
         }
-
-        /* 图片展示区 */
-        .image-area {
-            margin-top: 18px;
+        .color-widget {
+            background: linear-gradient(135deg, #23283a 60%, #2ea4b7 100%);
+            border: 2px solid var(--primary);
+            border-radius: var(--card-radius);
+            width: 100px;
+            height: 110px;
             display: flex;
-            gap: 46px;
+            flex-direction: column;
             align-items: center;
-            min-height: 90px;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 14px rgba(46,164,183,0.11);
+            position: relative;
+            color: #fff;
+        }
+        .color-widget:hover {
+            border: 2px solid var(--accent);
+        }
+        .color-block {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 8px rgba(46,164,183,0.09);
+            border: 2px solid #fff;
+        }
+        .content-title {
+            font-size: 22px;
+            color: #f4f7fa;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+        .content-box {
+            background: rgba(24,28,44,0.94);
+            border-radius: var(--card-radius);
+            box-shadow: 0 2px 12px rgba(10,22,40,0.10);
+            padding: 24px 22px;
+            font-size: 16px;
+            color: #e4eaf1;
+            min-height: 120px;
+            margin-bottom: 30px;
+            transition: box-shadow 0.2s;
+        }
+        .image-area {
+            margin-top: 8px;
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            min-height: 80px;
         }
         .show-img {
-            width: 90px;
-            height: 90px;
-            border-radius: 18px;
+            width: 70px;
+            height: 70px;
+            border-radius: 11px;
             box-shadow: 0 2px 14px rgba(46,164,183,0.10);
             display: none;
             background: #fff;
             object-fit: cover;
-            border: 2px solid #2ea4b7;
+            border: 2px solid var(--primary);
         }
         .show-img.active {
             display: block;
@@ -169,46 +218,147 @@
             from { opacity: 0; }
             to   { opacity: 1; }
         }
-
+        /* 查询模块样式 */
+        .search-area {
+            margin-top: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .search-input {
+            background: #181c2c;
+            border-radius: 7px;
+            border: 1px solid var(--primary);
+            padding: 9px 14px;
+            color: #e4eaf1;
+            font-size: 16px;
+            outline: none;
+            width: 220px;
+            transition: border 0.2s;
+        }
+        .search-input:focus {
+            border: 1.5px solid var(--accent);
+        }
+        .search-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            padding: 10px 24px;
+            font-size: 15px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .search-btn:hover {
+            background: var(--primary);
+        }
+        /* 颜色调节弹窗 */
+        .color-modal {
+            position: fixed;
+            top: 60px;
+            right: 40px;
+            width: 320px;
+            background: #23283a;
+            border-radius: 14px;
+            box-shadow: 0 6px 24px rgba(46,164,183,0.24);
+            padding: 22px 24px;
+            z-index: 9999;
+            color: #fff;
+            display: none;
+        }
+        .color-modal.active {
+            display: block;
+            animation: fadeIn 0.25s;
+        }
+        .color-modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: var(--accent);
+        }
+        .color-modal-group {
+            margin-bottom: 14px;
+        }
+        .color-label {
+            display: inline-block;
+            width: 88px;
+        }
+        .color-input {
+            border: none;
+            border-radius: 6px;
+            width: 40px;
+            height: 30px;
+            vertical-align: middle;
+            margin-left: 8px;
+            cursor: pointer;
+        }
+        .color-modal-close {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 18px;
+            cursor: pointer;
+            float: right;
+            margin-top: 6px;
+        }
         /* 响应式适配 */
         @media (max-width: 1000px) {
             .main-container { flex-direction: column; max-width: 99vw; }
-            .sidebar { width: 100%; flex-direction: row; border-right: 0; border-bottom: 2px solid #23283a; gap: 10px; padding: 16px 0; }
-            .content-panel { padding: 22px 8px; }
-            .widget-bar { gap: 14px;}
+            .sidebar { width: 100%; flex-direction: row; border-right: 0; border-bottom: 2px solid #23283a; gap: 12px; padding: 16px 0;}
+            .content-panel { padding: 18px 4px; }
+            .widget-bar { gap: 8px;}
+            .color-modal { right: 12px; width: 95vw;}
         }
     </style>
 </head>
 <body>
-
-    <!-- 顶部导航 -->
     <div class="navbar">
         <span class="navbar-title">PET 创想空间 · 云互动橙米</span>
+        <button class="color-toggle-btn" onclick="toggleColorModal()">颜色调节</button>
     </div>
 
-    <!-- 主体布局 -->
+    <!-- 颜色调节弹窗 -->
+    <div id="colorModal" class="color-modal">
+        <div class="color-modal-title">主题颜色调节</div>
+        <div class="color-modal-group">
+            <span class="color-label">主背景</span>
+            <input class="color-input" type="color" id="mainBgInput" value="#161b22">
+        </div>
+        <div class="color-modal-group">
+            <span class="color-label">卡片背景</span>
+            <input class="color-input" type="color" id="containerBgInput" value="#23283a">
+        </div>
+        <div class="color-modal-group">
+            <span class="color-label">主色</span>
+            <input class="color-input" type="color" id="primaryInput" value="#2ea4b7">
+        </div>
+        <div class="color-modal-group">
+            <span class="color-label">高亮色</span>
+            <input class="color-input" type="color" id="accentInput" value="#ff9100">
+        </div>
+        <button class="color-modal-close" onclick="toggleColorModal()">关闭</button>
+    </div>
+
     <div class="main-container">
         <!-- 侧边栏 -->
         <div class="sidebar">
             <ul class="sidebar-list" id="itemList">
-                <li class="sidebar-item active" onclick="showText(0)">
-                    欢迎
-                </li>
-                <li class="sidebar-item" onclick="showText(1)">
-                    亮点功能
-                </li>
-                <li class="sidebar-item" onclick="showText(2)">
-                    操作指南
-                </li>
-                <li class="sidebar-item" onclick="showText(3)">
-                    关于团队
-                </li>
+                <li class="sidebar-item active" onclick="showText(0)">欢迎</li>
+                <li class="sidebar-item" onclick="showText(1)">亮点功能</li>
+                <li class="sidebar-item" onclick="showText(2)">操作指南</li>
+                <li class="sidebar-item" onclick="showText(3)">关于团队</li>
+                <li class="sidebar-divider"></li>
+                <li class="sidebar-item" onclick="showText(4)">查询结果</li>
+                <li class="sidebar-item" onclick="showText(5)">设置</li>
             </ul>
         </div>
 
         <!-- 内容区 -->
         <div class="content-panel">
-            <!-- 图片按钮区 -->
+            <!-- 小组件区 -->
             <div class="widget-bar">
                 <div class="widget-btn" onclick="showWidgetImg(0)" title="PET 宠物">
                     <img src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/pet.png" alt="PET图标" />
@@ -222,9 +372,21 @@
                     <img src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/cart.png" alt="购物车图标" />
                     <div class="widget-label">购物车</div>
                 </div>
+                <div class="color-widget" onclick="toggleColorModal()" title="颜色调节">
+                    <div class="color-block" id="colorBlock" style="background: linear-gradient(90deg, #2ea4b7, #ff9100);"></div>
+                    <div class="widget-label">颜色调节</div>
+                </div>
+                <div class="widget-btn" onclick="showText(4)" title="查询">
+                    <img src="https://img.icons8.com/fluency/48/000000/search.png" alt="查询图标" />
+                    <div class="widget-label">查询</div>
+                </div>
             </div>
-
-            <!-- 输出框 -->
+            <!-- 查询区 -->
+            <div class="search-area">
+                <input class="search-input" type="text" id="searchInput" placeholder="请输入查询内容...">
+                <button class="search-btn" onclick="handleSearch()">查询</button>
+            </div>
+            <!-- 内容展示 -->
             <div class="content-title" id="outputTitle">欢迎</div>
             <div id="output" class="content-box">
                 欢迎来到 <b>PET创想空间</b> 云互动橙米！<br>点选左侧项目或上方小组件，开启你的创意云端之旅。
@@ -239,7 +401,27 @@
     </div>
 
     <script>
-        // 要显示的文本内容
+        // 主题色动态调节
+        function setThemeColors() {
+            document.documentElement.style.setProperty('--main-bg', document.getElementById('mainBgInput').value);
+            document.documentElement.style.setProperty('--container-bg', document.getElementById('containerBgInput').value);
+            document.documentElement.style.setProperty('--card-bg', document.getElementById('containerBgInput').value);
+            document.documentElement.style.setProperty('--primary', document.getElementById('primaryInput').value);
+            document.documentElement.style.setProperty('--accent', document.getElementById('accentInput').value);
+            document.getElementById('colorBlock').style.background = 
+                `linear-gradient(90deg, ${document.getElementById('primaryInput').value}, ${document.getElementById('accentInput').value})`;
+        }
+        document.getElementById('mainBgInput').addEventListener('input', setThemeColors);
+        document.getElementById('containerBgInput').addEventListener('input', setThemeColors);
+        document.getElementById('primaryInput').addEventListener('input', setThemeColors);
+        document.getElementById('accentInput').addEventListener('input', setThemeColors);
+
+        // 颜色调节弹窗
+        function toggleColorModal() {
+            document.getElementById('colorModal').classList.toggle('active');
+        }
+
+        // 内容区逻辑
         const texts = [
             {
                 title: "欢迎",
@@ -247,15 +429,23 @@
             },
             {
                 title: "亮点功能",
-                content: "多元互动：文本输出、AI智能、宠物养成、购物体验。<br>主题色融合深蓝、科技青色与橙色，视觉更高级。<br>点击小组件可展示趣味图片！"
+                content: "多元互动：文本输出、AI智能、宠物养成、购物体验。<br>主题色可自定义，视觉更高级。<br>点击小组件可展示趣味图片！"
             },
             {
                 title: "操作指南",
-                content: "1. 点击左侧项目浏览内容。<br>2. 上方可点选小组件，展示专属图片。<br>3. 可自由扩展更多功能和互动。"
+                content: "1. 点击左侧项目浏览内容。<br>2. 上方可点选小组件，展示专属图片。<br>3. 使用“查询”功能快速检索信息。"
             },
             {
                 title: "关于团队",
                 content: "由 <b>PetLHM</b> 团队打造，致力于云端创新体验。<br>专注科技与趣味，让云端更智能。"
+            },
+            {
+                title: "查询结果",
+                content: "请在上方输入框输入查询内容，点击“查询”按钮，即可显示结果。"
+            },
+            {
+                title: "设置",
+                content: "您可以通过顶部“颜色调节”按钮自定义主题色，也可探索更多设置功能。"
             }
         ];
 
@@ -263,10 +453,8 @@
             // 切换高亮
             const items = document.querySelectorAll('.sidebar-item');
             items.forEach((el, i) => el.classList.toggle('active', i === idx));
-            // 设置右侧标题与内容
             document.getElementById('outputTitle').textContent = texts[idx].title;
             document.getElementById('output').innerHTML = texts[idx].content;
-            // 隐藏图片区
             hideAllImgs();
         }
 
@@ -275,7 +463,6 @@
             hideAllImgs();
             let imgElements = [document.getElementById('petImg'), document.getElementById('aiImg'), document.getElementById('cartImg')];
             imgElements[idx].classList.add('active');
-            // 输出框文本可跟随变化
             const widgetTexts = [
                 "🐾 这是 PET 宠物形象！<br>陪伴你的每一天，开启趣味互动。",
                 "🤖 这是 AI 智能图标！<br>体验云端智能，探索未来科技。",
@@ -284,11 +471,24 @@
             document.getElementById('outputTitle').textContent = texts[idx]?.title || "小组件";
             document.getElementById('output').innerHTML = widgetTexts[idx];
         }
-
         function hideAllImgs() {
             document.getElementById('petImg').classList.remove('active');
             document.getElementById('aiImg').classList.remove('active');
             document.getElementById('cartImg').classList.remove('active');
+        }
+
+        // 查询功能演示
+        function handleSearch() {
+            const val = document.getElementById('searchInput').value.trim();
+            if (!val) {
+                document.getElementById('outputTitle').textContent = "查询结果";
+                document.getElementById('output').innerHTML = "请输入内容后查询。";
+                hideAllImgs();
+                return;
+            }
+            document.getElementById('outputTitle').textContent = "查询结果";
+            document.getElementById('output').innerHTML = `<b>“${val}”</b>的查询结果：<br>（此处可对接实际后端或API）<br>暂无数据，敬请期待。`;
+            hideAllImgs();
         }
     </script>
 </body>
