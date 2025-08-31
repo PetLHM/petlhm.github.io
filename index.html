@@ -4,8 +4,186 @@
 <body>
     <h3>PET cloud window</h3>
     <p style="white-space:pre">
-    import importlib
+import importlib
+import subprocess
+import sys
+import os
+import tkinter
+import threading
+import queue
+from tkinter import ttk, Tk, messagebox, Text
+from tkinter.constants import *
+import tkinter as tk
 
+try:
+    from PyPDF2 import PdfWriter, PdfReader
+    import cv2
+    from PIL import Image
+    from reportlab.lib.pagesizes import letter
+    from reportlab.pdfgen import canvas
+    import qrcode
+except:
+    class InstallerManager:
+        def __init__(self, root, libraries):
+            self.root = root
+            self.libraries = libraries
+            self.total = len(libraries)
+            self.current = 0
+            self.progress = 0
+            self.status = "准备开始安装..."
+            self.queue = queue.Queue()
+            self.response_queue = queue.Queue()  # 新增响应队列
+            self.thread = None
+            self.cancelled = False
+
+        def start_installation(self):
+            self.thread = threading.Thread(target=self._install_libraries)
+            self.thread.start()
+            self.root.after(100, self._update_progress)
+
+        def _update_progress(self):
+            try:
+                while True:
+                    msg_type, value = self.queue.get_nowait()
+                    if msg_type == 'progress':
+                        self.progress += value
+                        self.progress_bar['value'] = self.progress
+                    elif msg_type == 'status':
+                        self.status_label.config(text=value)
+                    elif msg_type == 'error':
+                        messagebox.showerror("错误", value)
+                    elif msg_type == 'done':
+                        messagebox.showinfo("完成", value)
+                        self.root.destroy()
+                        self.restart_application()
+                    elif msg_type == 'ask_install':  # 处理安装询问
+                        package, package_name = value
+                        response = messagebox.askyesno("缺少库", f"库 {package} 未安装。是否要现在安装？")
+                        self.response_queue.put(response)
+            except queue.Empty:
+                pass
+            if not self.cancelled and self.thread.is_alive():
+                self.root.after(100, self._update_progress)
+
+        def _install_libraries(self):
+            self.total = len(self.libraries)
+            for package, package_name in self.libraries.items():
+                if self.cancelled:
+                    break
+                self.current += 1
+                self.status = f"正在检查 {package_name} ({self.current}/{self.total})..."
+                self.queue.put(('status', self.status))
+                try:
+                    importlib.import_module(package)
+                    self.queue.put(('progress', 100 / self.total))
+                    continue
+                except ImportError:
+                    pass
+
+                # 将安装请求发送到主线程处理
+                self.queue.put(('ask_install', (package, package_name)))
+                response = self.response_queue.get()  # 等待用户响应
+
+                if response:
+                    try:
+                        subprocess.check_call([sys.executable, "-m", "pip", "install", package_name])
+                        importlib.import_module(package)
+                        self.queue.put(('progress', 100 / self.total))
+                    except subprocess.CalledProcessError as e:
+                        self.queue.put(('error', f"安装 {package_name} 时发生错误: {e}"))
+                        continue
+                else:
+                    self.queue.put(('error', f"已跳过 {package_name}，请手动安装！"))
+                    self.queue.put(('progress', 100 / self.total))
+                    continue
+
+            if not self.cancelled:
+                self.queue.put(('done', "所有库已安装完成，正在重启！"))
+                
+                os.execl(sys.executable,  sys.executable,  *sys.argv) 
+
+        def restart_application(self):
+            script_path = sys.argv[0]
+            os.execv(sys.executable, [sys.executable, script_path])
+            sys.exit(0)
+
+        def cancel_installation(self):
+            self.cancelled = True
+            self.progress_bar['value'] = 0
+            self.status_label.config(text="安装已取消。")
+            if self.thread and self.thread.is_alive():
+                self.thread.join(timeout=1)
+
+    def ensure_libraries_installed():
+        required_libraries = {
+            'cv2': 'opencv-python',
+            'PIL': 'Pillow',
+            'PyPDF2': 'PyPDF2',
+            'reportlab': 'reportlab',
+            'qrcode': 'qrcode'
+        }
+
+        root = Tk()
+        root.title('OFFICE 本地部署')
+        root.geometry('400x200')
+
+        progress_frame = ttk.Frame(root)
+        progress_frame.pack(fill=X, padx=5, pady=5)
+
+        progress_label = ttk.Label(progress_frame, text="安装进度:")
+        progress_label.pack(side=LEFT)
+
+        progress_bar = ttk.Progressbar(progress_frame, orient=HORIZONTAL, length=200, mode='determinate')
+        progress_bar.pack(side=RIGHT, fill=X, expand=True)
+
+        status_label = ttk.Label(root, text="准备开始安装...", anchor=W)
+        status_label.pack(fill=X, padx=5, pady=5)
+
+        txt_edit = tk.Text(root, font=('微软雅黑', 9), width=54, height=5)
+        txt_edit.place(x=9, y=66)
+        a = '安装操作说明\n\n提示:此软件不适用于win7以下的操作系统,win10一下操作系统无法使用摄像功能\n\n手动安装操作\n您可以win+r,输入cmd,在窗口中输入\npip install cv2\npip install PIL\npip install PyPdf2\npip install reportlab\npip install qrcode\n\n仍然失败\n可前往python安装程序中选择修复并重启电脑后尝试\n\n客服助理\n13735578201'
+        txt_edit.insert(tk.END, a)
+
+        installer_manager = InstallerManager(root, required_libraries)
+        installer_manager.progress_bar = progress_bar
+        installer_manager.status_label = status_label
+
+        cancel_button = ttk.Button(root, text='取消安装', command=installer_manager.cancel_installation)
+        cancel_button.pack(side=BOTTOM, padx=5, pady=5)
+
+        installer_manager.start_installation()
+
+        root.mainloop()
+
+    def show_message(title, message, msg_type='info'):
+        if msg_type == 'info':
+            messagebox.showinfo(title, message)
+        elif msg_type == 'warning':
+            messagebox.showwarning(title, message)
+        elif msg_type == 'error':
+            messagebox.showerror(title, message)
+
+    ensure_libraries_installed()
+
+    try:
+        from PyPDF2 import PdfWriter, PdfReader
+        import cv2
+        from PIL import Image
+        from reportlab.lib.pagesizes import letter
+        from reportlab.pdfgen import canvas
+        import qrcode
+    except ImportError as e:
+        show_message("导入错误", f"即使尝试安装后，仍无法导入某些库。请检查您的环境配置: {e}", 'error')
+        sys.exit(1)
+
+    try:
+        show_message("版本信息", f"OpenCV 版本: {cv2.__version__}", 'info')
+    except NameError:
+        show_message("导入错误", "即使尝试安装后，仍无法导入 cv2。请检查您的环境配置。", 'error')
+        sys.exit(1)
+
+# 这里继续添加你的主程序代码
+else:
     import tkinter
     from tkinter import ttk,filedialog,messagebox
     import tkinter as tk
@@ -10823,5 +11001,4 @@ Windows、MacOS、iOS和Android等多个平台。用户
 
 
     </p>
-        
 </body>
