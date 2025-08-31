@@ -1,110 +1,221 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PET 云窗口</title>
+    <title>PET 创想空间 · 云互动橙米</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
             margin: 0;
-            background: linear-gradient(135deg, #e6f7ff 0%, #f8fafc 100%);
+            background: linear-gradient(135deg, #ffe5b2 0%, #e0fcf7 50%, #ffe4cf 100%);
             min-height: 100vh;
         }
 
         .container {
             display: flex;
-            max-width: 800px;
+            max-width: 880px;
             margin: 40px auto;
-            box-shadow: 0 4px 24px rgba(60,110,180,0.06);
-            border-radius: 18px;
+            box-shadow: 0 4px 32px rgba(255,140,40,0.10);
+            border-radius: 24px;
             overflow: hidden;
-            background: rgba(255,255,255,0.85);
+            background: rgba(255,255,255,0.88);
+            position: relative;
         }
 
         /* 左侧列表 */
         .left-panel {
-            width: 180px;
-            background: linear-gradient(120deg, #e6f7ff 50%, #d5e9f6 100%);
-            padding: 32px 0 32px 0;
+            width: 200px;
+            background: linear-gradient(120deg, #ffb25f 60%, #e0fcf7 100%);
+            padding: 40px 0 40px 0;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 14px;
         }
 
         .list {
             list-style: none;
-            padding: 0 0 0 36px;
+            padding: 0 0 0 42px;
             margin: 0;
         }
 
         .list-item {
-            padding: 10px 18px;
-            border-radius: 6px 24px 24px 6px;
+            padding: 12px 22px;
+            border-radius: 8px 30px 30px 8px;
             cursor: pointer;
             transition: background 0.18s, color 0.18s;
             background: transparent;
-            color: #23628b;
-            font-size: 16px;
+            color: #ff9100;
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .list-item.active,
         .list-item:hover {
-            background: linear-gradient(90deg, #9ad6f3 10%, #e6f7ff 100%);
-            color: #18597c;
+            background: linear-gradient(90deg, #ffbe76 15%, #e0fcf7 100%);
+            color: #32b6a1;
             font-weight: bold;
         }
 
         /* 右侧输出框 */
         .right-panel {
             flex: 1;
-            min-width: 300px;
-            padding: 38px 40px 38px 40px;
-            background: rgba(245,250,255,0.65);
+            min-width: 340px;
+            padding: 50px 48px 50px 48px;
+            background: rgba(255,245,230,0.72);
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
         }
 
         .output-title {
-            margin: 0 0 12px 0;
-            font-size: 20px;
-            color: #23628b;
-            letter-spacing: 1px;
+            margin: 0 0 16px 0;
+            font-size: 26px;
+            color: #ff9100;
+            letter-spacing: 2px;
+            font-family: 'Fira Sans', Arial, sans-serif;
         }
 
         .output-box {
             background: transparent;
             border: none;
             font-family: 'Fira Mono', monospace;
-            font-size: 16px;
-            min-height: 160px;
-            padding: 14px 0 0 0;
+            font-size: 17px;
+            min-height: 180px;
+            padding: 18px 0 0 0;
             color: #2c3e50;
             overflow-y: auto;
+            line-height: 1.8;
+        }
+
+        /* 小组件区域 */
+        .widgets {
+            display: flex;
+            gap: 22px;
+            margin-top: 34px;
+            margin-bottom: 12px;
+        }
+
+        .widget {
+            background: linear-gradient(120deg, #ffe5b2 0%, #32b6a1 150%);
+            border-radius: 16px;
+            padding: 12px 22px;
+            box-shadow: 0 2px 10px rgba(50,182,161,0.08);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: box-shadow 0.18s;
+            border: 2px solid #ffb25f;
+            font-size: 16px;
+            color: #32b6a1;
+        }
+        .widget:hover {
+            box-shadow: 0 6px 20px rgba(50,182,161,0.18);
+        }
+        .widget img {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            object-fit: contain;
+            background: #fff;
+        }
+
+        /* 图片展示区 */
+        .image-area {
+            margin-top: 22px;
+            display: flex;
+            gap: 38px;
+            align-items: center;
+        }
+        .show-img {
+            max-width: 90px;
+            max-height: 90px;
+            border-radius: 16px;
+            box-shadow: 0 2px 14px rgba(50,182,161,0.10);
+            display: none;
+        }
+        .show-img.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        /* 创意标题 */
+        .main-title {
+            text-align: center;
+            color: #ff9100;
+            margin-top: 32px;
+            font-size: 38px;
+            font-family: 'Fredoka One', 'Arial Rounded MT Bold', Arial, sans-serif;
+            letter-spacing: 3px;
+            text-shadow: 0 4px 24px #ffe4cf;
+        }
+        .main-subtitle {
+            text-align:center;
+            font-size: 18px;
+            color: #32b6a1;
+            margin-bottom: 18px;
+            letter-spacing: 2px;
         }
 
     </style>
 </head>
 <body>
 
-    <h3 style="text-align:center;color:#23628b;margin-top:32px;">PET 云窗口</h3>
+    <div class="main-title">PET 创想空间 · 云互动橙米</div>
+    <div class="main-subtitle">玩转云端 · 智能 · 便捷 · 趣味</div>
 
     <div class="container">
+
         <!-- 左侧：列表项 -->
         <div class="left-panel">
             <ul class="list" id="itemList">
-                <li class="list-item active" onclick="showText(0)">欢迎</li>
-                <li class="list-item" onclick="showText(1)">功能介绍</li>
-                <li class="list-item" onclick="showText(2)">操作指南</li>
-                <li class="list-item" onclick="showText(3)">关于我们</li>
+                <li class="list-item active" onclick="showText(0)">
+                    <span>🎈 欢迎</span>
+                </li>
+                <li class="list-item" onclick="showText(1)">
+                    <span>🧡 亮点功能</span>
+                </li>
+                <li class="list-item" onclick="showText(2)">
+                    <span>🛠 操作指南</span>
+                </li>
+                <li class="list-item" onclick="showText(3)">
+                    <span>🌟 关于团队</span>
+                </li>
             </ul>
+            <div class="widgets">
+                <div class="widget" onclick="showWidgetImg(0)">
+                    <img src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/pet.png" alt="PET图标" />
+                    <span>PET 宠物</span>
+                </div>
+                <div class="widget" onclick="showWidgetImg(1)">
+                    <img src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/ai.png" alt="AI图标" />
+                    <span>智能 AI</span>
+                </div>
+                <div class="widget" onclick="showWidgetImg(2)">
+                    <img src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/cart.png" alt="购物车图标" />
+                    <span>购物车</span>
+                </div>
+            </div>
         </div>
 
-        <!-- 右侧：输出框 -->
+        <!-- 右侧：输出框和图片展示区 -->
         <div class="right-panel">
-            <div class="output-title" id="outputTitle">欢迎</div>
+            <div class="output-title" id="outputTitle">🎈 欢迎</div>
             <div id="output" class="output-box">
-                欢迎使用 PET 云窗口！<br>请在左侧选择项目以显示不同内容。
+                欢迎来到 <b>PET创想空间</b> 云互动橙米！<br>点选左侧项目或下方小组件，开启你的创意云端之旅。
+            </div>
+            <div class="image-area">
+                <img id="petImg" class="show-img" src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/pet.png" alt="PET 宠物" />
+                <img id="aiImg" class="show-img" src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/ai.png" alt="AI 智能" />
+                <img id="cartImg" class="show-img" src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/cart.png" alt="购物车" />
             </div>
         </div>
     </div>
@@ -113,20 +224,20 @@
         // 要显示的文本内容
         const texts = [
             {
-                title: "欢迎",
-                content: "欢迎使用 PET 云窗口！<br>请在左侧选择项目以显示不同内容。"
+                title: "🎈 欢迎",
+                content: "欢迎来到 <b>PET创想空间</b> 云互动橙米！<br>点选左侧项目或下方小组件，开启你的创意云端之旅。"
             },
             {
-                title: "功能介绍",
-                content: "PET 云窗口支持多种在线交互功能，包括文本输出、数据展示和云端操作。"
+                title: "🧡 亮点功能",
+                content: "多元互动：文本输出、AI智能、宠物养成、购物体验。<br>主题色融合橙色、蓝绿色和米色，视觉更清新。<br>点击小组件可展示趣味图片！"
             },
             {
-                title: "操作指南",
-                content: "1. 点击左侧项目切换不同内容。<br>2. 可根据需要添加更多功能按钮。"
+                title: "🛠 操作指南",
+                content: "1. 点击左侧项目浏览内容。<br>2. 下方可点选小组件，展示专属图片。<br>3. 可自由扩展更多功能和互动。"
             },
             {
-                title: "关于我们",
-                content: "PET 云窗口由 PetLHM 团队开发，致力于提供简洁高效的云端体验。"
+                title: "🌟 关于团队",
+                content: "由 <b>PetLHM</b> 团队打造，致力于云端创新体验。<br>关注用户趣味、智能与便捷，欢迎联系我们！"
             }
         ];
 
@@ -134,10 +245,33 @@
             // 切换高亮
             const items = document.querySelectorAll('.list-item');
             items.forEach((el, i) => el.classList.toggle('active', i === idx));
-
             // 设置右侧标题与内容
             document.getElementById('outputTitle').textContent = texts[idx].title;
             document.getElementById('output').innerHTML = texts[idx].content;
+            // 隐藏图片区
+            hideAllImgs();
+        }
+
+        // 小组件图片对应
+        function showWidgetImg(idx) {
+            // 高亮小组件（如需可扩展）
+            hideAllImgs();
+            let imgElements = [document.getElementById('petImg'), document.getElementById('aiImg'), document.getElementById('cartImg')];
+            imgElements[idx].classList.add('active');
+            // 输出框文本可跟随变化
+            const widgetTexts = [
+                "🐾 这是 PET 宠物形象！<br>陪伴你的每一天，开启趣味互动。",
+                "🤖 这是 AI 智能图标！<br>体验云端智能，探索未来科技。",
+                "🛒 这是购物车图标！<br>畅享便捷购物，智能管理你的物品。"
+            ];
+            document.getElementById('outputTitle').textContent = texts[idx]?.title || "小组件";
+            document.getElementById('output').innerHTML = widgetTexts[idx];
+        }
+
+        function hideAllImgs() {
+            document.getElementById('petImg').classList.remove('active');
+            document.getElementById('aiImg').classList.remove('active');
+            document.getElementById('cartImg').classList.remove('active');
         }
     </script>
 </body>
