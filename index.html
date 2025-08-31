@@ -1,142 +1,181 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
+    <meta charset="UTF-8">
     <title>PET 创想空间 · 云互动橙米</title>
+    <!-- Google Fonts 推荐字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
+            font-family: 'Roboto', '微软雅黑', Arial, sans-serif;
             margin: 0;
-            background: linear-gradient(135deg, #ffe5b2 0%, #e0fcf7 50%, #ffe4cf 100%);
+            background: linear-gradient(135deg, #f6f5ef 0%, #e0fcf7 80%);
             min-height: 100vh;
+        }
+
+        .main-title {
+            text-align: center;
+            color: #008a99;
+            margin-top: 38px;
+            font-size: 40px;
+            font-family: 'Montserrat', '微软雅黑', Arial, sans-serif;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+        .main-subtitle {
+            text-align:center;
+            font-size: 18px;
+            color: #ff9100;
+            margin-bottom: 22px;
+            letter-spacing: 1.5px;
+            font-family: 'Roboto', Arial, sans-serif;
         }
 
         .container {
             display: flex;
-            max-width: 880px;
-            margin: 40px auto;
-            box-shadow: 0 4px 32px rgba(255,140,40,0.10);
-            border-radius: 24px;
+            max-width: 920px;
+            margin: 32px auto;
+            box-shadow: 0 4px 32px rgba(0,138,153,0.12);
+            border-radius: 28px;
             overflow: hidden;
-            background: rgba(255,255,255,0.88);
+            background: #fff;
             position: relative;
+            font-family: 'Roboto', Arial, sans-serif;
         }
 
         /* 左侧列表 */
         .left-panel {
-            width: 200px;
-            background: linear-gradient(120deg, #ffb25f 60%, #e0fcf7 100%);
-            padding: 40px 0 40px 0;
+            width: 230px;
+            background: linear-gradient(120deg, #e0fcf7 60%, #f6f5ef 100%);
+            padding: 44px 0 44px 0;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 18px;
+            border-right: 2px solid #f6f5ef;
         }
 
         .list {
             list-style: none;
-            padding: 0 0 0 42px;
+            padding: 0 0 0 38px;
             margin: 0;
         }
 
         .list-item {
-            padding: 12px 22px;
-            border-radius: 8px 30px 30px 8px;
+            padding: 13px 25px;
+            border-radius: 12px 36px 36px 12px;
             cursor: pointer;
             transition: background 0.18s, color 0.18s;
             background: transparent;
-            color: #ff9100;
+            color: #008a99;
             font-size: 18px;
             font-weight: 500;
             letter-spacing: 1px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .list-item.active,
         .list-item:hover {
-            background: linear-gradient(90deg, #ffbe76 15%, #e0fcf7 100%);
-            color: #32b6a1;
+            background: linear-gradient(90deg, #c7f5fa 15%, #ffefde 100%);
+            color: #ff9100;
             font-weight: bold;
+            box-shadow: 0 2px 12px rgba(0,138,153,0.06);
         }
 
-        /* 右侧输出框 */
+        /* 小组件区域 */
+        .widgets {
+            display: flex;
+            gap: 18px;
+            margin-top: 40px;
+            margin-bottom: 0;
+            padding-left: 32px;
+        }
+
+        .widget {
+            background: #f6f5ef;
+            border-radius: 16px;
+            padding: 12px 12px 8px 12px;
+            box-shadow: 0 2px 10px rgba(0,138,153,0.07);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: box-shadow 0.18s, border 0.18s;
+            border: 2px solid #e0fcf7;
+            min-width: 80px;
+        }
+        .widget:active, .widget:focus, .widget:hover {
+            box-shadow: 0 6px 20px rgba(255,145,0,0.13);
+            border: 2px solid #ff9100;
+        }
+        .widget img {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: #fff;
+            margin-bottom: 4px;
+            box-shadow: 0 2px 8px rgba(0,138,153,0.08);
+        }
+        .widget span {
+            font-size: 15px;
+            color: #008a99;
+            font-weight: 500;
+            text-align: center;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+
+        /* 右侧输出框和图片区 */
         .right-panel {
             flex: 1;
-            min-width: 340px;
-            padding: 50px 48px 50px 48px;
-            background: rgba(255,245,230,0.72);
+            min-width: 330px;
+            padding: 54px 56px 48px 56px;
+            background: #fcfcfa;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
         }
 
         .output-title {
-            margin: 0 0 16px 0;
-            font-size: 26px;
-            color: #ff9100;
+            margin: 0 0 18px 0;
+            font-size: 28px;
+            color: #008a99;
             letter-spacing: 2px;
-            font-family: 'Fira Sans', Arial, sans-serif;
+            font-weight: bold;
+            font-family: 'Montserrat', Arial, sans-serif;
         }
 
         .output-box {
             background: transparent;
             border: none;
-            font-family: 'Fira Mono', monospace;
+            font-family: 'Roboto Mono', 'Fira Mono', monospace;
             font-size: 17px;
-            min-height: 180px;
-            padding: 18px 0 0 0;
-            color: #2c3e50;
+            min-height: 160px;
+            padding: 12px 0 0 0;
+            color: #233a4c;
             overflow-y: auto;
-            line-height: 1.8;
-        }
-
-        /* 小组件区域 */
-        .widgets {
-            display: flex;
-            gap: 22px;
-            margin-top: 34px;
-            margin-bottom: 12px;
-        }
-
-        .widget {
-            background: linear-gradient(120deg, #ffe5b2 0%, #32b6a1 150%);
-            border-radius: 16px;
-            padding: 12px 22px;
-            box-shadow: 0 2px 10px rgba(50,182,161,0.08);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: box-shadow 0.18s;
-            border: 2px solid #ffb25f;
-            font-size: 16px;
-            color: #32b6a1;
-        }
-        .widget:hover {
-            box-shadow: 0 6px 20px rgba(50,182,161,0.18);
-        }
-        .widget img {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            object-fit: contain;
-            background: #fff;
+            line-height: 1.7;
         }
 
         /* 图片展示区 */
         .image-area {
-            margin-top: 22px;
+            margin-top: 24px;
             display: flex;
-            gap: 38px;
+            gap: 44px;
             align-items: center;
         }
         .show-img {
-            max-width: 90px;
-            max-height: 90px;
-            border-radius: 16px;
-            box-shadow: 0 2px 14px rgba(50,182,161,0.10);
+            width: 86px;
+            height: 86px;
+            border-radius: 18px;
+            box-shadow: 0 2px 14px rgba(0,138,153,0.10);
             display: none;
+            background: #fff;
+            object-fit: cover;
+            border: 2px solid #e0fcf7;
         }
         .show-img.active {
             display: block;
@@ -147,22 +186,13 @@
             to   { opacity: 1; }
         }
 
-        /* 创意标题 */
-        .main-title {
-            text-align: center;
-            color: #ff9100;
-            margin-top: 32px;
-            font-size: 38px;
-            font-family: 'Fredoka One', 'Arial Rounded MT Bold', Arial, sans-serif;
-            letter-spacing: 3px;
-            text-shadow: 0 4px 24px #ffe4cf;
-        }
-        .main-subtitle {
-            text-align:center;
-            font-size: 18px;
-            color: #32b6a1;
-            margin-bottom: 18px;
-            letter-spacing: 2px;
+        /* 响应式适配 */
+        @media (max-width: 800px) {
+            .container { flex-direction: column; max-width: 98vw; }
+            .left-panel { width: 100%; flex-direction: row; border-right: 0; border-bottom: 2px solid #e0fcf7; gap: 12px; padding: 20px 0; }
+            .right-panel { padding: 28px 12px; }
+            .widgets { padding-left: 0; gap: 10px;}
+            .main-title { font-size: 30px; }
         }
 
     </style>
@@ -191,15 +221,15 @@
                 </li>
             </ul>
             <div class="widgets">
-                <div class="widget" onclick="showWidgetImg(0)">
+                <div class="widget" tabindex="0" onclick="showWidgetImg(0)">
                     <img src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/pet.png" alt="PET图标" />
                     <span>PET 宠物</span>
                 </div>
-                <div class="widget" onclick="showWidgetImg(1)">
+                <div class="widget" tabindex="0" onclick="showWidgetImg(1)">
                     <img src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/ai.png" alt="AI图标" />
                     <span>智能 AI</span>
                 </div>
-                <div class="widget" onclick="showWidgetImg(2)">
+                <div class="widget" tabindex="0" onclick="showWidgetImg(2)">
                     <img src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/cart.png" alt="购物车图标" />
                     <span>购物车</span>
                 </div>
@@ -254,7 +284,6 @@
 
         // 小组件图片对应
         function showWidgetImg(idx) {
-            // 高亮小组件（如需可扩展）
             hideAllImgs();
             let imgElements = [document.getElementById('petImg'), document.getElementById('aiImg'), document.getElementById('cartImg')];
             imgElements[idx].classList.add('active');
