@@ -5,112 +5,140 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-            /* 为了更明显地看到效果，可以临时设置一个背景色*/
-            background-color: #e6f7ff; 
-           
+            margin: 0;
+            background: linear-gradient(135deg, #e6f7ff 0%, #f8fafc 100%);
+            min-height: 100vh;
         }
 
-        /* 容器：使用 Flexbox 布局，让左右两部分并排 */
         .container {
             display: flex;
-            gap: 1px; /* ✅ 缩小左右间距 */
-            align-items: flex-start; /* 顶部对齐 */
+            max-width: 800px;
+            margin: 40px auto;
+            box-shadow: 0 4px 24px rgba(60,110,180,0.06);
+            border-radius: 18px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.85);
         }
 
-        /* 左侧区域 */
+        /* 左侧列表 */
         .left-panel {
-            flex: 1; /* 占据剩余空间 */
-            min-width: 20px;
+            width: 180px;
+            background: linear-gradient(120deg, #e6f7ff 50%, #d5e9f6 100%);
+            padding: 32px 0 32px 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .list {
+            list-style: none;
+            padding: 0 0 0 36px;
+            margin: 0;
+        }
+
+        .list-item {
+            padding: 10px 18px;
+            border-radius: 6px 24px 24px 6px;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+            background: transparent;
+            color: #23628b;
+            font-size: 16px;
+        }
+
+        .list-item.active,
+        .list-item:hover {
+            background: linear-gradient(90deg, #9ad6f3 10%, #e6f7ff 100%);
+            color: #18597c;
+            font-weight: bold;
         }
 
         /* 右侧输出框 */
         .right-panel {
             flex: 1;
-            min-width: 300px; /* 输出框最小宽度 */
+            min-width: 300px;
+            padding: 38px 40px 38px 40px;
+            background: rgba(245,250,255,0.65);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .output-title {
+            margin: 0 0 12px 0;
+            font-size: 20px;
+            color: #23628b;
+            letter-spacing: 1px;
         }
 
         .output-box {
-            width: 100%; /* ✅ 建议改为 100%，150% 会超出容器 */
-            height: 250px;
-            padding: 10px;
-            /* ✅ 移除边框 */
-            border: none; 
-            /* border: 10px solid #ccc; */
-            border-radius: 4px; 
-            /* ✅ 设置背景色为透明，使其与页面背景融为一体 */
-            background-color: transparent; 
-            /* background-color: #f9f9f9; */
-            overflow-y: auto; /* 内容过多时出现滚动条 */
-            font-family: monospace; /* 使用等宽字体，便于阅读 */
-            
-            /* 可选：为了美观，可以加一个轻微的内阴影或下划线 */
-            /* box-shadow: inset 0 -1px 0 #ddd; /* 底部内阴影 */
-            /* border-bottom: 1px solid #ddd; /* 底部细线 */
-        }
-
-        /* 按钮样式 */
-        .text-button {
-            background: none;
+            background: transparent;
             border: none;
-            color: inherit;
-            font: inherit;
-            cursor: pointer;
-            padding: 0;
-            margin: 0;
-            text-decoration: underline;
+            font-family: 'Fira Mono', monospace;
+            font-size: 16px;
+            min-height: 160px;
+            padding: 14px 0 0 0;
+            color: #2c3e50;
+            overflow-y: auto;
         }
 
-        .text-button:hover {
-            color: #2EA5E0;
-        }
-
-        .text-button:active {
-            color: #2B9CD4;
-        }
     </style>
 </head>
 <body>
 
-    <h3>PET 云窗口</h3>
+    <h3 style="text-align:center;color:#23628b;margin-top:32px;">PET 云窗口</h3>
 
-    <!-- 主容器：左右布局 -->
     <div class="container">
-        
-        <!-- 左侧：按钮区域 -->
+        <!-- 左侧：列表项 -->
         <div class="left-panel">
-            <p>
-                <button class="text-button" onclick="myButtonClick()">可点击的按钮</button>
-            </p>
-            <!-- 可以添加更多按钮或控件 -->
+            <ul class="list" id="itemList">
+                <li class="list-item active" onclick="showText(0)">欢迎</li>
+                <li class="list-item" onclick="showText(1)">功能介绍</li>
+                <li class="list-item" onclick="showText(2)">操作指南</li>
+                <li class="list-item" onclick="showText(3)">关于我们</li>
+            </ul>
         </div>
 
         <!-- 右侧：输出框 -->
         <div class="right-panel">
-            <h4>输出信息</h4>
+            <div class="output-title" id="outputTitle">欢迎</div>
             <div id="output" class="output-box">
-                <!-- 输出内容将动态插入到这里 -->
-                欢迎使用 PET 云窗口！
+                欢迎使用 PET 云窗口！<br>请在左侧选择项目以显示不同内容。
             </div>
         </div>
-
     </div>
 
     <script>
-        function myButtonClick() {
-            // 获取输出框元素
-            const outputDiv = document.getElementById('output');
+        // 要显示的文本内容
+        const texts = [
+            {
+                title: "欢迎",
+                content: "欢迎使用 PET 云窗口！<br>请在左侧选择项目以显示不同内容。"
+            },
+            {
+                title: "功能介绍",
+                content: "PET 云窗口支持多种在线交互功能，包括文本输出、数据展示和云端操作。"
+            },
+            {
+                title: "操作指南",
+                content: "1. 点击左侧项目切换不同内容。<br>2. 可根据需要添加更多功能按钮。"
+            },
+            {
+                title: "关于我们",
+                content: "PET 云窗口由 PetLHM 团队开发，致力于提供简洁高效的云端体验。"
+            }
+        ];
 
-            // 先清空
-            outputDiv.textContent = ''; 
-            
-            // 添加新内容
-            outputDiv.textContent += "1\n";
+        function showText(idx) {
+            // 切换高亮
+            const items = document.querySelectorAll('.list-item');
+            items.forEach((el, i) => el.classList.toggle('active', i === idx));
 
-            // 可选：自动滚动到底部
-            outputDiv.scrollTop = outputDiv.scrollHeight;
+            // 设置右侧标题与内容
+            document.getElementById('outputTitle').textContent = texts[idx].title;
+            document.getElementById('output').innerHTML = texts[idx].content;
         }
     </script>
-
 </body>
 </html>
