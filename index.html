@@ -1,81 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-    <title>PET cloud window</title>
-    <style>
-        body { font-family: "微软雅黑", Arial, sans-serif; }
-        .button-list { margin: 12px 0; }
-        .button-list button { margin: 4px 4px 4px 0; padding: 8px 16px; font-size: 15px; }
-        #output { margin: 12px 0; padding: 8px; background: #f7f7f7; border: 1px solid #ccc; min-height: 36px; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>列表按钮项示例</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h3>PET cloud window</h3>
+    <!-- 方法一：使用 <ul> 和 <li> 创建列表，每个列表项包含一个按钮 -->
+    <h2>方法一：按钮列表</h2>
+    <ul id="button-list">
+        <li><button class="list-button">按钮 1</button></li>
+        <li><button class="list-button">按钮 2</button></li>
+        <li><button class="list-button">按钮 3</button></li>
+        <li><button class="list-button">按钮 4</button></li>
+    </ul>
 
-    <p id="source" style="white-space:pre">
-import importlib
-import subprocess
-import sys
-import os
-import tkinter
-import threading
-import queue
-from tkinter import ttk, Tk, messagebox, Text
-from tkinter.constants import *
-import tkinter as tk
+    <!-- 方法二：更复杂的列表项，包含文本和操作按钮 -->
+    <h2>方法二：带操作按钮的列表项</h2>
+    <ul id="action-list">
+        <li class="list-item">
+            <span>项目 1</span>
+            <button class="action-btn edit">编辑</button>
+            <button class="action-btn delete">删除</button>
+        </li>
+        <li class="list-item">
+            <span>项目 2</span>
+            <button class="action-btn edit">编辑</button>
+            <button class="action-btn delete">删除</button>
+        </li>
+        <li class="list-item">
+            <span>项目 3</span>
+            <button class="action-btn edit">编辑</button>
+            <button class="action-btn delete">删除</button>
+        </li>
+    </ul>
 
-try:
-    from PyPDF2 import PdfWriter, PdfReader
-    import cv2
-    from PIL import Image
-    from reportlab.lib.pagesizes import letter
-    from reportlab.pdfgen import canvas
-    import qrcode
-except:
-    class InstallerManager:
-        def __init__(self, root, libraries):
-            self.root = root;
-            // ... 省略 ...
-    # ... 省略 ...
-    ensure_libraries_installed()
-    # ... 省略 ...
-else:
-    import tkinter
-    # ... 省略 ...
-    import json
-    # ... 省略 ...
-    # ... 省略 ...
-    # ... 省略 ...
-</p>
-
-<div class="button-list" id="button-list"></div>
-<div id="output"></div>
-
-<script>
-(function() {
-    // 获取 <p> 标签内的文本
-    var p = document.getElementById('source');
-    // 按行切分且去掉首尾空行
-    var lines = p.textContent.split('\n').filter(function(line) {
-        return line.trim() !== '';
-    });
-
-    // 存储所有代码片段，每16行一组
-    var chunks = [];
-    var chunkSize = 16;
-    for (var i = 0; i < lines.length; i += chunkSize) {
-        chunks.push(lines.slice(i, i + chunkSize).join('\n'));
-    }
-
-    var buttonListDiv = document.getElementById('button-list');
-    var outputDiv = document.getElementById('output');
-
-    // 创建按钮
-    chunks.forEach(function(chunk, idx) {
-        var btn = document.createElement('button');
-        btn.textContent = '显示片段 ' + (idx + 1);
-        btn.onclick = function() {
-            outputDiv.textContent = chunk;
-        };
-        buttonListDiv.appendChild(btn);
-    });
-})();
-</script>
+    <script src="script.js"></script>
+</body>
+</html>
