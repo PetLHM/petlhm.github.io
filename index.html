@@ -36,7 +36,14 @@
     <script>
         // 所有响应操作都写在这个函数里
         function myButtonClick() {
-            <h1>1</h1>
+            // 1. 创建一个新的 h1 元素
+            const h1Element = document.createElement('h1');
+            // 2. 设置其文本内容
+            h1Element.textContent = '1';
+            // 3. 找到要插入的位置 (比如 id 为 output 的 div)
+            const outputDiv = document.getElementById('output');
+            // 4. 将 h1 元素添加到该位置
+            outputDiv.appendChild(h1Element);
             
         }
     </script>
