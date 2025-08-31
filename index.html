@@ -6,12 +6,15 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            /* 为了更明显地看到效果，可以临时设置一个背景色
+            background-color: #e6f7ff; 
+            */
         }
 
         /* 容器：使用 Flexbox 布局，让左右两部分并排 */
         .container {
             display: flex;
-            gap: 2px; /* 左右间距 */
+            gap: 40px; /* ✅ 缩小左右间距 */
             align-items: flex-start; /* 顶部对齐 */
         }
 
@@ -28,14 +31,22 @@
         }
 
         .output-box {
-            width: 150%;
+            width: 100%; /* ✅ 建议改为 100%，150% 会超出容器 */
             height: 250px;
             padding: 10px;
-            border: 10px solid #ccc;
-            border-radius: 4px;
-            background-color: #f9f9f9;
+            /* ✅ 移除边框 */
+            border: none; 
+            /* border: 10px solid #ccc; */
+            border-radius: 4px; 
+            /* ✅ 设置背景色为透明，使其与页面背景融为一体 */
+            background-color: transparent; 
+            /* background-color: #f9f9f9; */
             overflow-y: auto; /* 内容过多时出现滚动条 */
             font-family: monospace; /* 使用等宽字体，便于阅读 */
+            
+            /* 可选：为了美观，可以加一个轻微的内阴影或下划线 */
+            /* box-shadow: inset 0 -1px 0 #ddd; /* 底部内阴影 */
+            /* border-bottom: 1px solid #ddd; /* 底部细线 */
         }
 
         /* 按钮样式 */
@@ -90,12 +101,11 @@
             // 获取输出框元素
             const outputDiv = document.getElementById('output');
 
-             outputDiv.textContent = ''; 
-            // 方法 1: 使用 innerHTML (可以包含HTML标签)
-            // outputDiv.innerHTML += "<p><strong>1</strong></p>"; // 每次点击添加一行
+            // 先清空
+            outputDiv.textContent = ''; 
             
-            // 方法 2: 使用 textContent (纯文本，更安全)
-            outputDiv.textContent += "1\n"; // \n 代表换行
+            // 添加新内容
+            outputDiv.textContent += "1\n";
 
             // 可选：自动滚动到底部
             outputDiv.scrollTop = outputDiv.scrollHeight;
