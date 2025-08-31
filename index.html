@@ -1,74 +1,53 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>样式化按钮</title>
+    <title>简单按钮示例</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            padding: 20px;
-        }
-
-        .interface-text {
-            color: #555; /* 假设界面文本是深灰色 */
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        /* 核心：将 button 样式化为 span */
+        /* 让按钮看起来像普通文本，颜色与界面一致 */
         .text-button {
-            /* 移除默认按钮样式 */
-            background: none;
-            border: none;
-            padding: 0;
+            background: none;          /* 无背景 */
+            border: none;              /* 无边框 */
+            color: inherit;            /* 颜色跟随父元素（界面颜色） */
+            font: inherit;             /* 字体跟随父元素 */
+            cursor: pointer;           /* 鼠标悬停时显示手型 */
+            padding: 0;                /* 去除内边距 */
             margin: 0;
-            /* 继承父元素样式，使其颜色、字体与周围文本一致 */
-            color: inherit;
-            font: inherit;
-            /* 文本对齐 */
-            text-align: left;
-            /* 光标变为手型，提示可点击 */
-            cursor: pointer;
-            /* 添加下划线或改变颜色以指示可交互性 (可选) */
-            text-decoration: underline;
-            /* text-decoration: none; */
+            text-decoration: underline; /* 可选：加下划线表示可点击 */
         }
 
-        /* 悬停效果 (视觉反馈) */
+        /* 悬停效果 */
         .text-button:hover {
-            /* color: #007bff; /* 改变颜色 */
-            background-color: rgba(0, 123, 255, 0.1); /* 轻微背景色 */
-            /* text-decoration: none; /* 移除下划线 */
+            background-color: #f0f0f0; /* 悬停时轻微背景色 */
         }
 
-        /* 激活/点击效果 (重要视觉反馈) */
+        /* 点击效果 */
         .text-button:active {
-            /* color: #0056b3; /* 更深的颜色 */
-            transform: translateY(1px); /* 模拟按下效果 */
-        }
-
-        /* 聚焦效果 (可访问性) */
-        .text-button:focus {
-            outline: 2px solid #007bff; /* 或使用 box-shadow */
-            outline-offset: 2px;
+            color: #0056b3; /* 点击时颜色变深 */
         }
     </style>
 </head>
 <body>
 
-    <div class="interface-text">
-        这是一段普通的界面文本。
-        <!-- 使用样式化的 button -->
-        <button class="text-button" onclick="handleClick()">这是一个看起来像文本的按钮</button>
-        继续其他文本内容。
-    </div>
+    <p>这是一段普通的文字，其中有一个 
+        <!-- 按钮直接调用函数 -->
+        <button class="text-button" onclick="myButtonClick()">可点击的按钮</button>
+        ，然后继续其他文字。
+    </p>
 
     <script>
-        function handleClick() {
-            alert('按钮被点击了！'); // 实际功能
-            // 或者执行其他操作，如修改DOM、发送请求等
-            console.log('按钮已触发');
+        // 所有响应操作都写在这个函数里
+        function myButtonClick() {
+            // 1. 弹出提示 (示例操作)
+            alert("按钮被点击了！");
+
+            // 2. 在控制台打印信息
+            console.log("按钮已触发");
+
+            // 3. 修改页面内容 (示例：改变旁边的文字)
+            // document.querySelector('p').textContent = "按钮被点击了！内容已更新。";
+
+            // 4. 其他任何你想执行的操作...
+            // 比如：发送网络请求、修改样式、跳转页面等
         }
     </script>
 
