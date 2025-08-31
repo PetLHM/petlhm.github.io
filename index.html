@@ -2,40 +2,75 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>列表按钮项示例</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>样式化按钮</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        .interface-text {
+            color: #555; /* 假设界面文本是深灰色 */
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        /* 核心：将 button 样式化为 span */
+        .text-button {
+            /* 移除默认按钮样式 */
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            /* 继承父元素样式，使其颜色、字体与周围文本一致 */
+            color: inherit;
+            font: inherit;
+            /* 文本对齐 */
+            text-align: left;
+            /* 光标变为手型，提示可点击 */
+            cursor: pointer;
+            /* 添加下划线或改变颜色以指示可交互性 (可选) */
+            text-decoration: underline;
+            /* text-decoration: none; */
+        }
+
+        /* 悬停效果 (视觉反馈) */
+        .text-button:hover {
+            /* color: #007bff; /* 改变颜色 */
+            background-color: rgba(0, 123, 255, 0.1); /* 轻微背景色 */
+            /* text-decoration: none; /* 移除下划线 */
+        }
+
+        /* 激活/点击效果 (重要视觉反馈) */
+        .text-button:active {
+            /* color: #0056b3; /* 更深的颜色 */
+            transform: translateY(1px); /* 模拟按下效果 */
+        }
+
+        /* 聚焦效果 (可访问性) */
+        .text-button:focus {
+            outline: 2px solid #007bff; /* 或使用 box-shadow */
+            outline-offset: 2px;
+        }
+    </style>
 </head>
 <body>
-    <!-- 方法一：使用 <ul> 和 <li> 创建列表，每个列表项包含一个按钮 -->
-    <h2>方法一：按钮列表</h2>
-    <ul id="button-list">
-        <li><button class="list-button">按钮 1</button></li>
-        <li><button class="list-button">按钮 2</button></li>
-        <li><button class="list-button">按钮 3</button></li>
-        <li><button class="list-button">按钮 4</button></li>
-    </ul>
 
-    <!-- 方法二：更复杂的列表项，包含文本和操作按钮 -->
-    <h2>方法二：带操作按钮的列表项</h2>
-    <ul id="action-list">
-        <li class="list-item">
-            <span>项目 1</span>
-            <button class="action-btn edit">编辑</button>
-            <button class="action-btn delete">删除</button>
-        </li>
-        <li class="list-item">
-            <span>项目 2</span>
-            <button class="action-btn edit">编辑</button>
-            <button class="action-btn delete">删除</button>
-        </li>
-        <li class="list-item">
-            <span>项目 3</span>
-            <button class="action-btn edit">编辑</button>
-            <button class="action-btn delete">删除</button>
-        </li>
-    </ul>
+    <div class="interface-text">
+        这是一段普通的界面文本。
+        <!-- 使用样式化的 button -->
+        <button class="text-button" onclick="handleClick()">这是一个看起来像文本的按钮</button>
+        继续其他文本内容。
+    </div>
 
-    <script src="script.js"></script>
+    <script>
+        function handleClick() {
+            alert('按钮被点击了！'); // 实际功能
+            // 或者执行其他操作，如修改DOM、发送请求等
+            console.log('按钮已触发');
+        }
+    </script>
+
 </body>
 </html>
