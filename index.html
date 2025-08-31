@@ -1,50 +1,103 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>简单按钮示例</title>
+    <title>PET 云窗口</title>
     <style>
-        /* 让按钮看起来像普通文本，颜色与界面一致 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        /* 容器：使用 Flexbox 布局，让左右两部分并排 */
+        .container {
+            display: flex;
+            gap: 20px; /* 左右间距 */
+            align-items: flex-start; /* 顶部对齐 */
+        }
+
+        /* 左侧区域 */
+        .left-panel {
+            flex: 1; /* 占据剩余空间 */
+            min-width: 200px;
+        }
+
+        /* 右侧输出框 */
+        .right-panel {
+            flex: 1;
+            min-width: 300px; /* 输出框最小宽度 */
+        }
+
+        .output-box {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            overflow-y: auto; /* 内容过多时出现滚动条 */
+            font-family: monospace; /* 使用等宽字体，便于阅读 */
+        }
+
+        /* 按钮样式 */
         .text-button {
-            background: none;          /* 无背景 */
-            border: none;              /* 无边框 */
-            color: inherit;            /* 颜色跟随父元素（界面颜色） */
-            font: inherit;             /* 字体跟随父元素 */
-            cursor: pointer;           /* 鼠标悬停时显示手型 */
-            padding: 0;                /* 去除内边距 */
+            background: none;
+            border: none;
+            color: inherit;
+            font: inherit;
+            cursor: pointer;
+            padding: 0;
             margin: 0;
-            text-decoration: underline; /* 可选：加下划线表示可点击 */
+            text-decoration: underline;
         }
 
-        /* 悬停效果 */
         .text-button:hover {
-            color: #2EA5E0; /* 悬停时轻微背景色 */
+            color: #2EA5E0;
         }
 
-        /* 点击效果 */
         .text-button:active {
-            color: #2B9CD4; /* 点击时颜色变深 */
+            color: #2B9CD4;
         }
     </style>
 </head>
 <body>
-    <h3>PET 云窗口</h3> <br>
-    <p>
-        <button class="text-button" onclick="myButtonClick()">可点击的按钮</button>
-  
-    </p>
+
+    <h3>PET 云窗口</h3>
+
+    <!-- 主容器：左右布局 -->
+    <div class="container">
+        
+        <!-- 左侧：按钮区域 -->
+        <div class="left-panel">
+            <p>
+                <button class="text-button" onclick="myButtonClick()">可点击的按钮</button>
+            </p>
+            <!-- 可以添加更多按钮或控件 -->
+        </div>
+
+        <!-- 右侧：输出框 -->
+        <div class="right-panel">
+            <h4>输出信息</h4>
+            <div id="output" class="output-box">
+                <!-- 输出内容将动态插入到这里 -->
+                欢迎使用 PET 云窗口！
+            </div>
+        </div>
+
+    </div>
 
     <script>
-        // 所有响应操作都写在这个函数里
         function myButtonClick() {
-            // 1. 创建一个新的 h1 元素
-            const h1Element = document.createElement('h1');
-            // 2. 设置其文本内容
-            h1Element.textContent = '1';
-            // 3. 找到要插入的位置 (比如 id 为 output 的 div)
+            // 获取输出框元素
             const outputDiv = document.getElementById('output');
-            // 4. 将 h1 元素添加到该位置
-            outputDiv.appendChild(h1Element);
             
+            // 方法 1: 使用 innerHTML (可以包含HTML标签)
+            // outputDiv.innerHTML += "<p><strong>1</strong></p>"; // 每次点击添加一行
+            
+            // 方法 2: 使用 textContent (纯文本，更安全)
+            outputDiv.textContent += "1\n"; // \n 代表换行
+
+            // 可选：自动滚动到底部
+            outputDiv.scrollTop = outputDiv.scrollHeight;
         }
     </script>
 
