@@ -3,179 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <title>PET 创想空间 · 云互动橙米</title>
-    <!-- Google Fonts 推荐字体 -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Roboto', '微软雅黑', Arial, sans-serif;
             margin: 0;
-            background: linear-gradient(135deg, #f6f5ef 0%, #e0fcf7 80%);
+            font-family: 'Inter', '微软雅黑', Arial, sans-serif;
+            background: linear-gradient(120deg, #161b22 0%, #23283a 100%);
             min-height: 100vh;
+            color: #f4f7fa;
         }
 
-        .main-title {
-            text-align: center;
-            color: #008a99;
-            margin-top: 38px;
-            font-size: 40px;
-            font-family: 'Montserrat', '微软雅黑', Arial, sans-serif;
+        /* 顶部导航栏 */
+        .navbar {
+            width: 100%;
+            background: #23283a;
+            box-shadow: 0 2px 8px rgba(10,22,40,0.09);
+            padding: 0 0 0 36px;
+            height: 54px;
+            display: flex;
+            align-items: center;
+        }
+        .navbar-title {
+            font-size: 22px;
+            color: #ff9100;
+            font-weight: 700;
             letter-spacing: 2px;
-            font-weight: bold;
-        }
-        .main-subtitle {
-            text-align:center;
-            font-size: 18px;
-            color: #ff9100;
-            margin-bottom: 22px;
-            letter-spacing: 1.5px;
-            font-family: 'Roboto', Arial, sans-serif;
+            font-family: 'Inter', Arial, sans-serif;
         }
 
-        .container {
+        /* 布局大容器 */
+        .main-container {
             display: flex;
-            max-width: 920px;
-            margin: 32px auto;
-            box-shadow: 0 4px 32px rgba(0,138,153,0.12);
-            border-radius: 28px;
+            max-width: 1120px;
+            min-height: 600px;
+            margin: 40px auto 0 auto;
+            border-radius: 18px;
+            box-shadow: 0 6px 32px rgba(10,22,40,0.12);
+            background: rgba(30,34,51,0.98);
             overflow: hidden;
-            background: #fff;
-            position: relative;
-            font-family: 'Roboto', Arial, sans-serif;
         }
 
-        /* 左侧列表 */
-        .left-panel {
-            width: 230px;
-            background: linear-gradient(120deg, #e0fcf7 60%, #f6f5ef 100%);
-            padding: 44px 0 44px 0;
-            box-sizing: border-box;
+        /* 侧边栏 */
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(120deg, #23283a 80%, #161b22 100%);
+            padding: 38px 0 38px 0;
             display: flex;
             flex-direction: column;
-            gap: 18px;
-            border-right: 2px solid #f6f5ef;
+            gap: 20px;
         }
-
-        .list {
+        .sidebar-list {
             list-style: none;
-            padding: 0 0 0 38px;
             margin: 0;
+            padding: 0 0 0 32px;
         }
-
-        .list-item {
-            padding: 13px 25px;
-            border-radius: 12px 36px 36px 12px;
+        .sidebar-item {
+            padding: 12px 18px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: background 0.18s, color 0.18s;
-            background: transparent;
-            color: #008a99;
-            font-size: 18px;
+            color: #b3c2d6;
+            font-size: 16px;
             font-weight: 500;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin-bottom: 10px;
+            transition: background 0.18s, color 0.18s;
         }
-
-        .list-item.active,
-        .list-item:hover {
-            background: linear-gradient(90deg, #c7f5fa 15%, #ffefde 100%);
+        .sidebar-item.active, .sidebar-item:hover {
+            background: linear-gradient(90deg, #2c344c 60%, #23283a 100%);
             color: #ff9100;
-            font-weight: bold;
-            box-shadow: 0 2px 12px rgba(0,138,153,0.06);
         }
 
-        /* 小组件区域 */
-        .widgets {
+        /* 内容区 */
+        .content-panel {
+            flex: 1;
+            padding: 44px 54px 44px 54px;
             display: flex;
-            gap: 18px;
-            margin-top: 40px;
-            margin-bottom: 0;
-            padding-left: 32px;
+            flex-direction: column;
+            justify-content: flex-start;
+            background: transparent;
+            position: relative;
         }
 
-        .widget {
-            background: #f6f5ef;
-            border-radius: 16px;
-            padding: 12px 12px 8px 12px;
-            box-shadow: 0 2px 10px rgba(0,138,153,0.07);
+        .content-title {
+            font-size: 26px;
+            color: #f4f7fa;
+            font-weight: 700;
+            margin-bottom: 18px;
+            letter-spacing: 1px;
+        }
+
+        .content-box {
+            background: rgba(24,28,44,0.92);
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(10,22,40,0.10);
+            padding: 26px 24px;
+            font-size: 16px;
+            color: #e4eaf1;
+            min-height: 160px;
+            margin-bottom: 32px;
+            transition: box-shadow 0.2s;
+        }
+
+        /* 图片按钮区 */
+        .widget-bar {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 12px;
+        }
+        .widget-btn {
+            background: linear-gradient(135deg, #23283a 60%, #2c344c 100%);
+            border: 2px solid #2ea4b7;
+            border-radius: 50%;
+            width: 74px;
+            height: 74px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
+            box-shadow: 0 2px 14px rgba(46,164,183,0.13);
             cursor: pointer;
-            transition: box-shadow 0.18s, border 0.18s;
-            border: 2px solid #e0fcf7;
-            min-width: 80px;
+            transition: border 0.18s, box-shadow 0.18s;
+            position: relative;
         }
-        .widget:active, .widget:focus, .widget:hover {
-            box-shadow: 0 6px 20px rgba(255,145,0,0.13);
+        .widget-btn:active, .widget-btn:hover {
             border: 2px solid #ff9100;
+            box-shadow: 0 6px 24px rgba(255,145,0,0.18);
         }
-        .widget img {
+        .widget-btn img {
             width: 38px;
             height: 38px;
             border-radius: 10px;
             object-fit: cover;
             background: #fff;
-            margin-bottom: 4px;
-            box-shadow: 0 2px 8px rgba(0,138,153,0.08);
         }
-        .widget span {
-            font-size: 15px;
-            color: #008a99;
+        .widget-label {
+            font-size: 13px;
+            color: #b3c2d6;
             font-weight: 500;
+            margin-top: 6px;
             text-align: center;
-            font-family: 'Roboto', Arial, sans-serif;
-        }
-
-        /* 右侧输出框和图片区 */
-        .right-panel {
-            flex: 1;
-            min-width: 330px;
-            padding: 54px 56px 48px 56px;
-            background: #fcfcfa;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-        }
-
-        .output-title {
-            margin: 0 0 18px 0;
-            font-size: 28px;
-            color: #008a99;
-            letter-spacing: 2px;
-            font-weight: bold;
-            font-family: 'Montserrat', Arial, sans-serif;
-        }
-
-        .output-box {
-            background: transparent;
-            border: none;
-            font-family: 'Roboto Mono', 'Fira Mono', monospace;
-            font-size: 17px;
-            min-height: 160px;
-            padding: 12px 0 0 0;
-            color: #233a4c;
-            overflow-y: auto;
-            line-height: 1.7;
         }
 
         /* 图片展示区 */
         .image-area {
-            margin-top: 24px;
+            margin-top: 18px;
             display: flex;
-            gap: 44px;
+            gap: 46px;
             align-items: center;
+            min-height: 90px;
         }
         .show-img {
-            width: 86px;
-            height: 86px;
+            width: 90px;
+            height: 90px;
             border-radius: 18px;
-            box-shadow: 0 2px 14px rgba(0,138,153,0.10);
+            box-shadow: 0 2px 14px rgba(46,164,183,0.10);
             display: none;
             background: #fff;
             object-fit: cover;
-            border: 2px solid #e0fcf7;
+            border: 2px solid #2ea4b7;
         }
         .show-img.active {
             display: block;
@@ -187,61 +171,65 @@
         }
 
         /* 响应式适配 */
-        @media (max-width: 800px) {
-            .container { flex-direction: column; max-width: 98vw; }
-            .left-panel { width: 100%; flex-direction: row; border-right: 0; border-bottom: 2px solid #e0fcf7; gap: 12px; padding: 20px 0; }
-            .right-panel { padding: 28px 12px; }
-            .widgets { padding-left: 0; gap: 10px;}
-            .main-title { font-size: 30px; }
+        @media (max-width: 1000px) {
+            .main-container { flex-direction: column; max-width: 99vw; }
+            .sidebar { width: 100%; flex-direction: row; border-right: 0; border-bottom: 2px solid #23283a; gap: 10px; padding: 16px 0; }
+            .content-panel { padding: 22px 8px; }
+            .widget-bar { gap: 14px;}
         }
-
     </style>
 </head>
 <body>
 
-    <div class="main-title">PET 创想空间 · 云互动橙米</div>
-    <div class="main-subtitle">玩转云端 · 智能 · 便捷 · 趣味</div>
+    <!-- 顶部导航 -->
+    <div class="navbar">
+        <span class="navbar-title">PET 创想空间 · 云互动橙米</span>
+    </div>
 
-    <div class="container">
-
-        <!-- 左侧：列表项 -->
-        <div class="left-panel">
-            <ul class="list" id="itemList">
-                <li class="list-item active" onclick="showText(0)">
-                    <span>🎈 欢迎</span>
+    <!-- 主体布局 -->
+    <div class="main-container">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <ul class="sidebar-list" id="itemList">
+                <li class="sidebar-item active" onclick="showText(0)">
+                    欢迎
                 </li>
-                <li class="list-item" onclick="showText(1)">
-                    <span>🧡 亮点功能</span>
+                <li class="sidebar-item" onclick="showText(1)">
+                    亮点功能
                 </li>
-                <li class="list-item" onclick="showText(2)">
-                    <span>🛠 操作指南</span>
+                <li class="sidebar-item" onclick="showText(2)">
+                    操作指南
                 </li>
-                <li class="list-item" onclick="showText(3)">
-                    <span>🌟 关于团队</span>
+                <li class="sidebar-item" onclick="showText(3)">
+                    关于团队
                 </li>
             </ul>
-            <div class="widgets">
-                <div class="widget" tabindex="0" onclick="showWidgetImg(0)">
-                    <img src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/pet.png" alt="PET图标" />
-                    <span>PET 宠物</span>
-                </div>
-                <div class="widget" tabindex="0" onclick="showWidgetImg(1)">
-                    <img src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/ai.png" alt="AI图标" />
-                    <span>智能 AI</span>
-                </div>
-                <div class="widget" tabindex="0" onclick="showWidgetImg(2)">
-                    <img src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/cart.png" alt="购物车图标" />
-                    <span>购物车</span>
-                </div>
-            </div>
         </div>
 
-        <!-- 右侧：输出框和图片展示区 -->
-        <div class="right-panel">
-            <div class="output-title" id="outputTitle">🎈 欢迎</div>
-            <div id="output" class="output-box">
-                欢迎来到 <b>PET创想空间</b> 云互动橙米！<br>点选左侧项目或下方小组件，开启你的创意云端之旅。
+        <!-- 内容区 -->
+        <div class="content-panel">
+            <!-- 图片按钮区 -->
+            <div class="widget-bar">
+                <div class="widget-btn" onclick="showWidgetImg(0)" title="PET 宠物">
+                    <img src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/pet.png" alt="PET图标" />
+                    <div class="widget-label">PET 宠物</div>
+                </div>
+                <div class="widget-btn" onclick="showWidgetImg(1)" title="智能 AI">
+                    <img src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/ai.png" alt="AI图标" />
+                    <div class="widget-label">智能 AI</div>
+                </div>
+                <div class="widget-btn" onclick="showWidgetImg(2)" title="购物车">
+                    <img src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/cart.png" alt="购物车图标" />
+                    <div class="widget-label">购物车</div>
+                </div>
             </div>
+
+            <!-- 输出框 -->
+            <div class="content-title" id="outputTitle">欢迎</div>
+            <div id="output" class="content-box">
+                欢迎来到 <b>PET创想空间</b> 云互动橙米！<br>点选左侧项目或上方小组件，开启你的创意云端之旅。
+            </div>
+            <!-- 图片展示区 -->
             <div class="image-area">
                 <img id="petImg" class="show-img" src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/pet.png" alt="PET 宠物" />
                 <img id="aiImg" class="show-img" src="https://raw.githubusercontent.com/PetLHM/petlhm.github.io/main/assets/ai.png" alt="AI 智能" />
@@ -254,26 +242,26 @@
         // 要显示的文本内容
         const texts = [
             {
-                title: "🎈 欢迎",
-                content: "欢迎来到 <b>PET创想空间</b> 云互动橙米！<br>点选左侧项目或下方小组件，开启你的创意云端之旅。"
+                title: "欢迎",
+                content: "欢迎来到 <b>PET创想空间</b> 云互动橙米！<br>点选左侧项目或上方小组件，开启你的创意云端之旅。"
             },
             {
-                title: "🧡 亮点功能",
-                content: "多元互动：文本输出、AI智能、宠物养成、购物体验。<br>主题色融合橙色、蓝绿色和米色，视觉更清新。<br>点击小组件可展示趣味图片！"
+                title: "亮点功能",
+                content: "多元互动：文本输出、AI智能、宠物养成、购物体验。<br>主题色融合深蓝、科技青色与橙色，视觉更高级。<br>点击小组件可展示趣味图片！"
             },
             {
-                title: "🛠 操作指南",
-                content: "1. 点击左侧项目浏览内容。<br>2. 下方可点选小组件，展示专属图片。<br>3. 可自由扩展更多功能和互动。"
+                title: "操作指南",
+                content: "1. 点击左侧项目浏览内容。<br>2. 上方可点选小组件，展示专属图片。<br>3. 可自由扩展更多功能和互动。"
             },
             {
-                title: "🌟 关于团队",
-                content: "由 <b>PetLHM</b> 团队打造，致力于云端创新体验。<br>关注用户趣味、智能与便捷，欢迎联系我们！"
+                title: "关于团队",
+                content: "由 <b>PetLHM</b> 团队打造，致力于云端创新体验。<br>专注科技与趣味，让云端更智能。"
             }
         ];
 
         function showText(idx) {
             // 切换高亮
-            const items = document.querySelectorAll('.list-item');
+            const items = document.querySelectorAll('.sidebar-item');
             items.forEach((el, i) => el.classList.toggle('active', i === idx));
             // 设置右侧标题与内容
             document.getElementById('outputTitle').textContent = texts[idx].title;
