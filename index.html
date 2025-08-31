@@ -14,13 +14,17 @@
             --border: #30363d;
             --text: #c9d1d9;
             --code-bg: #161b22;
-            --card-radius: 8px;
+            --card-radius: 10px;
             --shadow: 0 8px 28px 0 rgba(1, 4, 9, 0.32);
+            --py-btn-bg: #ffd43b;
+            --py-btn-hover-bg: #306998;
+            --py-btn-text: #222;
+            --py-btn-font: 'Inter', 'Roboto Mono', monospace, Arial, sans-serif;
         }
         html, body {
             margin: 0;
             padding: 0;
-            font-family: 'Inter', 'Roboto Mono', monospace, Arial, sans-serif;
+            font-family: var(--py-btn-font);
             background: var(--main-bg);
             color: var(--text);
             min-height: 100vh;
@@ -69,22 +73,32 @@
             padding: 0 0 0 2px;
         }
         .sidebar-item {
-            padding: 11px 18px;
-            border-radius: var(--card-radius);
-            cursor: pointer;
-            color: #7ee787;
-            font-size: 15px;
-            font-family: 'Roboto Mono', monospace;
-            font-weight: 500;
-            margin-bottom: 7px;
-            background: transparent;
-            border: 1.2px solid transparent;
-            transition: background 0.15s, color 0.15s, border 0.15s;
+            margin-bottom: 13px;
+            border: none;
+            background: none;
+            padding: 0;
         }
-        .sidebar-item.active, .sidebar-item:hover {
-            background: var(--code-bg);
-            color: var(--primary);
-            border: 1.2px solid var(--primary);
+        .py-btn {
+            display: block;
+            width: 100%;
+            padding: 12px 18px;
+            border-radius: 6px;
+            background: var(--py-btn-bg);
+            color: var(--py-btn-text);
+            font-family: var(--py-btn-font);
+            font-size: 15.5px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 1px 2px #2222 inset;
+            transition: background 0.18s, color 0.18s;
+            outline: none;
+            letter-spacing: 0.2px;
+            margin-bottom: 2px;
+        }
+        .py-btn.active, .py-btn:hover {
+            background: var(--py-btn-hover-bg);
+            color: #fff;
         }
         .content-panel {
             flex: 1;
@@ -110,31 +124,32 @@
             font-family: 'Inter', Arial, sans-serif;
         }
         .code-card {
-            background: var(--code-bg);
-            border-radius: var(--card-radius);
-            box-shadow: 0 2px 12px rgba(10,22,40,0.07);
-            padding: 18px 13px 18px 18px;
-            font-size: 16px;
+            background: linear-gradient(135deg, #181a20 70%, #23272e 100%);
+            border-radius: 20px 20px 16px 16px;
+            box-shadow: 0 2px 24px 0 rgba(33, 38, 44, 0.19);
+            padding: 26px 20px 23px 28px;
+            font-size: 17px;
             color: var(--text);
             font-family: 'Roboto Mono', monospace;
-            line-height: 1.95;
+            line-height: 2.1;
             letter-spacing: 0.4px;
-            border: 1.2px solid var(--border);
+            border: 2.2px solid #23272e;
             transition: box-shadow 0.2s;
             position: relative;
             margin-bottom: 12px;
-            max-width: 390px;
+            max-width: 440px;
+            margin-top: 6px;
         }
         .code-card::before {
-            content: "Python";
+            content: "Python代码片段";
             position: absolute;
-            top: 6px;
-            left: 11px;
+            top: 8px;
+            left: 15px;
             font-size: 12px;
-            color: var(--primary);
+            color: var(--accent);
             font-family: 'Inter', Arial, sans-serif;
             letter-spacing: 1px;
-            opacity: 0.87;
+            opacity: 0.90;
         }
         .github-style {
             margin-top: 13px;
@@ -153,6 +168,7 @@
             .sidebar { width: 100%; flex-direction: row; border-right: 0; border-bottom: 2px solid var(--border); padding: 12px 0;}
             .content-panel { padding: 12px 4px 16px 4px; }
             .code-card { max-width: 99vw; }
+            .py-btn { font-size: 15px; }
         }
     </style>
 </head>
@@ -164,18 +180,18 @@
         <!-- 侧边栏 -->
         <div class="sidebar">
             <ul class="sidebar-list" id="itemList">
-                <li class="sidebar-item active" onclick="showCode(0)">print(1)</li>
-                <li class="sidebar-item" onclick="showCode(1)">print(2)</li>
-                <li class="sidebar-item" onclick="showCode(2)">print(3)</li>
-                <li class="sidebar-item" onclick="showCode(3)">for i in range(5): print(i)</li>
-                <li class="sidebar-item" onclick="showCode(4)">def hello(): print("Hello")</li>
-                <li class="sidebar-item" onclick="showCode(5)">sum([1,2,3])</li>
+                <li class="sidebar-item"><button class="py-btn active" onclick="showCode(0)">print(1)</button></li>
+                <li class="sidebar-item"><button class="py-btn" onclick="showCode(1)">print(2)</button></li>
+                <li class="sidebar-item"><button class="py-btn" onclick="showCode(2)">print(3)</button></li>
+                <li class="sidebar-item"><button class="py-btn" onclick="showCode(3)">for i in range(5): print(i)</button></li>
+                <li class="sidebar-item"><button class="py-btn" onclick="showCode(4)">def hello(): print("Hello")</button></li>
+                <li class="sidebar-item"><button class="py-btn" onclick="showCode(5)">sum([1,2,3])</button></li>
             </ul>
         </div>
         <!-- 内容区 -->
         <div class="content-panel">
             <span class="content-title">代码片段展示区</span>
-            <span class="info-bar">选择左侧代码片段，自动展示 Python 代码示例</span>
+            <span class="info-bar">选择左侧按钮，自动展示 Python 代码示例</span>
             <div class="code-card" id="output">
 <pre><code>print(1)</code></pre>
             </div>
@@ -198,9 +214,9 @@
 `sum([1,2,3])`
         ];
         function showCode(idx) {
-            // 切换高亮
-            const items = document.querySelectorAll('.sidebar-item');
-            items.forEach((el, i) => el.classList.toggle('active', i === idx));
+            // 切换高亮，仿python.org按钮激活
+            const btns = document.querySelectorAll('.py-btn');
+            btns.forEach((el, i) => el.classList.toggle('active', i === idx));
             document.getElementById('output').innerHTML = `<pre><code>${codes[idx]}</code></pre>`;
         }
     </script>
