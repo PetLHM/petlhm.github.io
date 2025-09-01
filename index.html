@@ -2,30 +2,250 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>简易文件保存网站</title>
+  <title>文件存储 · 美学融合版</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body { background: #161b22; color: #c9d1d9; font-family: 'Inter', Arial, sans-serif; }
-    .container { max-width: 420px; margin: 40px auto; background: #21262c; border-radius: 10px; box-shadow: 0 8px 28px 0 rgba(1,4,9,0.32); padding: 28px; }
-    .title { font-size: 20px; color: #f9e06f; font-weight: bold; margin-bottom: 18px; }
-    input[type="file"] { margin-bottom: 18px; }
-    button { background: #ffd43b; color: #222; border-radius: 5px; padding: 8px 18px; border: none; cursor: pointer; margin-bottom: 12px; }
-    .file-list { margin-top: 16px; }
-    .file-item { margin-bottom: 7px; }
-    .download-btn { background: #238636; color: #fff; border-radius: 4px; padding: 2px 12px; border: none; cursor: pointer; margin-left: 7px; font-size: 13px;}
-    .delete-btn { background: #d73a49; color: #fff; border-radius: 4px; padding: 2px 10px; border: none; cursor: pointer; margin-left: 3px; font-size: 13px;}
-    .tip { color: #6e7681; font-size: 13px; margin-bottom: 14px;}
+    :root {
+      --main-bg: #f5f6fa;
+      --card-bg: #fff;
+      --accent: #007aff;
+      --border: #e5e7eb;
+      --shadow: 0 8px 32px 0 rgba(22, 24, 35, 0.12);
+      --radius-lg: 18px;
+      --radius-md: 10px;
+      --radius-sm: 6px;
+      --btn-bg: linear-gradient(90deg, #007aff 0%, #45a1ff 100%);
+      --btn-hover-bg: linear-gradient(90deg, #0051a1 0%, #238636 100%);
+      --btn-text: #fff;
+      --btn-shadow: 0 2px 8px 0 rgba(0,122,255,0.09);
+      --btn-font: 'Inter', 'Roboto Mono', Arial, sans-serif;
+      --nav-bg: #f9f9fb;
+      --nav-active-bg: #eaf4ff;
+      --nav-text: #007aff;
+      --nav-hover-bg: #f3fafe;
+      --nav-radius: 12px;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--main-bg);
+      font-family: var(--btn-font);
+      color: #222;
+      min-height: 100vh;
+    }
+    .navbar {
+      width: 100%;
+      background: var(--nav-bg);
+      border-bottom: 1.5px solid var(--border);
+      box-shadow: 0 2px 12px rgba(21,26,30,0.05);
+      padding: 0 0 0 36px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+    }
+    .navbar-title {
+      font-size: 24px;
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+    .main-container {
+      max-width: 520px;
+      margin: 54px auto 0 auto;
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 38px 38px 32px 38px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 24px;
+    }
+    .nav-list {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+    .nav-btn {
+      background: var(--nav-bg);
+      color: var(--nav-text);
+      border: none;
+      font-family: var(--btn-font);
+      font-size: 17px;
+      font-weight: 500;
+      padding: 11px 22px;
+      border-radius: var(--nav-radius);
+      cursor: pointer;
+      transition: background 0.16s, color 0.16s, box-shadow 0.2s;
+      box-shadow: none;
+      outline: none;
+      letter-spacing: 0.2px;
+      position: relative;
+    }
+    .nav-btn.active,
+    .nav-btn:hover {
+      background: var(--nav-active-bg);
+      color: #0051a1;
+      box-shadow: 0 4px 14px 0 rgba(0, 122, 255, 0.09);
+    }
+    .section-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      box-shadow: 0 2px 10px 0 rgba(21,26,30,0.07);
+      padding: 26px 24px 22px 24px;
+      font-size: 16px;
+      position: relative;
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: 19px;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 7px;
+      font-family: 'Inter', Arial, sans-serif;
+      letter-spacing: 1px;
+    }
+    .tip {
+      color: #6e7681;
+      font-size: 13px;
+      margin-bottom: 14px;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+    .file-block {
+      margin-bottom: 18px;
+    }
+    input[type="file"] {
+      font-size: 15px;
+      margin-bottom: 16px;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+    .action-btn {
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      border-radius: var(--radius-sm);
+      padding: 10px 22px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: var(--btn-font);
+      box-shadow: var(--btn-shadow);
+      margin-bottom: 12px;
+      transition: background 0.15s, box-shadow 0.2s, transform 0.13s;
+      outline: none;
+      letter-spacing: 0.3px;
+    }
+    .action-btn:hover, .action-btn:active {
+      background: var(--btn-hover-bg);
+      color: #fff;
+      box-shadow: 0 4px 14px 0 rgba(0, 122, 255, 0.18);
+      transform: translateY(-2px) scale(1.04);
+    }
+    .file-list {
+      margin-top: 18px;
+    }
+    .file-item {
+      margin-bottom: 8px;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .download-btn {
+      background: linear-gradient(90deg,#238636 0%,#45a1ff 100%);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      padding: 2px 14px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: var(--btn-font);
+      font-weight: 500;
+      transition: background 0.15s, box-shadow 0.2s;
+      margin-left: 7px;
+    }
+    .download-btn:hover {
+      background: linear-gradient(90deg,#0051a1 0%,#007aff 100%);
+      box-shadow: 0 2px 8px 0 rgba(0,122,255,0.11);
+    }
+    .delete-btn {
+      background: linear-gradient(90deg,#fc5c7d 0%,#f8576c 100%);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      padding: 2px 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: var(--btn-font);
+      font-weight: 500;
+      margin-left: 3px;
+      transition: background 0.15s, box-shadow 0.2s;
+    }
+    .delete-btn:hover {
+      background: linear-gradient(90deg,#d73a49 0%,#f8576c 100%);
+      box-shadow: 0 2px 8px 0 rgba(255,50,120,0.13);
+    }
+    @media (max-width: 600px) {
+      .main-container { max-width: 99vw; padding: 10px 4vw 20px 4vw;}
+      .navbar { padding-left: 12px; height: 52px;}
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="title">本地文件存储网站</div>
-    <div class="tip">上传文件后，文件内容将保存到浏览器本地（仅此设备）。</div>
-    <input type="file" id="fileInput" multiple>
-    <button onclick="saveFiles()">保存文件</button>
-    <div class="file-list" id="fileList"></div>
+  <div class="navbar">
+    <span class="navbar-title">文件存储 · 美学融合版</span>
+  </div>
+  <div class="main-container">
+    <nav class="nav-list">
+      <button class="nav-btn active" onclick="showSection('upload')">上传文件</button>
+      <button class="nav-btn" onclick="showSection('list')">文件列表</button>
+      <button class="nav-btn" onclick="showSection('about')">关于网站</button>
+    </nav>
+    <div id="section-upload" class="section-card">
+      <div class="section-title">上传新文件</div>
+      <div class="tip">支持多文件，文件内容仅存储在本地浏览器，刷新后依然可见。</div>
+      <div class="file-block">
+        <input type="file" id="fileInput" multiple>
+        <button class="action-btn" onclick="saveFiles()">保存文件</button>
+      </div>
+    </div>
+    <div id="section-list" class="section-card" style="display:none;">
+      <div class="section-title">文件列表与操作</div>
+      <div class="tip">点击下载可取回文件，删除仅移除本地存储。</div>
+      <div class="file-list" id="fileList"></div>
+    </div>
+    <div id="section-about" class="section-card" style="display:none;">
+      <div class="section-title">关于与美学说明</div>
+      <div style="color:#444;line-height:1.7;font-size:15px;">
+        <b>本网站融合：</b>
+        <ul>
+          <li>Python.org 导航风格</li>
+          <li>Copilot 卡片与现代元素</li>
+          <li>Apple 极简美学与动态反馈</li>
+        </ul>
+        <b>功能：</b>
+        <ul>
+          <li>文件上传/保存（localStorage，私有本地）</li>
+          <li>文件下载与删除</li>
+          <li>美观的按钮与卡片布局</li>
+        </ul>
+        <b>适用场景：</b> 临时文件存储、跨页面浏览，只在本机生效。
+      </div>
+    </div>
   </div>
   <script>
-    // 保存文件到localStorage
+    function showSection(name) {
+      document.getElementById('section-upload').style.display = name === 'upload' ? '' : 'none';
+      document.getElementById('section-list').style.display = name === 'list' ? '' : 'none';
+      document.getElementById('section-about').style.display = name === 'about' ? '' : 'none';
+      const btns = document.querySelectorAll('.nav-btn');
+      btns.forEach((el, i) => el.classList.toggle('active', ['upload','list','about'][i] === name));
+      if (name === 'list') showFiles();
+    }
     function saveFiles() {
       const files = document.getElementById('fileInput').files;
       for (let file of files) {
@@ -36,15 +256,18 @@
         };
         reader.readAsDataURL(file);
       }
+      document.getElementById('fileInput').value = '';
+      showSection('list');
     }
-    // 展示文件列表
     function showFiles() {
       const list = document.getElementById('fileList');
       list.innerHTML = '';
+      let hasFile = false;
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key.startsWith('file_')) {
           const filename = key.substring(5);
+          hasFile = true;
           list.innerHTML += `<div class="file-item">
             ${filename}
             <button class="download-btn" onclick="downloadFile('${filename}')">下载</button>
@@ -52,8 +275,8 @@
           </div>`;
         }
       }
+      if (!hasFile) list.innerHTML = '<span style="color:#aaa;">暂无已存文件</span>';
     }
-    // 下载文件
     function downloadFile(filename) {
       const dataUrl = localStorage.getItem('file_' + filename);
       const a = document.createElement('a');
@@ -61,13 +284,12 @@
       a.download = filename;
       a.click();
     }
-    // 删除文件
     function deleteFile(filename) {
       localStorage.removeItem('file_' + filename);
       showFiles();
     }
-    // 页面加载时显示
-    showFiles();
+    // 默认展示上传区
+    showSection('upload');
   </script>
 </body>
 </html>
