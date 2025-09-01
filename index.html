@@ -1,224 +1,73 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <title>PET 云空间 · Python内置代码演示</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Inter:wght@500;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --main-bg: #0d1117;
-            --sidebar-bg: #161b22;
-            --container-bg: #21262c;
-            --accent: #f9e06f;
-            --primary: #238636;
-            --border: #30363d;
-            --text: #c9d1d9;
-            --code-bg: #161b22;
-            --card-radius: 10px;
-            --shadow: 0 8px 28px 0 rgba(1, 4, 9, 0.32);
-            --py-btn-bg: #ffd43b;
-            --py-btn-hover-bg: #306998;
-            --py-btn-text: #222;
-            --py-btn-font: 'Inter', 'Roboto Mono', monospace, Arial, sans-serif;
-        }
-        html, body {
-            margin: 0;
-            padding: 0;
-            font-family: var(--py-btn-font);
-            background: var(--main-bg);
-            color: var(--text);
-            min-height: 100vh;
-        }
-        .navbar {
-            width: 100%;
-            background: var(--sidebar-bg);
-            border-bottom: 1.3px solid var(--border);
-            height: 56px;
-            display: flex;
-            align-items: center;
-            padding-left: 38px;
-            z-index: 10;
-            position: relative;
-            box-shadow: 0 2px 6px rgba(21,26,30,0.11);
-        }
-        .navbar-title {
-            font-size: 22px;
-            color: var(--accent);
-            font-weight: 700;
-            letter-spacing: 1px;
-            font-family: 'Inter', Arial, sans-serif;
-        }
-        .main-container {
-            display: flex;
-            max-width: 900px;
-            min-height: 500px;
-            margin: 46px auto 0 auto;
-            border-radius: var(--card-radius);
-            box-shadow: var(--shadow);
-            background: var(--container-bg);
-            overflow: visible;
-            position: relative;
-        }
-        .sidebar {
-            width: 180px;
-            background: var(--sidebar-bg);
-            border-right: 1.7px solid var(--border);
-            padding: 28px 0 28px 0;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar-list {
-            list-style: none;
-            margin: 0;
-            padding: 0 0 0 2px;
-        }
-        .sidebar-item {
-            margin-bottom: 13px;
-            border: none;
-            background: none;
-            padding: 0;
-        }
-        .py-btn {
-            display: block;
-            width: 100%;
-            padding: 12px 18px;
-            border-radius: 6px;
-            background: var(--py-btn-bg);
-            color: var(--py-btn-text);
-            font-family: var(--py-btn-font);
-            font-size: 15.5px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 1px 2px #2222 inset;
-            transition: background 0.18s, color 0.18s;
-            outline: none;
-            letter-spacing: 0.2px;
-            margin-bottom: 2px;
-        }
-        .py-btn.active, .py-btn:hover {
-            background: var(--py-btn-hover-bg);
-            color: #fff;
-        }
-        .content-panel {
-            flex: 1;
-            padding: 32px 30px 26px 30px;
-            display: flex;
-            flex-direction: column;
-            background: transparent;
-            position: relative;
-        }
-        .content-title {
-            font-size: 20px;
-            color: var(--accent);
-            font-family: 'Inter', Arial, sans-serif;
-            font-weight: 700;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-        .info-bar {
-            font-size: 14px;
-            color: #6e7681;
-            margin-bottom: 9px;
-            margin-left: 2px;
-            font-family: 'Inter', Arial, sans-serif;
-        }
-        .code-card {
-            background: linear-gradient(135deg, #181a20 70%, #23272e 100%);
-            border-radius: 20px 20px 16px 16px;
-            box-shadow: 0 2px 24px 0 rgba(33, 38, 44, 0.19);
-            padding: 26px 20px 23px 28px;
-            font-size: 17px;
-            color: var(--text);
-            font-family: 'Roboto Mono', monospace;
-            line-height: 2.1;
-            letter-spacing: 0.4px;
-            border: 2.2px solid #23272e;
-            transition: box-shadow 0.2s;
-            position: relative;
-            margin-bottom: 12px;
-            max-width: 440px;
-            margin-top: 6px;
-        }
-        .code-card::before {
-            content: "Python代码片段";
-            position: absolute;
-            top: 8px;
-            left: 15px;
-            font-size: 12px;
-            color: var(--accent);
-            font-family: 'Inter', Arial, sans-serif;
-            letter-spacing: 1px;
-            opacity: 0.90;
-        }
-        .github-style {
-            margin-top: 13px;
-            font-size: 13px;
-            color: #7d8590;
-            font-family: 'Inter', Arial, sans-serif;
-        }
-        .github-link {
-            color: #2f81f7;
-            text-decoration: underline;
-            font-weight: 500;
-            margin-left: 2px;
-        }
-        @media (max-width: 900px) {
-            .main-container { flex-direction: column; max-width: 99vw; }
-            .sidebar { width: 100%; flex-direction: row; border-right: 0; border-bottom: 2px solid var(--border); padding: 12px 0;}
-            .content-panel { padding: 12px 4px 16px 4px; }
-            .code-card { max-width: 99vw; }
-            .py-btn { font-size: 15px; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>简易文件保存网站</title>
+  <style>
+    body { background: #161b22; color: #c9d1d9; font-family: 'Inter', Arial, sans-serif; }
+    .container { max-width: 420px; margin: 40px auto; background: #21262c; border-radius: 10px; box-shadow: 0 8px 28px 0 rgba(1,4,9,0.32); padding: 28px; }
+    .title { font-size: 20px; color: #f9e06f; font-weight: bold; margin-bottom: 18px; }
+    input[type="file"] { margin-bottom: 18px; }
+    button { background: #ffd43b; color: #222; border-radius: 5px; padding: 8px 18px; border: none; cursor: pointer; margin-bottom: 12px; }
+    .file-list { margin-top: 16px; }
+    .file-item { margin-bottom: 7px; }
+    .download-btn { background: #238636; color: #fff; border-radius: 4px; padding: 2px 12px; border: none; cursor: pointer; margin-left: 7px; font-size: 13px;}
+    .delete-btn { background: #d73a49; color: #fff; border-radius: 4px; padding: 2px 10px; border: none; cursor: pointer; margin-left: 3px; font-size: 13px;}
+    .tip { color: #6e7681; font-size: 13px; margin-bottom: 14px;}
+  </style>
 </head>
 <body>
-    <div class="navbar">
-        <span class="navbar-title">PET 云空间 · Python内置代码演示</span>
-    </div>
-    <div class="main-container">
-        <!-- 侧边栏 -->
-        <div class="sidebar">
-            <ul class="sidebar-list" id="itemList">
-                <li class="sidebar-item"><button class="py-btn active" onclick="showCode(0)">print(1)</button></li>
-                <li class="sidebar-item"><button class="py-btn" onclick="showCode(1)">print(2)</button></li>
-                <li class="sidebar-item"><button class="py-btn" onclick="showCode(2)">print(3)</button></li>
-                <li class="sidebar-item"><button class="py-btn" onclick="showCode(3)">for i in range(5): print(i)</button></li>
-                <li class="sidebar-item"><button class="py-btn" onclick="showCode(4)">def hello(): print("Hello")</button></li>
-                <li class="sidebar-item"><button class="py-btn" onclick="showCode(5)">sum([1,2,3])</button></li>
-            </ul>
-        </div>
-        <!-- 内容区 -->
-        <div class="content-panel">
-            <span class="content-title">代码片段展示区</span>
-            <span class="info-bar">选择左侧按钮，自动展示 Python 代码示例</span>
-            <div class="code-card" id="output">
-<pre><code>print(1)</code></pre>
-            </div>
-            <div class="github-style">
-                <span>样式致敬</span>
-                <a href="https://github.com/" target="_blank" class="github-link">GitHub</a>
-                <span>·</span>
-                <a href="https://www.python.org/" target="_blank" class="github-link">Python.org</a>
-            </div>
-        </div>
-    </div>
-    <script>
-        // 代码内容
-        const codes = [
-`print(1)`,
-`print(2)`,
-`print(3)`,
-`for i in range(5):\n    print(i)`,
-`def hello():\n    print("Hello")\nhello()`,
-`sum([1,2,3])`
-        ];
-        function showCode(idx) {
-            // 切换高亮，仿python.org按钮激活
-            const btns = document.querySelectorAll('.py-btn');
-            btns.forEach((el, i) => el.classList.toggle('active', i === idx));
-            document.getElementById('output').innerHTML = `<pre><code>${codes[idx]}</code></pre>`;
+  <div class="container">
+    <div class="title">本地文件存储网站</div>
+    <div class="tip">上传文件后，文件内容将保存到浏览器本地（仅此设备）。</div>
+    <input type="file" id="fileInput" multiple>
+    <button onclick="saveFiles()">保存文件</button>
+    <div class="file-list" id="fileList"></div>
+  </div>
+  <script>
+    // 保存文件到localStorage
+    function saveFiles() {
+      const files = document.getElementById('fileInput').files;
+      for (let file of files) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          localStorage.setItem('file_' + file.name, e.target.result);
+          showFiles();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+    // 展示文件列表
+    function showFiles() {
+      const list = document.getElementById('fileList');
+      list.innerHTML = '';
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('file_')) {
+          const filename = key.substring(5);
+          list.innerHTML += `<div class="file-item">
+            ${filename}
+            <button class="download-btn" onclick="downloadFile('${filename}')">下载</button>
+            <button class="delete-btn" onclick="deleteFile('${filename}')">删除</button>
+          </div>`;
         }
-    </script>
+      }
+    }
+    // 下载文件
+    function downloadFile(filename) {
+      const dataUrl = localStorage.getItem('file_' + filename);
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = filename;
+      a.click();
+    }
+    // 删除文件
+    function deleteFile(filename) {
+      localStorage.removeItem('file_' + filename);
+      showFiles();
+    }
+    // 页面加载时显示
+    showFiles();
+  </script>
 </body>
 </html>
