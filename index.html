@@ -1,295 +1,832 @@
-<!DOCTYPE html>
-<html lang="zh">
+<!doctype html>
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <title>文件存储 · 美学融合版</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --main-bg: #f5f6fa;
-      --card-bg: #fff;
-      --accent: #007aff;
-      --border: #e5e7eb;
-      --shadow: 0 8px 32px 0 rgba(22, 24, 35, 0.12);
-      --radius-lg: 18px;
-      --radius-md: 10px;
-      --radius-sm: 6px;
-      --btn-bg: linear-gradient(90deg, #007aff 0%, #45a1ff 100%);
-      --btn-hover-bg: linear-gradient(90deg, #0051a1 0%, #238636 100%);
-      --btn-text: #fff;
-      --btn-shadow: 0 2px 8px 0 rgba(0,122,255,0.09);
-      --btn-font: 'Inter', 'Roboto Mono', Arial, sans-serif;
-      --nav-bg: #f9f9fb;
-      --nav-active-bg: #eaf4ff;
-      --nav-text: #007aff;
-      --nav-hover-bg: #f3fafe;
-      --nav-radius: 12px;
-    }
-    body {
-      margin: 0;
-      padding: 0;
-      background: var(--main-bg);
-      font-family: var(--btn-font);
-      color: #222;
-      min-height: 100vh;
-    }
-    .navbar {
-      width: 100%;
-      background: var(--nav-bg);
-      border-bottom: 1.5px solid var(--border);
-      box-shadow: 0 2px 12px rgba(21,26,30,0.05);
-      padding: 0 0 0 36px;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      position: relative;
-      z-index: 10;
-    }
-    .navbar-title {
-      font-size: 24px;
-      color: var(--accent);
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      font-family: 'Inter', Arial, sans-serif;
-    }
-    .main-container {
-      max-width: 520px;
-      margin: 54px auto 0 auto;
-      background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
-      padding: 38px 38px 32px 38px;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 24px;
-    }
-    .nav-list {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
-      justify-content: center;
-    }
-    .nav-btn {
-      background: var(--nav-bg);
-      color: var(--nav-text);
-      border: none;
-      font-family: var(--btn-font);
-      font-size: 17px;
-      font-weight: 500;
-      padding: 11px 22px;
-      border-radius: var(--nav-radius);
-      cursor: pointer;
-      transition: background 0.16s, color 0.16s, box-shadow 0.2s;
-      box-shadow: none;
-      outline: none;
-      letter-spacing: 0.2px;
-      position: relative;
-    }
-    .nav-btn.active,
-    .nav-btn:hover {
-      background: var(--nav-active-bg);
-      color: #0051a1;
-      box-shadow: 0 4px 14px 0 rgba(0, 122, 255, 0.09);
-    }
-    .section-card {
-      background: var(--card-bg);
-      border-radius: var(--radius-md);
-      box-shadow: 0 2px 10px 0 rgba(21,26,30,0.07);
-      padding: 26px 24px 22px 24px;
-      font-size: 16px;
-      position: relative;
-      margin-bottom: 10px;
-    }
-    .section-title {
-      font-size: 19px;
-      color: var(--accent);
-      font-weight: 700;
-      margin-bottom: 7px;
-      font-family: 'Inter', Arial, sans-serif;
-      letter-spacing: 1px;
-    }
-    .tip {
-      color: #6e7681;
-      font-size: 13px;
-      margin-bottom: 14px;
-      font-family: 'Inter', Arial, sans-serif;
-    }
-    .file-block {
-      margin-bottom: 18px;
-    }
-    input[type="file"] {
-      font-size: 15px;
-      margin-bottom: 16px;
-      font-family: 'Inter', Arial, sans-serif;
-    }
-    .action-btn {
-      background: var(--btn-bg);
-      color: var(--btn-text);
-      border-radius: var(--radius-sm);
-      padding: 10px 22px;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      font-family: var(--btn-font);
-      box-shadow: var(--btn-shadow);
-      margin-bottom: 12px;
-      transition: background 0.15s, box-shadow 0.2s, transform 0.13s;
-      outline: none;
-      letter-spacing: 0.3px;
-    }
-    .action-btn:hover, .action-btn:active {
-      background: var(--btn-hover-bg);
-      color: #fff;
-      box-shadow: 0 4px 14px 0 rgba(0, 122, 255, 0.18);
-      transform: translateY(-2px) scale(1.04);
-    }
-    .file-list {
-      margin-top: 18px;
-    }
-    .file-item {
-      margin-bottom: 8px;
-      font-size: 15px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-    .download-btn {
-      background: linear-gradient(90deg,#238636 0%,#45a1ff 100%);
-      color: #fff;
-      border-radius: var(--radius-sm);
-      padding: 2px 14px;
-      border: none;
-      cursor: pointer;
-      font-size: 13px;
-      font-family: var(--btn-font);
-      font-weight: 500;
-      transition: background 0.15s, box-shadow 0.2s;
-      margin-left: 7px;
-    }
-    .download-btn:hover {
-      background: linear-gradient(90deg,#0051a1 0%,#007aff 100%);
-      box-shadow: 0 2px 8px 0 rgba(0,122,255,0.11);
-    }
-    .delete-btn {
-      background: linear-gradient(90deg,#fc5c7d 0%,#f8576c 100%);
-      color: #fff;
-      border-radius: var(--radius-sm);
-      padding: 2px 12px;
-      border: none;
-      cursor: pointer;
-      font-size: 13px;
-      font-family: var(--btn-font);
-      font-weight: 500;
-      margin-left: 3px;
-      transition: background 0.15s, box-shadow 0.2s;
-    }
-    .delete-btn:hover {
-      background: linear-gradient(90deg,#d73a49 0%,#f8576c 100%);
-      box-shadow: 0 2px 8px 0 rgba(255,50,120,0.13);
-    }
-    @media (max-width: 600px) {
-      .main-container { max-width: 99vw; padding: 10px 4vw 20px 4vw;}
-      .navbar { padding-left: 12px; height: 52px;}
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Python 脚本库 · 专业下载站</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f7fb;
+    --panel:#ffffff;
+    --muted:#6b7280;
+    --accent:#007aff;       /* Apple-like blue */
+    --accent-2:#238636;     /* GitHub green */
+    --glass: rgba(255,255,255,0.6);
+    --radius-lg:14px;
+    --radius-md:10px;
+    --shadow-lg: 0 12px 40px rgba(16,24,40,0.08);
+    --shadow-sm: 0 6px 18px rgba(16,24,40,0.06);
+    --mono: 'Roboto Mono', monospace;
+    --ui-font: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  html,body{height:100%;margin:0;background:
+    linear-gradient(180deg,#eef3fb 0%,var(--bg) 60%);font-family:var(--ui-font);color:#0f172a;}
+  .wrap{max-width:980px;margin:36px auto;padding:28px;}
+  .header{
+    display:flex;align-items:center;gap:18px;background:linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.95));
+    border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow-lg);backdrop-filter: blur(6px);
+  }
+  .logo {
+    width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--accent),#45a1ff);color:white;font-weight:700;font-size:20px;
+    box-shadow: 0 6px 18px rgba(3,102,255,0.14), inset 0 -6px 12px rgba(255,255,255,0.08);
+  }
+  .title {
+    display:flex;flex-direction:column;
+  }
+  .title h1{margin:0;font-size:18px;letter-spacing:0.2px;}
+  .title p{margin:4px 0 0 0;color:var(--muted);font-size:13px;}
+  .actions {margin-left:auto;display:flex;gap:10px;align-items:center;}
+  /* navigation (python.org like buttons) */
+  .nav{
+    margin-top:18px;display:flex;gap:10px;align-items:center;justify-content:center;
+  }
+  .nav button{
+    background:transparent;border:1px solid transparent;padding:9px 14px;border-radius:10px;font-weight:600;
+    color:var(--accent);cursor:pointer;font-size:14px;
+    transition: all .14s ease;
+    box-shadow:none;
+  }
+  .nav button:hover{background:linear-gradient(90deg,rgba(0,122,255,0.06),rgba(0,122,255,0.03));transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  .nav button.active{background:linear-gradient(90deg,rgba(0,122,255,0.10),rgba(0,122,255,0.03));border-color:rgba(0,122,255,0.12);box-shadow:0 8px 28px rgba(3,102,255,0.08);color:#003f7f}
+  /* resources area */
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:22px;}
+  @media (max-width:820px){.grid{grid-template-columns:1fr}}
+  .card{
+    background:var(--panel);border-radius:12px;padding:18px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;
+    min-height:140px;border:1px solid rgba(15,23,42,0.04);
+  }
+  .card .meta{display:flex;align-items:center;gap:12px;}
+  .badge{
+    background:linear-gradient(180deg,#f8fafc,#ffffff);border-radius:8px;padding:8px 10px;font-weight:700;color:#0f172a;
+    box-shadow: 0 4px 10px rgba(2,6,23,0.04);font-size:13px;
+  }
+  .card h3{margin:6px 0 0 0;font-size:16px;}
+  .card p{margin:8px 0 0 0;color:var(--muted);font-size:13px;flex:1}
+  .card .foot{display:flex;align-items:center;gap:10px;margin-top:14px;}
+  /* primary download button (Apple + GitHub feel) */
+  .btn-primary{
+    background:linear-gradient(90deg,var(--accent),#46a1ff);color:#fff;padding:10px 16px;border-radius:10px;border:none;font-weight:700;
+    cursor:pointer;box-shadow: 0 8px 24px rgba(3,102,255,0.14);transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .btn-primary:hover{transform:translateY(-3px);box-shadow:0 16px 36px rgba(3,102,255,0.18)}
+  .btn-ghost{background:transparent;border:1px solid rgba(15,23,42,0.06);padding:8px 12px;border-radius:10px;cursor:pointer;color:var(--muted)}
+  .pill{font-family:var(--mono);font-size:13px;padding:6px 8px;border-radius:8px;background:#f3f4f6;color:#111}
+  .size{color:var(--muted);font-size:13px}
+  .tools{margin-left:auto;display:flex;gap:8px;}
+  /* preview modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(8,12,20,0.45);display:none;align-items:center;justify-content:center;z-index:1200}
+  .modal{background:linear-gradient(180deg,#0b1220,#061025);width:88%;max-width:980px;border-radius:12px;padding:18px;box-shadow:0 20px 80px rgba(2,6,23,0.6);color:#e6eef8}
+  .modal pre{background:rgba(255,255,255,0.03);padding:12px;border-radius:8px;overflow:auto;font-family:var(--mono);font-size:13px;line-height:1.45;max-height:60vh}
+  .modal .meta{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+  .close-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#dbeafe;padding:8px 10px;border-radius:8px;cursor:pointer}
+  /* subtle footer */
+  .foot-note{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+  /* small interactive touches */
+  .copy-success{position:fixed;right:22px;bottom:22px;background:#111827;color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 8px 30px rgba(2,6,23,0.4);display:none}
+</style>
 </head>
 <body>
-  <div class="navbar">
-    <span class="navbar-title">文件存储 · 美学融合版</span>
-  </div>
-  <div class="main-container">
-    <nav class="nav-list">
-      <button class="nav-btn active" onclick="showSection('upload')">上传文件</button>
-      <button class="nav-btn" onclick="showSection('list')">文件列表</button>
-      <button class="nav-btn" onclick="showSection('about')">关于网站</button>
+  <div class="wrap">
+    <header class="header" role="banner">
+      <div class="logo" aria-hidden="true">Py</div>
+      <div class="title">
+        <h1>Python 脚本库 — 专业分发中心</h1>
+        <p>高质感按钮与卡片布局，直接下载或预览脚本；支持复制、查看大小与平台说明。</p>
+      </div>
+      <div class="actions" role="navigation" aria-label="actions">
+        <button class="btn-primary" id="download-all">一键打包下载</button>
+        <button class="btn-ghost" id="view-readme">站点说明</button>
+      </div>
+    </header>
+
+    <nav class="nav" role="navigation" aria-label="primary">
+      <button class="nav-btn active" data-filter="all">全部</button>
+      <button class="nav-btn" data-filter="script">脚本 (.py)</button>
+      <button class="nav-btn" data-filter="binary">二进制 / 安装包</button>
+      <button class="nav-btn" data-filter="tools">工具</button>
     </nav>
-    <div id="section-upload" class="section-card">
-      <div class="section-title">上传新文件</div>
-      <div class="tip">支持多文件，文件内容仅存储在本地浏览器，刷新后依然可见。</div>
-      <div class="file-block">
-        <input type="file" id="fileInput" multiple>
-        <button class="action-btn" onclick="saveFiles()">保存文件</button>
+
+    <section class="grid" aria-live="polite" id="resourceGrid">
+      <!-- cards generated by JS -->
+    </section>
+
+    <div class="foot-note">部署：直接把本文件（index.html）放到静态主机或 GitHub Pages。若要放真实安装包，请把文件替换为指向实际二进制的 URL。</div>
+  </div>
+
+  <!-- modal preview -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="meta">
+        <div><strong id="modalTitle">预览</strong> <span id="modalName" class="pill" style="margin-left:10px"></span></div>
+        <div style="margin-left:auto">
+          <button class="close-btn" id="modalClose">关闭</button>
+          <button class="close-btn" id="modalCopy">复制</button>
+          <button class="close-btn" id="modalDownload">下载</button>
+        </div>
       </div>
-    </div>
-    <div id="section-list" class="section-card" style="display:none;">
-      <div class="section-title">文件列表与操作</div>
-      <div class="tip">点击下载可取回文件，删除仅移除本地存储。</div>
-      <div class="file-list" id="fileList"></div>
-    </div>
-    <div id="section-about" class="section-card" style="display:none;">
-      <div class="section-title">关于与美学说明</div>
-      <div style="color:#444;line-height:1.7;font-size:15px;">
-        <b>本网站融合：</b>
-        <ul>
-          <li>Python.org 导航风格</li>
-          <li>Copilot 卡片与现代元素</li>
-          <li>Apple 极简美学与动态反馈</li>
-        </ul>
-        <b>功能：</b>
-        <ul>
-          <li>文件上传/保存（localStorage，私有本地）</li>
-          <li>文件下载与删除</li>
-          <li>美观的按钮与卡片布局</li>
-        </ul>
-        <b>适用场景：</b> 临时文件存储、跨页面浏览，只在本机生效。
-      </div>
+      <pre id="modalContent" tabindex="0"></pre>
     </div>
   </div>
-  <script>
-    function showSection(name) {
-      document.getElementById('section-upload').style.display = name === 'upload' ? '' : 'none';
-      document.getElementById('section-list').style.display = name === 'list' ? '' : 'none';
-      document.getElementById('section-about').style.display = name === 'about' ? '' : 'none';
-      const btns = document.querySelectorAll('.nav-btn');
-      btns.forEach((el, i) => el.classList.toggle('active', ['upload','list','about'][i] === name));
-      if (name === 'list') showFiles();
-    }
-    function saveFiles() {
-      const files = document.getElementById('fileInput').files;
-      for (let file of files) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          localStorage.setItem('file_' + file.name, e.target.result);
-          showFiles();
-        };
-        reader.readAsDataURL(file);
-      }
-      document.getElementById('fileInput').value = '';
-      showSection('list');
-    }
-    function showFiles() {
-      const list = document.getElementById('fileList');
-      list.innerHTML = '';
-      let hasFile = false;
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key.startsWith('file_')) {
-          const filename = key.substring(5);
-          hasFile = true;
-          list.innerHTML += `<div class="file-item">
-            ${filename}
-            <button class="download-btn" onclick="downloadFile('${filename}')">下载</button>
-            <button class="delete-btn" onclick="deleteFile('${filename}')">删除</button>
-          </div>`;
-        }
-      }
-      if (!hasFile) list.innerHTML = '<span style="color:#aaa;">暂无已存文件</span>';
-    }
-    function downloadFile(filename) {
-      const dataUrl = localStorage.getItem('file_' + filename);
-      const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = filename;
-      a.click();
-    }
-    function deleteFile(filename) {
-      localStorage.removeItem('file_' + filename);
-      showFiles();
-    }
-    // 默认展示上传区
-    showSection('upload');
-  </script>
+
+  <div class="copy-success" id="copySuccess">已复制到剪贴板</div>
+
+<script>
+/* ---------- Embedded files (from user) ---------- */
+/* Keep filenames exactly as provided. Content is raw text. */
+const files = [
+  {
+    name: "绿梵AI.py",
+    type: "script",
+    platform: "Windows/Linux/macOS",
+    desc: "基于 tkinter + selenium 的自动化聊天脚本（Selenium + ChromeDriver 管理）。",
+    content: `import tkinter as tk
+from tkinter import ttk
+from selenium import webdriver  # 控制浏览器的核心模块
+from selenium.webdriver.chrome.service import Service  # 管理ChromDriver服务
+from webdriver_manager.chrome import ChromeDriverManager  # 自动下载并管理ChromeDriver
+from selenium.webdriver.common.by import By  # 定义元素定位方式
+from selenium.webdriver.support.ui import WebDriverWait  # 显示等待工具
+from selenium.webdriver.support import expected_conditions as EC  # 常用等待条件
+import time
+
+import threading
+from selenium.webdriver.common.keys import Keys
+
+main_版本 = '1.0.0'
+green_f = tk.Tk()
+green_f.title(f'绿梵AI [{main_版本}]')
+green_f.geometry('344x250')
+
+Label1 = tk.Label(green_f, text='初始化进程', font=('微软雅黑 Light', 17))
+Label1.place(x=20, y=25)
+Label2 = tk.Label(green_f, text='输入来自Google Chrame浏览器的地址', font=('微软雅黑', 13))
+Label2.place(x=20, y=65)
+entry1 = ttk.Entry(green_f, font=('微软雅黑', 13))
+entry1.place(x=20, y=145, height=32, width=220)
+style = ttk.Style()
+style.configure('TButton', font=('微软雅黑', 13), height=32, width=7)
+place = ''
+版本 = ''
+顺序 = 0
+word=''
+
+def main():
+   try:
+    global place, 版本, driver
+    green_AIf = tk.Tk()
+
+    def mu1():
+        green_AIf.geometry('344x250')
+        txt_edit.config(height=7,width=33)
+        entry3.place(x=22,y=175,width=250,height=46)
+        btnT.place(x=275,y=175,height=48,width=48)
+
+    def mu2():
+        green_AIf.geometry('544x450')
+        txt_edit.config(height=18,width=55)
+        entry3.place(x=22,y=390,width=445,height=52)
+        btnT.place(x=471,y=390,height=53,width=51)
+    def mu3():
+        green_AIf.geometry('744x650')
+        txt_edit.config(height=27,width=77)
+        entry3.place(x=22,y=573,width=635,height=56)
+        btnT.place(x=661,y=573,height=57,width=57)
+
+
+    green_AIf.title(f'绿梵AI [{main_版本}]')
+    entry3 = ttk.Entry(green_AIf, font=('微软雅黑', 13))
+    entry3.place(x=22, y=175, height=46, width=250)
+    txt_edit = tk.Text(green_AIf, wrap=tk.WORD, width=33, font=('微软雅黑', 11), height=7, undo=True)
+    txt_edit.place(x=22, y=13)
+
+
+    txt_edit.config(state=tk.NORMAL)
+    txt_edit.delete('1.0', tk.END)
+    txt_edit.config(state='disabled')
+    # 创建Scrollbar组件
+
+    scrollbar = tk.Scrollbar(green_AIf, orient=tk.VERTICAL, command=txt_edit.yview)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+    # 配置Text组件与Scrollbar的关系
+    txt_edit['yscrollcommand'] = scrollbar.set
+    chat_控制=0
+    chat_net_顺序=1
+    chat_版本='DeepSeek-R1'
+    def chat(value):
+            nonlocal chat_版本
+            # 点击思考部分按钮，使思考的部分也显示出来
+            try:
+
+
+
+                button = driver.find_element(By.CSS_SELECTOR, "[class*='cos-icon cos-icon-change']")
+                button.click()
+                wait = WebDriverWait(driver, 10)
+
+
+                # 定位所有class为"input-capsules-model-list-item"的元素
+                all_items = wait.until(
+                  EC.presence_of_all_elements_located(
+                      (By.CLASS_NAME, "input-capsules-model-list-item")
+                  )
+                )
+
+                # 遍历元素寻找目标按钮
+                for item in all_items:
+                  # 检查元素内是否包含"DeepSeek-V3最新版"标题
+                  title_element = item.find_element(
+                      By.CLASS_NAME, "input-capsules-model-list-item-title"
+                  )
+                  print('value'+str(value))
+                  
+                  版本=chat_版本
+                  print('版本'+str(版本))
+                  if title_element.text == value:
+
+                      # 点击目标按钮
+                      item.click()
+                      print(f"成功点击{value}")
+                      chat_版本=value
+                      button = driver.find_element(By.CSS_SELECTOR, "[class*='cos-icon cos-icon-change']")
+                      button.click()
+                      break
+
+
+                版本_List=['DeepSeek-R1','DeepSeek-V3']
+                for i in range(len(版本_List)):
+                  print(i)
+                  if(版本_List[i]==版本):
+                     file_menu2.entryconfig(i, label=f"{版本_List[i]}")
+                     print(str(版本)+f'    版本1    {i}')
+                     print(str(版本_List[i])+'     版本_List1')
+
+                  if(value==版本_List[i]):
+                     file_menu2.entryconfig(i, label=f"{版本_List[i]} √")
+                     print(str(value)+f'    版本2     {i}')
+                     print(str(版本_List[i])+'     版本_List2')
+
+            except Exception as e:
+                      print(f'Error:\\n{e}')
+
+
+
+    def net():
+       nonlocal chat_net_顺序
+       try:
+            button = driver.find_element(By.CSS_SELECTOR,"[class*='cos-icon cos-icon-change']")
+            button.click()
+            button = driver.find_element(By.CSS_SELECTOR, "[class*='cos-switcher cos-sm']")
+            button.click()
+            chat_net_顺序+=1
+            if(chat_net_顺序%2!=0):
+
+               file_menu2.entryconfig(3, label="联网模式")
+            else:
+              file_menu2.entryconfig(3, label="联网模式 √")
+            button = driver.find_element(By.CSS_SELECTOR, "[class*='cos-icon cos-icon-change']")
+            button.click()
+       except Exception as e:
+
+            print(f'Error:\\n{e}')
+            pass
+
+
+    def exchange():
+        global word
+        nonlocal chat_控制
+        try:
+            try:
+                txt_edit.config(state='normal')
+                btnT.config(state='disabled')
+
+                entry3.delete(0, tk.END)
+
+                #刷新网页
+                #driver.refresh()
+                chat_控制=1
+                ok()
+            except Exception as e:
+                txt_edit.insert(tk.END,f'无法重新回复，请稍后重试 \\n{e}')
+                green_AIf.update()
+            finally:
+                txt_edit.config(state='normal')
+                btnT.config(state='disabled')
+                green_AIf.update()
+
+
+        except Exception as e:
+            txt_edit.insert(tk.END,f'无法重新回复，请稍后重试 \\n{e}')
+            green_AIf.update()
+        finally:
+            btnT.config(state='normal')
+            txt_edit.config(state='disabled')
+            chat_控制=0
+    chat_thought_顺序=1
+    def thought():
+       nonlocal chat_thought_顺序
+       try:
+          button = driver.find_element(By.CSS_SELECTOR,"[class*='internet-search-icon']")
+          button.click()
+          chat_thought_顺序+=1
+          if(chat_thought_顺序%2!=0):
+
+            file_menu2.entryconfig(5, label="深度思考")
+          else:
+           file_menu2.entryconfig(5, label="深度思考 √")
+       except Exception as e:
+          print(f'{e}')
+
+
+    # 创建菜单栏
+    menu_bar = tk.Menu(green_AIf)
+    # 文件菜单
+    file_menu = tk.Menu(menu_bar, tearoff=0)
+    file_menu2 = tk.Menu(menu_bar, tearoff=0)
+    file_menu3 = tk.Menu(menu_bar, tearoff=0)
+    file_menu.add_command(label="🗘 重新回复", command=exchange)
+
+
+    file_menu2.add_command(label="DeepSeek-R1 √", command=lambda x='DeepSeek-R1': chat(x))
+    file_menu2.add_command(label="DeepSeek-V3",  command=lambda x='DeepSeek-V3': chat(x))
+
+
+    file_menu2.add_separator()
+    file_menu2.add_command(label="联网模式", command=net)
+
+    file_menu2.add_separator()
+    file_menu2.add_command(label="深度搜索", command=thought)
+
+
+    file_menu3.add_command(label="344x250", command=mu1)
+    file_menu3.add_command(label="644x450", command=mu2)
+    file_menu3.add_command(label="744x650", command=mu3)
+
+
+    file_menu.entryconfig('🗘 重新回复',  state='disabled')
+    menu_bar.add_cascade(label="编辑", menu=file_menu)
+    menu_bar.add_cascade(label="版本", menu=file_menu2)
+    menu_bar.add_cascade(label="窗口", menu=file_menu3)
+
+
+    # 设置菜单栏到窗口
+    green_AIf.config(menu=menu_bar)
+
+
+
+
+
+
+
+    ok_次=0
+    def ok_son():
+        nonlocal entry3,chat_控制,ok_次
+        global driver,word
+        try:
+            if(chat_控制)==0:
+               word = entry3.get()
+            print(chat_控制)
+            if word == '':
+                txt_edit.config(state='disabled')
+                btnT.config(state='normal')
+                return
+            
+            # 访问网址
+
+            if chat_控制==0:
+                print(1)
+                txt_edit.config(state='normal')
+                btnT.config(state='disabled')
+                
+                #txt_edit.delete('1.0', tk.END)
+                txt_edit.insert(tk.END, f'我提出的问题:\\n{word}\\n\\n')
+            else:
+                txt_edit.config(state='normal')
+                btnT.config(state='disabled')
+                txt_edit.insert(tk.END,'\\n\\n重新回答:\\n')
+            txt_edit.config(state='normal')
+            btnT.config(state='disabled')
+
+            entry3.delete(0, tk.END)
+
+
+            #使用after能解决无响应问题
+
+            green_AIf.update()
+
+            # 👇 关键：对 word 进行 URL 编码（写网址的时候可用）
+            ##                from urllib.parse import quote
+            ##                word = quote(word, safe='')
+            ##                url = f'https://chat.baidu.com/search?word={word}。&dyTabStr=MCwxMiwzLDEsMiwxMyw3LDYsNSw5&pd=csaitab&setype=csaitab&extParamsJson=%7B%22enter_type%22%3A%22search_a_tab%22%2C%22sa%22%3A%22vs_tab%22%2C%22apagelid%22%3A%229405376116451188355%22%2C%22ori_lid%22%3A%229405376116451188355%22%7D'
+            ##
+            ##                # 插入文本内容
+            ##                txt_edit.insert(tk.END, f'正在访问:{url}\\n')
+            txt_edit.insert(tk.END, f'正在写入:{word}\\n')
+            # 定位输入框元素（支持多种定位方式）
+            ok_次+=1
+            if(ok_次==1):
+               input_element = driver.find_element(By.ID,"chat-textarea")  # 通过ID定位
+            else:
+               input_element = driver.find_element(By.ID,"chat-input-box")
+            # input_element = driver.find_element_by_name("q")  # 通过name属性定位
+            # input_element = driver.find_element_by_xpath("//input[@class='search']")  # 通过XPath定位
+            print('检测OK')
+            # 在输入框中输入文字
+            input_element.send_keys(word)
+            print('输入OK')
+            # 模拟回车键提交
+            input_element.send_keys(Keys.RETURN)                # 刷新让其显示
+            green_AIf.update()
+            print('回撤OK')
+            #driver.get(url)  # 打开网页
+
+
+
+            try:
+                txt_edit.insert(tk.END, f'思考中~\\n')
+                green_AIf.update()
+                # 等待第一个AI段落出现
+                try:
+                    WebDriverWait(driver,25, 0.3).until(
+                        # 使用稳定的选择器
+                        # class=这种最精确，不是只要包含这个元素名就行
+                        EC.presence_of_element_located((By.CSS_SELECTOR, "[class*='marklang-paragraph']"))
+
+                    )
+                except:
+                    if(chat_控制!=0):
+                       txt_edit.insert(tk.END, f'窗口莫名出现了问题，请重新进入~\\n')
+                       return
+                    else:
+                       txt_edit.insert(tk.END, f'窗口莫名出现了问题，正在重试~\\n')
+
+                       green_AIf.update()
+                       exchange()
+                    
+
+                txt_edit.insert(tk.END, f'正在组织回答~\\n')
+                green_AIf.update()
+
+                # 等待至少2个段落出现（确保其内容完整，避免遗漏）使用最强大的python选择器
+                WebDriverWait(driver, 180, 0.3).until(
+                    lambda d: len(d.find_elements(By.CSS_SELECTOR, "[class*='marklang']")) >= 1
+
+                )
+            except Exception as e:
+                txt_edit.insert(tk.END, f'错误,请重试~\\n{e}\\n')
+                green_AIf.update()
+                return
+
+
+            # 检查是否全部生成出来
+            try:
+
+                WebDriverWait(driver, 180, 0.3).until(
+                    #until只能有一个等待值但是any_of/all_of可以有多个
+                   EC.all_of(
+                        # 使用稳定的选择器
+                        # class=这种最精确，不是只要包含这个元素名就行
+                        # class*=这种只要部分达标即可可以防止因网页代码更新造成的错误
+                        EC.presence_of_element_located((By.CSS_SELECTOR, "[class*='cos-icon cos-icon-thumbs-down']")),
+                        EC.presence_of_element_located((By.CSS_SELECTOR, "[class*='cos-icon cos-icon-exchange']")),
+                        EC.presence_of_element_located((By.CSS_SELECTOR, "[class*='cos-icon cos-icon-thumbs-up']"))
+                   )
+                )
+            except Exception as e:
+                txt_edit.insert(tk.END, f'系统超时~\\n{e}\\n')
+                green_AIf.update()
+            txt_edit.insert(tk.END, f'即将生成回复~\\n')
+            green_AIf.update()
+
+            time.sleep(1.5)  # 给 JavaScript 留出时间完成渲染
+
+
+            # 滚动到底部，触发所有内容渲染
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(1.5)
+            # 点击思考部分按钮，使思考的部分也显示出来
+            try:
+                button = driver.find_element(By.CSS_SELECTOR, "[class*='cos-icon cos-icon-down']")
+                button.click()
+            except:
+                print('无思考进程~')
+            # 使用 Selenium 直接查找所有 AI 段落
+            paragraphs = driver.find_elements(By.CSS_SELECTOR, "[class*='marklang-paragraph']")
+           # print(len(driver.find_elements(By.CSS_SELECTOR, "[class='marklang']")))
+
+            # 遍历并输出每一段内容
+
+            for i, p in enumerate(paragraphs, 0):
+                try:
+                    # 实时找最新的元素
+                    p = driver.find_elements(By.CSS_SELECTOR, "[class*='marklang-paragraph']")[i]
+                    text = p.text.strip()  # 去除首尾空白字符
+                    if text:  # 避免输出空段落
+                        txt_edit.insert(tk.END, f'{text}\\n')
+                        green_AIf.update()
+                except Exception as e:
+                    txt_edit.insert(tk.END, f'发生错误:{e}\\n')
+                    green_AIf.update()
+                else:
+                    file_menu.entryconfig('🗘 重新回复',  state='normal')
+        except Exception as e:
+            txt_edit.insert(tk.END, f'发生错误:{e}\\n')
+            green_AIf.update()
+        finally:
+            # 释放内存和系统资源
+            chat_控制=0
+            txt_edit.insert(tk.END, f'回答已结束~\\n\\n\\n')
+            btnT.config(state='normal')
+            file_menu.entryconfig('🗘 重新回复',  state='normal')
+            txt_edit.config(state='disabled')
+            green_AIf.update()
+
+    ##
+    def close():
+        # print(1)
+        try:
+            driver.quit()
+            green_AIf.destroy()
+        except:
+            pass
+    def ok():
+      threading.Thread(target=ok_son, daemon=True).start()
+    # 绑定窗口关闭事件到自定义函数
+    green_AIf.protocol("WM_DELETE_WINDOW", close)
+
+    btnT = ttk.Button(green_AIf, style='TButton', text='''发送''', command=ok)
+    btnT.place(x=275, y=175, height=48, width=48)
+    mu1()
+    green_AIf.mainloop()
+   except Exception as e:
+       print(f'Error:{e}')
+
+
+def destroy_window():
+    green_f.destroy()
+    main()
+
+
+driver = ''
+
+
+def nex_son():
+    global place, 版本, 顺序, driver
+    if 顺序 == 0:
+        place = entry1.get()
+        entry1.delete(0, 'end')
+        Label2.config(text='输入Google Chrome的版本号')
+
+        btn1.configure(text='完成')
+        顺序 += 1
+        return
+    else:
+       try:
+            btn1.config(state='disabled')
+            版本 = entry1.get()
+            place = r'C:\\Program Files\\Google\\Chrome Dev\\Application\\chrome.exe'
+            版本 = '140.0.7327.6'#版本随时更新会导致出现could not reach...
+
+        # 配置Chrome浏览器选项
+       
+            options = webdriver.ChromeOptions()
+
+            options.binary_location = rf'{place}'
+            service=Service(place)
+            
+            # 添加浏览器启动参数(命令参数)
+
+            #options.add_argument('--headless')  # 部分环境对新版无头模式兼容性不佳
+            #options.add_argument('--disable-dev-shm-usage')  # 解决容器环境内存问题
+            #options.add_argument('--headless=new')  # 启用新版无头模式（后台运行，不显示窗口）
+            options.add_argument('--no-sandbox')  # 禁用沙盒（提高兼容性）
+            options.add_argument('--disable-gpu')  # 禁用 GPU 加速（避免某些环境崩溃）
+            options.add_argument('--window-size=1920,1080')  # 设置窗口大小
+            options.add_experimental_option("excludeSwitches", ["enable-automation"])  # 隐藏“自动化控制”提示
+            options.add_argument('--disable-blink-features=AutomationControlled')  # 防止网站检测自动化
+            options.add_argument('disk-cache-size=1')  # 缓存限制1MB
+
+            # 初始化浏览器驱动
+            service = Service(ChromeDriverManager(driver_version=版本).install())
+            # service: 驱动服务；options: 浏览器配置
+            # 此时会启动一个 Chrome 浏览器（无头模式下不可见）
+            # 这个就是将浏览器的驱动和配置告诉driver这个假装用户的东西让他代替他们去执行对浏览器的操作
+            driver = webdriver.Chrome(service=service, options=options)
+
+            entry1.place_forget()
+            btn1.place_forget()
+            Label2.place_forget()
+            Label1.config(text='完成设置,正准备启动...')
+            url='https://chat.baidu.com/search?extParams=%7B%22enter_type%22%3A%22ai_explore_home%22%7D&isShowHello=1'
+            driver.get(url)
+            green_f.after(1000, destroy_window)
+       except Exception as e:
+            entry1.place_forget()
+            btn1.place_forget()
+            Label2.place_forget()
+            Label1.config(text=f'发生错误，请重试...\\n\\n{e}')
+def nex():
+   threading.Thread(target=nex_son, daemon=True).start()
+
+btn1 = ttk.Button(green_f, style='TButton', text='下一步', command=nex)
+btn1.place(x=250, y=145)
+green_f.mainloop()`
+  },
+  {
+    name: "非爬取方式.py",
+    type: "script",
+    platform: "Cross-platform",
+    desc: "简易基于关键字匹配的本地问答脚本（无需爬取、适合快速离线测试）。",
+    content: `import time
+import random
+
+# 用户自定义问答库（可以不断扩展）
+qa_library = {
+    "你好": ["你好呀！", "您好，有什么想问的？"],
+    "你是谁": ["我是一个用Python做的简易AI助手。"],
+    "时间": [lambda: "现在时间是：" + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())],
+    "日期": [lambda: "今天是：" + time.strftime("%Y-%m-%d", time.localtime())],
+    "天气": ["今天天气不错！", "天气晴朗，适合学习Python！"],
+    "帮助": ["你可以问我：你好、时间、计算、天气等问题。"]
+}
+
+# 对话历史
+history = []
+
+def simple_math(sentence):
+    # 支持加法、减法、乘法、除法
+    try:
+        expression = sentence.replace('加', '+').replace('减', '-').replace('乘', '*').replace('除', '/')
+        result = eval(expression)
+        return f"计算结果是：{result}"
+    except:
+        return "抱歉，目前只支持简单的加减乘除运算。"
+
+def ai_answer(user_input):
+    user_input = user_input.strip().lower()
+    # 关键词匹配
+    for key in qa_library:
+        if key in user_input:
+            answer = random.choice(qa_library[key])
+            if callable(answer):
+                return answer()
+            return answer
+    # 数学计算
+    if any(op in user_input for op in ['加', '减', '乘', '除', '+', '-', '*', '/']):
+        return simple_math(user_input)
+    # 时间和日期
+    if "几点" in user_input or "时间" in user_input:
+        return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    if "日期" in user_input or "今天" in user_input:
+        return time.strftime("%Y-%m-%d", time.localtime())
+    # 输出历史
+    if "历史" in user_input or "对话" in user_input:
+        return "历史对话：" + "; ".join(history[-5:])
+    # 默认回答
+    return "抱歉，我还不太懂你的问题，可以问我时间、计算、天气、历史等~"
+
+if __name__ == "__main__":
+    print("欢迎体验Python简易AI助手！（输入 exit 结束）")
+    while True:
+        user_input = input("你说：")
+        if user_input.lower() in ("exit", "quit", "bye"):
+            print("AI助手：再见！")
+            break
+        history.append(user_input)
+        print("AI助手：", ai_answer(user_input))`
+  }
+];
+
+/* ---------- UI rendering & interactions ---------- */
+
+const grid = document.getElementById('resourceGrid');
+
+function makeCard(file, idx){
+  const card = document.createElement('article');
+  card.className='card';
+  card.setAttribute('data-type', file.type);
+
+  card.innerHTML = `
+    <div class="meta">
+      <div class="badge">${file.type.toUpperCase()}</div>
+      <div style="display:flex;flex-direction:column;">
+        <h3>${file.name}</h3>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:6px">
+          <span class="pill">${file.platform}</span>
+          <span class="size" id="size-${idx}">计算大小...</span>
+        </div>
+      </div>
+      <div class="tools" role="group" aria-label="file tools">
+        <button class="btn-primary" data-download="${idx}">下载</button>
+        <button class="btn-ghost" data-view="${idx}">预览</button>
+      </div>
+    </div>
+    <p>${escapeHtml(file.desc)}</p>
+  `;
+  // compute size
+  const sizeEl = card.querySelector(`#size-${idx}`);
+  const blob = new Blob([file.content], {type:'text/plain;charset=utf-8'});
+  sizeEl.textContent = (blob.size < 1024) ? (blob.size + ' B') : ((blob.size/1024).toFixed(1)+' KB');
+
+  // attach handlers
+  card.querySelector('[data-download]').onclick = ()=>downloadFile(idx);
+  card.querySelector('[data-view]').onclick = ()=>openModal(idx);
+
+  return card;
+}
+
+function renderAll(){
+  grid.innerHTML='';
+  files.forEach((f,i)=> grid.appendChild(makeCard(f,i)));
+}
+renderAll();
+
+/* filtering */
+document.querySelectorAll('.nav button').forEach(btn=>{
+  btn.addEventListener('click', e=>{
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('.card').forEach(c=>{
+      c.style.display = (filter === 'all' || c.dataset.type === filter) ? '' : 'none';
+    });
+  });
+});
+
+/* download single file */
+function downloadFile(i){
+  const f = files[i];
+  const blob = new Blob([f.content], {type: 'text/x-python;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = f.name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=> URL.revokeObjectURL(url), 5000);
+}
+
+/* download all as zip (client-side) - basic fallback: create a single concatenated .zip-like .txt */
+document.getElementById('download-all').addEventListener('click', ()=>{
+  // For a true zip you'd need JSZip; here we create a tar-like plain text bundle for simplicity
+  let bundle = files.map(f=>`===== ${f.name} =====\n${f.content}\n\n`).join('\n');
+  const blob = new Blob([bundle], {type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'python-scripts-bundle.txt';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=> URL.revokeObjectURL(a.href), 5000);
+});
+
+/* modal preview */
+const modal = document.getElementById('modal');
+const modalContent = document.getElementById('modalContent');
+const modalName = document.getElementById('modalName');
+const modalTitle = document.getElementById('modalTitle');
+
+let currentIdx = null;
+function openModal(i){
+  currentIdx = i;
+  modalName.textContent = files[i].name;
+  modalTitle.textContent = '文件预览';
+  modalContent.textContent = files[i].content;
+  modal.style.display = 'flex';
+  document.getElementById('modalDownload').onclick = ()=>downloadFile(i);
+  document.getElementById('modalCopy').onclick = ()=>copyToClipboard(files[i].content);
+}
+document.getElementById('modalClose').onclick = ()=>{ modal.style.display='none'; };
+
+/* copy */
+function copyToClipboard(text){
+  navigator.clipboard.writeText(text).then(()=>{
+    const el = document.getElementById('copySuccess');
+    el.style.display='block';
+    setTimeout(()=> el.style.display='none',1300);
+  }, ()=> alert('复制失败，请手动复制'));
+}
+
+/* small helper */
+function escapeHtml(str){
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* readme modal */
+document.getElementById('view-readme').addEventListener('click', ()=>{
+  const md = `这是一个静态分发页面示例。\\n- 点击“下载”将生成并保存脚本文件。\\n- 若需要分发真实安装包，请替换对应文件的链接为二进制URL或在服务器上托管实际文件。`;
+  modalName.textContent = '说明';
+  modalTitle.textContent = '站点说明';
+  modalContent.textContent = md;
+  modal.style.display='flex';
+  document.getElementById('modalDownload').onclick = ()=>{ /* noop */ };
+  document.getElementById('modalCopy').onclick = ()=>copyToClipboard(md);
+});
+
+/* keyboard: Esc closes modal */
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') modal.style.display='none'; });
+
+</script>
 </body>
 </html>
