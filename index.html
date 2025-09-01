@@ -3,144 +3,133 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Python 脚本库 · 专业下载站</title>
+<title>Python 分发站 — 专业下载（单文件）</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- JSZip for real zip packaging -->
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <style>
   :root{
-    --bg:#f5f7fb;
-    --panel:#ffffff;
-    --muted:#6b7280;
-    --accent:#007aff;       /* Apple-like blue */
-    --accent-2:#238636;     /* GitHub green */
-    --glass: rgba(255,255,255,0.6);
-    --radius-lg:14px;
-    --radius-md:10px;
-    --shadow-lg: 0 12px 40px rgba(16,24,40,0.08);
-    --shadow-sm: 0 6px 18px rgba(16,24,40,0.06);
-    --mono: 'Roboto Mono', monospace;
-    --ui-font: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    --bg:#eff3fb;
+    --card:#ffffff;
+    --muted:#5b6670;
+    --accent:#0078d7;     /* Windows-ish blue */
+    --win-gloss: linear-gradient(180deg,#f8fbff,#e8f1fb);
+    --radius:10px;
+    --shadow: 0 10px 30px rgba(5,10,30,0.08);
+    --mono:'Roboto Mono', monospace;
+    --ui:'Inter',system-ui,-apple-system,"Segoe UI",Roboto,Arial;
   }
-  html,body{height:100%;margin:0;background:
-    linear-gradient(180deg,#eef3fb 0%,var(--bg) 60%);font-family:var(--ui-font);color:#0f172a;}
-  .wrap{max-width:980px;margin:36px auto;padding:28px;}
-  .header{
-    display:flex;align-items:center;gap:18px;background:linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.95));
-    border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow-lg);backdrop-filter: blur(6px);
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--ui);background:linear-gradient(180deg,#f7fbff, var(--bg));color:#0b1220;-webkit-font-smoothing:antialiased}
+  .container{max-width:980px;margin:34px auto;padding:20px}
+  header{display:flex;align-items:center;gap:16px;background:var(--win-gloss);padding:14px;border-radius:14px;box-shadow:var(--shadow);border:1px solid rgba(8,18,40,0.06)}
+  .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#3ab0ff);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:20px;box-shadow:inset 0 -8px 18px rgba(255,255,255,0.06)}
+  .title h1{margin:0;font-size:18px}
+  .title p{margin:4px 0 0;color:var(--muted);font-size:13px}
+  .tools{margin-left:auto;display:flex;gap:10px;align-items:center}
+  /* Windows7 style buttons (glossy bevel) */
+  .btn {
+    display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:6px;
+    background:linear-gradient(180deg,#ffffff,#e6eefc);
+    border:1px solid rgba(11,20,40,0.08);box-shadow: 0 2px 0 rgba(255,255,255,0.6) inset, 0 2px 6px rgba(2,6,23,0.06);
+    color:#0b1220;font-weight:600;cursor:pointer;transition:all .12s ease;font-size:14px;
   }
-  .logo {
-    width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(135deg,var(--accent),#45a1ff);color:white;font-weight:700;font-size:20px;
-    box-shadow: 0 6px 18px rgba(3,102,255,0.14), inset 0 -6px 12px rgba(255,255,255,0.08);
-  }
-  .title {
-    display:flex;flex-direction:column;
-  }
-  .title h1{margin:0;font-size:18px;letter-spacing:0.2px;}
-  .title p{margin:4px 0 0 0;color:var(--muted);font-size:13px;}
-  .actions {margin-left:auto;display:flex;gap:10px;align-items:center;}
-  /* navigation (python.org like buttons) */
-  .nav{
-    margin-top:18px;display:flex;gap:10px;align-items:center;justify-content:center;
-  }
-  .nav button{
-    background:transparent;border:1px solid transparent;padding:9px 14px;border-radius:10px;font-weight:600;
-    color:var(--accent);cursor:pointer;font-size:14px;
-    transition: all .14s ease;
-    box-shadow:none;
-  }
-  .nav button:hover{background:linear-gradient(90deg,rgba(0,122,255,0.06),rgba(0,122,255,0.03));transform:translateY(-2px);box-shadow:var(--shadow-sm)}
-  .nav button.active{background:linear-gradient(90deg,rgba(0,122,255,0.10),rgba(0,122,255,0.03));border-color:rgba(0,122,255,0.12);box-shadow:0 8px 28px rgba(3,102,255,0.08);color:#003f7f}
-  /* resources area */
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:22px;}
-  @media (max-width:820px){.grid{grid-template-columns:1fr}}
-  .card{
-    background:var(--panel);border-radius:12px;padding:18px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;
-    min-height:140px;border:1px solid rgba(15,23,42,0.04);
-  }
-  .card .meta{display:flex;align-items:center;gap:12px;}
-  .badge{
-    background:linear-gradient(180deg,#f8fafc,#ffffff);border-radius:8px;padding:8px 10px;font-weight:700;color:#0f172a;
-    box-shadow: 0 4px 10px rgba(2,6,23,0.04);font-size:13px;
-  }
-  .card h3{margin:6px 0 0 0;font-size:16px;}
-  .card p{margin:8px 0 0 0;color:var(--muted);font-size:13px;flex:1}
-  .card .foot{display:flex;align-items:center;gap:10px;margin-top:14px;}
-  /* primary download button (Apple + GitHub feel) */
-  .btn-primary{
-    background:linear-gradient(90deg,var(--accent),#46a1ff);color:#fff;padding:10px 16px;border-radius:10px;border:none;font-weight:700;
-    cursor:pointer;box-shadow: 0 8px 24px rgba(3,102,255,0.14);transition:transform .12s ease, box-shadow .12s ease;
-  }
-  .btn-primary:hover{transform:translateY(-3px);box-shadow:0 16px 36px rgba(3,102,255,0.18)}
-  .btn-ghost{background:transparent;border:1px solid rgba(15,23,42,0.06);padding:8px 12px;border-radius:10px;cursor:pointer;color:var(--muted)}
-  .pill{font-family:var(--mono);font-size:13px;padding:6px 8px;border-radius:8px;background:#f3f4f6;color:#111}
-  .size{color:var(--muted);font-size:13px}
-  .tools{margin-left:auto;display:flex;gap:8px;}
-  /* preview modal */
-  .modal-backdrop{position:fixed;inset:0;background:rgba(8,12,20,0.45);display:none;align-items:center;justify-content:center;z-index:1200}
-  .modal{background:linear-gradient(180deg,#0b1220,#061025);width:88%;max-width:980px;border-radius:12px;padding:18px;box-shadow:0 20px 80px rgba(2,6,23,0.6);color:#e6eef8}
-  .modal pre{background:rgba(255,255,255,0.03);padding:12px;border-radius:8px;overflow:auto;font-family:var(--mono);font-size:13px;line-height:1.45;max-height:60vh}
-  .modal .meta{display:flex;gap:12px;align-items:center;margin-bottom:10px}
-  .close-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#dbeafe;padding:8px 10px;border-radius:8px;cursor:pointer}
-  /* subtle footer */
-  .foot-note{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
-  /* small interactive touches */
-  .copy-success{position:fixed;right:22px;bottom:22px;background:#111827;color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 8px 30px rgba(2,6,23,0.4);display:none}
+  .btn.primary{background:linear-gradient(180deg,#0078d7,#005aab);color:#fff;border-color:rgba(0,0,0,0.06);box-shadow:0 6px 18px rgba(3,60,120,0.12)}
+  .btn.ghost{background:transparent;border:1px solid rgba(11,20,40,0.06)}
+  .btn:active{transform:translateY(1px)}
+  .controls{display:flex;gap:10px;align-items:center;margin-top:14px}
+  .search{flex:1;display:flex;gap:8px;align-items:center}
+  input[type="search"]{width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(8,18,40,0.06);background:var(--card);font-size:14px}
+  select{padding:9px;border-radius:8px;border:1px solid rgba(8,18,40,0.06);background:var(--card);font-size:14px}
+  /* grid */
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:18px}
+  @media(max-width:820px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border-radius:10px;padding:14px;border:1px solid rgba(8,18,40,0.04);box-shadow:0 6px 20px rgba(3,12,32,0.04);display:flex;flex-direction:column;min-height:140px}
+  .meta{display:flex;align-items:center;gap:12px}
+  .tag{background:linear-gradient(180deg,#fbfdff,#eef6ff);padding:6px 8px;border-radius:6px;font-weight:700;color:var(--accent);font-size:13px;border:1px solid rgba(3,60,120,0.06)}
+  .name{font-weight:700;margin:0;font-size:15px}
+  .desc{color:var(--muted);font-size:13px;margin:8px 0 0}
+  .foot{display:flex;align-items:center;margin-top:auto;gap:10px}
+  .pill{font-family:var(--mono);background:#f3f4f6;padding:6px 8px;border-radius:6px;font-size:12px;color:#111}
+  .small{color:var(--muted);font-size:13px}
+  .card .actions{margin-left:auto;display:flex;gap:8px}
+  .count{font-size:12px;color:#7a8288}
+  /* modal */
+  .modal-wrap{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(6,12,20,0.45);z-index:1200}
+  .modal{width:92%;max-width:980px;border-radius:10px;padding:12px;background:linear-gradient(180deg,#0b1220,#041024);color:#e8f2ff;box-shadow:0 20px 80px rgba(2,6,23,0.6)}
+  pre{background:rgba(255,255,255,0.02);padding:12px;border-radius:6px;overflow:auto;font-family:var(--mono);font-size:13px;max-height:62vh}
+  .modal .meta{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .close{margin-left:auto;background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px;border-radius:6px;color:#e6eef8;cursor:pointer}
+  .copy-toast{position:fixed;right:22px;bottom:22px;background:#111827;color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 8px 30px rgba(2,6,23,0.4);display:none}
+  footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <header class="header" role="banner">
-      <div class="logo" aria-hidden="true">Py</div>
+  <div class="container">
+    <header>
+      <div class="logo">Py</div>
       <div class="title">
-        <h1>Python 脚本库 — 专业分发中心</h1>
-        <p>高质感按钮与卡片布局，直接下载或预览脚本；支持复制、查看大小与平台说明。</p>
+        <h1>Python 分发站 · 专业下载</h1>
+        <p>融合 Windows7 手感、Apple 质感与开发者友好，单文件静态页面分发脚本/安装包。</p>
       </div>
-      <div class="actions" role="navigation" aria-label="actions">
-        <button class="btn-primary" id="download-all">一键打包下载</button>
-        <button class="btn-ghost" id="view-readme">站点说明</button>
+      <div class="tools" role="toolbar" aria-label="site tools">
+        <button class="btn primary" id="downloadAllBtn">下载全部 (zip)</button>
+        <button class="btn" id="refreshBtn">刷新列表</button>
+        <button class="btn ghost" id="readmeBtn">说明</button>
       </div>
     </header>
 
-    <nav class="nav" role="navigation" aria-label="primary">
-      <button class="nav-btn active" data-filter="all">全部</button>
-      <button class="nav-btn" data-filter="script">脚本 (.py)</button>
-      <button class="nav-btn" data-filter="binary">二进制 / 安装包</button>
-      <button class="nav-btn" data-filter="tools">工具</button>
-    </nav>
+    <div class="controls">
+      <div class="search">
+        <input type="search" id="search" placeholder="搜索文件名、描述或平台（回车搜索）" />
+      </div>
+      <select id="filter">
+        <option value="all">全部类型</option>
+        <option value="script">脚本 (.py)</option>
+        <option value="binary">二进制/安装包</option>
+      </select>
+      <select id="sort">
+        <option value="name">按名称</option>
+        <option value="size">按大小</option>
+        <option value="downloads">按下载量</option>
+      </select>
+    </div>
 
-    <section class="grid" aria-live="polite" id="resourceGrid">
-      <!-- cards generated by JS -->
-    </section>
+    <main class="grid" id="grid" aria-live="polite"></main>
 
-    <div class="foot-note">部署：直接把本文件（index.html）放到静态主机或 GitHub Pages。若要放真实安装包，请把文件替换为指向实际二进制的 URL。</div>
+    <footer>将此文件放到静态主机或 GitHub Pages。若需要真实二进制分发，请替换文件 url 指向实际文件。</footer>
   </div>
 
   <!-- modal preview -->
-  <div class="modal-backdrop" id="modal">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-wrap" id="modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modTitle">
       <div class="meta">
-        <div><strong id="modalTitle">预览</strong> <span id="modalName" class="pill" style="margin-left:10px"></span></div>
-        <div style="margin-left:auto">
-          <button class="close-btn" id="modalClose">关闭</button>
-          <button class="close-btn" id="modalCopy">复制</button>
-          <button class="close-btn" id="modalDownload">下载</button>
+        <div>
+          <strong id="modTitle">预览</strong>
+          <span id="modName" class="pill" style="margin-left:8px"></span>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button class="btn" id="modDownload">下载</button>
+          <button class="btn" id="modCopy">复制</button>
+          <button class="close" id="modClose">关闭</button>
         </div>
       </div>
-      <pre id="modalContent" tabindex="0"></pre>
+      <pre id="modContent" tabindex="0"></pre>
     </div>
   </div>
 
-  <div class="copy-success" id="copySuccess">已复制到剪贴板</div>
+  <div class="copy-toast" id="toast">已复制到剪贴板</div>
 
 <script>
-/* ---------- Embedded files (from user) ---------- */
-/* Keep filenames exactly as provided. Content is raw text. */
-const files = [
+/* ---------------------- 简洁、模块化的数据与工具 ---------------------- */
+
+/* 内置资源：把脚本或小二进制元数据放上来。如果要分发真实的安装包，可把 url 指向托管好的文件 */
+const FILES = [
   {
     name: "绿梵AI.py",
     type: "script",
     platform: "Windows/Linux/macOS",
-    desc: "基于 tkinter + selenium 的自动化聊天脚本（Selenium + ChromeDriver 管理）。",
+    desc: "tkinter + selenium 自动化聊天脚本（含 webdriver 管理示例）。",
     content: `import tkinter as tk
 from tkinter import ttk
 from selenium import webdriver  # 控制浏览器的核心模块
@@ -259,12 +248,12 @@ def main():
                 for i in range(len(版本_List)):
                   print(i)
                   if(版本_List[i]==版本):
-                     file_menu2.entryconfig(i, label=f"{版本_List[i]}")
+                     file_menu2.entryconfig(i, label=f"${'{' }版本_List[i]}")
                      print(str(版本)+f'    版本1    {i}')
                      print(str(版本_List[i])+'     版本_List1')
 
                   if(value==版本_List[i]):
-                     file_menu2.entryconfig(i, label=f"{版本_List[i]} √")
+                     file_menu2.entryconfig(i, label=f"${'{' }版本_List[i]} √")
                      print(str(value)+f'    版本2     {i}')
                      print(str(版本_List[i])+'     版本_List2')
 
@@ -424,7 +413,7 @@ def main():
             ##                # 插入文本内容
             ##                txt_edit.insert(tk.END, f'正在访问:{url}\\n')
             txt_edit.insert(tk.END, f'正在写入:{word}\\n')
-            # 定位输入框元素（支持多种定位方式）
+            # 定位输入框元素（支持多种定位方式)
             ok_次+=1
             if(ok_次==1):
                input_element = driver.find_element(By.ID,"chat-textarea")  # 通过ID定位
@@ -561,84 +550,13 @@ def main():
     mu1()
     green_AIf.mainloop()
    except Exception as e:
-       print(f'Error:{e}')
-
-
-def destroy_window():
-    green_f.destroy()
-    main()
-
-
-driver = ''
-
-
-def nex_son():
-    global place, 版本, 顺序, driver
-    if 顺序 == 0:
-        place = entry1.get()
-        entry1.delete(0, 'end')
-        Label2.config(text='输入Google Chrome的版本号')
-
-        btn1.configure(text='完成')
-        顺序 += 1
-        return
-    else:
-       try:
-            btn1.config(state='disabled')
-            版本 = entry1.get()
-            place = r'C:\\Program Files\\Google\\Chrome Dev\\Application\\chrome.exe'
-            版本 = '140.0.7327.6'#版本随时更新会导致出现could not reach...
-
-        # 配置Chrome浏览器选项
-       
-            options = webdriver.ChromeOptions()
-
-            options.binary_location = rf'{place}'
-            service=Service(place)
-            
-            # 添加浏览器启动参数(命令参数)
-
-            #options.add_argument('--headless')  # 部分环境对新版无头模式兼容性不佳
-            #options.add_argument('--disable-dev-shm-usage')  # 解决容器环境内存问题
-            #options.add_argument('--headless=new')  # 启用新版无头模式（后台运行，不显示窗口）
-            options.add_argument('--no-sandbox')  # 禁用沙盒（提高兼容性）
-            options.add_argument('--disable-gpu')  # 禁用 GPU 加速（避免某些环境崩溃）
-            options.add_argument('--window-size=1920,1080')  # 设置窗口大小
-            options.add_experimental_option("excludeSwitches", ["enable-automation"])  # 隐藏“自动化控制”提示
-            options.add_argument('--disable-blink-features=AutomationControlled')  # 防止网站检测自动化
-            options.add_argument('disk-cache-size=1')  # 缓存限制1MB
-
-            # 初始化浏览器驱动
-            service = Service(ChromeDriverManager(driver_version=版本).install())
-            # service: 驱动服务；options: 浏览器配置
-            # 此时会启动一个 Chrome 浏览器（无头模式下不可见）
-            # 这个就是将浏览器的驱动和配置告诉driver这个假装用户的东西让他代替他们去执行对浏览器的操作
-            driver = webdriver.Chrome(service=service, options=options)
-
-            entry1.place_forget()
-            btn1.place_forget()
-            Label2.place_forget()
-            Label1.config(text='完成设置,正准备启动...')
-            url='https://chat.baidu.com/search?extParams=%7B%22enter_type%22%3A%22ai_explore_home%22%7D&isShowHello=1'
-            driver.get(url)
-            green_f.after(1000, destroy_window)
-       except Exception as e:
-            entry1.place_forget()
-            btn1.place_forget()
-            Label2.place_forget()
-            Label1.config(text=f'发生错误，请重试...\\n\\n{e}')
-def nex():
-   threading.Thread(target=nex_son, daemon=True).start()
-
-btn1 = ttk.Button(green_f, style='TButton', text='下一步', command=nex)
-btn1.place(x=250, y=145)
-green_f.mainloop()`
+       print(f'Error:{e}')`
   },
   {
     name: "非爬取方式.py",
     type: "script",
     platform: "Cross-platform",
-    desc: "简易基于关键字匹配的本地问答脚本（无需爬取、适合快速离线测试）。",
+    desc: "轻量的关键字匹配本地问答脚本，适合离线测试与示例。",
     content: `import time
 import random
 
@@ -699,133 +617,152 @@ if __name__ == "__main__":
   }
 ];
 
-/* ---------- UI rendering & interactions ---------- */
+/* ---------------------- 小工具 ---------------------- */
+const $ = sel => document.querySelector(sel);
+const g = id => document.getElementById(id);
 
-const grid = document.getElementById('resourceGrid');
+async function sha1Hex(str){
+  const buf = new TextEncoder().encode(str);
+  const hash = await crypto.subtle.digest('SHA-1', buf);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
 
-function makeCard(file, idx){
-  const card = document.createElement('article');
-  card.className='card';
-  card.setAttribute('data-type', file.type);
+/* 下载统计保存在 localStorage */
+function getCounts(){ try { return JSON.parse(localStorage.getItem('dl_counts')||'{}') } catch { return {} } }
+function incCount(name){ const c=getCounts(); c[name]=(c[name]||0)+1; localStorage.setItem('dl_counts',JSON.stringify(c)); }
 
-  card.innerHTML = `
+/* ---------------------- 渲染与交互 ---------------------- */
+
+function makeCard(f, idx){
+  const div = document.createElement('article');
+  div.className='card';
+  div.innerHTML = `
     <div class="meta">
-      <div class="badge">${file.type.toUpperCase()}</div>
-      <div style="display:flex;flex-direction:column;">
-        <h3>${file.name}</h3>
-        <div style="display:flex;gap:10px;align-items:center;margin-top:6px">
-          <span class="pill">${file.platform}</span>
-          <span class="size" id="size-${idx}">计算大小...</span>
+      <div class="tag">${f.type.toUpperCase()}</div>
+      <div style="flex:1">
+        <p class="name">${escapeHtml(f.name)}</p>
+        <div class="desc">${escapeHtml(f.desc)}</div>
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+          <span class="pill">${f.platform}</span>
+          <span class="small" id="size-${idx}">计算大小…</span>
+          <span class="count" id="count-${idx}"></span>
         </div>
       </div>
-      <div class="tools" role="group" aria-label="file tools">
-        <button class="btn-primary" data-download="${idx}">下载</button>
-        <button class="btn-ghost" data-view="${idx}">预览</button>
+      <div class="actions">
+        <button class="btn primary" data-download="${idx}">下载</button>
+        <button class="btn" data-view="${idx}">预览</button>
       </div>
     </div>
-    <p>${escapeHtml(file.desc)}</p>
   `;
-  // compute size
-  const sizeEl = card.querySelector(`#size-${idx}`);
-  const blob = new Blob([file.content], {type:'text/plain;charset=utf-8'});
-  sizeEl.textContent = (blob.size < 1024) ? (blob.size + ' B') : ((blob.size/1024).toFixed(1)+' KB');
-
-  // attach handlers
-  card.querySelector('[data-download]').onclick = ()=>downloadFile(idx);
-  card.querySelector('[data-view]').onclick = ()=>openModal(idx);
-
-  return card;
+  // size & count
+  const sizeEl = div.querySelector(`#size-${idx}`);
+  const countEl = div.querySelector(`#count-${idx}`);
+  const blob = new Blob([f.content], {type:'text/plain;charset=utf-8'});
+  sizeEl.textContent = blob.size < 1024 ? `${blob.size} B` : `${(blob.size/1024).toFixed(1)} KB`;
+  const counts = getCounts(); countEl.textContent = `下载 ${counts[f.name]||0} 次`;
+  // handlers
+  div.querySelector('[data-download]').onclick = ()=>downloadFile(idx);
+  div.querySelector('[data-view]').onclick = ()=>openModal(idx);
+  return div;
 }
 
-function renderAll(){
-  grid.innerHTML='';
-  files.forEach((f,i)=> grid.appendChild(makeCard(f,i)));
+function render(list){
+  const grid = g('grid');
+  grid.innerHTML = '';
+  list.forEach((f,i)=> grid.appendChild(makeCard(f,i)));
 }
-renderAll();
 
-/* filtering */
-document.querySelectorAll('.nav button').forEach(btn=>{
-  btn.addEventListener('click', e=>{
-    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    const filter = btn.dataset.filter;
-    document.querySelectorAll('.card').forEach(c=>{
-      c.style.display = (filter === 'all' || c.dataset.type === filter) ? '' : 'none';
-    });
+/* filtering & search & sort */
+function applyFilters(){
+  const q = g('search').value.trim().toLowerCase();
+  const filter = g('filter').value;
+  const sort = g('sort').value;
+  let list = FILES.filter(f=>{
+    if(filter!=='all' && f.type!==filter) return false;
+    if(!q) return true;
+    return (f.name+f.desc+f.platform).toLowerCase().includes(q);
   });
-});
+  if(sort==='name') list.sort((a,b)=>a.name.localeCompare(b.name));
+  else if(sort==='size') list.sort((a,b)=> (new Blob([a.content]).size) - (new Blob([b.content]).size) );
+  else if(sort==='downloads'){
+    const counts = getCounts();
+    list.sort((a,b)=>(counts[b.name]||0)-(counts[a.name]||0));
+  }
+  render(list);
+}
 
-/* download single file */
-function downloadFile(i){
-  const f = files[i];
-  const blob = new Blob([f.content], {type: 'text/x-python;charset=utf-8'});
+/* download single (supports content or url) */
+async function downloadFile(i){
+  const f = FILES[i];
+  incCount(f.name);
+  applyFilters(); // update counts
+  if(f.url){
+    // external URL — direct navigate (good for large binaries)
+    const a = document.createElement('a');
+    a.href = f.url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
+    return;
+  }
+  const blob = new Blob([f.content], {type: f.type==='script' ? 'text/x-python;charset=utf-8' : 'application/octet-stream'});
+  // compute checksum async and show in console (nice-to-have)
+  sha1Hex(f.content).then(h=> console.log(`${f.name} SHA1: ${h}`)).catch(()=>{});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = f.name;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(()=> URL.revokeObjectURL(url), 5000);
+  const a = document.createElement('a'); a.href = url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
 }
 
-/* download all as zip (client-side) - basic fallback: create a single concatenated .zip-like .txt */
-document.getElementById('download-all').addEventListener('click', ()=>{
-  // For a true zip you'd need JSZip; here we create a tar-like plain text bundle for simplicity
-  let bundle = files.map(f=>`===== ${f.name} =====\n${f.content}\n\n`).join('\n');
-  const blob = new Blob([bundle], {type:'text/plain;charset=utf-8'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'python-scripts-bundle.txt';
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(()=> URL.revokeObjectURL(a.href), 5000);
-});
-
-/* modal preview */
-const modal = document.getElementById('modal');
-const modalContent = document.getElementById('modalContent');
-const modalName = document.getElementById('modalName');
-const modalTitle = document.getElementById('modalTitle');
-
-let currentIdx = null;
+/* preview modal */
 function openModal(i){
-  currentIdx = i;
-  modalName.textContent = files[i].name;
-  modalTitle.textContent = '文件预览';
-  modalContent.textContent = files[i].content;
-  modal.style.display = 'flex';
-  document.getElementById('modalDownload').onclick = ()=>downloadFile(i);
-  document.getElementById('modalCopy').onclick = ()=>copyToClipboard(files[i].content);
+  const f = FILES[i];
+  g('modName').textContent = f.name;
+  g('modTitle').textContent = `${f.type.toUpperCase()} 预览`;
+  g('modContent').textContent = f.content;
+  g('modal').style.display = 'flex';
+  g('modDownload').onclick = ()=>downloadFile(i);
+  g('modCopy').onclick = ()=>{ navigator.clipboard.writeText(f.content).then(()=>showToast()) };
 }
-document.getElementById('modalClose').onclick = ()=>{ modal.style.display='none'; };
+g('modClose').onclick = ()=> g('modal').style.display='none';
 
-/* copy */
-function copyToClipboard(text){
-  navigator.clipboard.writeText(text).then(()=>{
-    const el = document.getElementById('copySuccess');
-    el.style.display='block';
-    setTimeout(()=> el.style.display='none',1300);
-  }, ()=> alert('复制失败，请手动复制'));
-}
-
-/* small helper */
-function escapeHtml(str){
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+/* zip all using JSZip */
+async function downloadAll(){
+  const zip = new JSZip();
+  FILES.forEach(f=> zip.file(f.name, f.content));
+  const blob = await zip.generateAsync({type:'blob',compression:'DEFLATE'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'python-files.zip'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
 }
 
-/* readme modal */
-document.getElementById('view-readme').addEventListener('click', ()=>{
-  const md = `这是一个静态分发页面示例。\\n- 点击“下载”将生成并保存脚本文件。\\n- 若需要分发真实安装包，请替换对应文件的链接为二进制URL或在服务器上托管实际文件。`;
-  modalName.textContent = '说明';
-  modalTitle.textContent = '站点说明';
-  modalContent.textContent = md;
-  modal.style.display='flex';
-  document.getElementById('modalDownload').onclick = ()=>{ /* noop */ };
-  document.getElementById('modalCopy').onclick = ()=>copyToClipboard(md);
+/* helpers */
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+function showToast(){ const t=g('toast'); t.style.display='block'; setTimeout(()=>t.style.display='none',1300) }
+
+/* ---------------------- 事件绑定 ---------------------- */
+g('search').addEventListener('keydown', e=>{ if(e.key==='Enter') applyFilters() });
+g('filter').addEventListener('change', applyFilters);
+g('sort').addEventListener('change', applyFilters);
+g('downloadAllBtn').addEventListener('click', downloadAll);
+g('refreshBtn').addEventListener('click', ()=>{ location.reload() });
+g('readmeBtn').addEventListener('click', ()=> {
+  // simple modal readme
+  g('modName').textContent='说明';
+  g('modTitle').textContent='站点说明';
+  g('modContent').textContent = `说明：
+- 点击“下载”会把内置内容另存为文件。
+- 若要分发真实安装包，把对应条目替换为 { url: "https://your.host/path/to/file.exe" }，并把 content 留空或简短说明。
+- 本页面为单文件静态分发模板，可上 GitHub Pages 或任意静态主机部署。`;
+  g('modal').style.display='flex';
+  g('modDownload').onclick = ()=>{}; // noop
+  g('modCopy').onclick = ()=>{ navigator.clipboard.writeText(g('modContent').textContent).then(()=>showToast()) };
 });
 
-/* keyboard: Esc closes modal */
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') modal.style.display='none'; });
+/* keyboard ESC close modal */
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') g('modal').style.display='none' });
+
+/* ---------------------- 初始化 ---------------------- */
+applyFilters();
+
+/* compute and attach SHA1 asynchronously and show in console for transparency */
+FILES.forEach(f=> sha1Hex(f.content).then(h=> console.debug(`${f.name} SHA1: ${h}`)).catch(()=>{}));
 
 </script>
 </body>
