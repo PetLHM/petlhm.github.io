@@ -8,26 +8,40 @@
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <style>
   :root{
-    --bg: linear-gradient(180deg,#eef5fb,#ffffff);
-    --panel-bg: rgba(255,255,255,0.50);
-    --card-bg: rgba(255,255,255,0.62);
-    --muted: #5b6670;
-    --accent: #f57c00;
-    --accent-2: #ffb300;
+    /* 基础色与质感变量（默认：浅色玻璃 + 橙色） */
+    --bg-light: linear-gradient(180deg,#eef5fb,#ffffff);
+    --bg-dark: linear-gradient(180deg,#07101a,#0b1720);
+    --panel-bg-light: rgba(255,255,255,0.56);
+    --card-bg-light: rgba(255,255,255,0.66);
+    --panel-bg-dark: rgba(8,12,18,0.40);
+    --card-bg-dark: rgba(12,18,24,0.46);
+    --muted-light: #5b6670;
+    --muted-dark: #98a0a8;
+    --accent: #f57c00;      /* 可切换 */
+    --accent-2: #ffb300;    /* 可切换 */
     --radius:14px;
     --glass-blur:22px;
     --glass-sat:1.12;
     --glass-contrast:1.05;
-    --gloss-opa:0.35;
+    --gloss-opa:0.36;
     --shadow-1: 0 8px 28px rgba(6,12,24,0.08);
     --shadow-2: 0 20px 56px rgba(6,12,24,0.12);
+
     --ui: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial;
     --mono: 'Roboto Mono', monospace;
+
+    /* runtime variables (controlled by JS) */
+    --page-bg: var(--bg-light);
+    --panel-bg: var(--panel-bg-light);
+    --card-bg: var(--card-bg-light);
+    --muted: var(--muted-light);
+    --text-color: #0b1220;
   }
+
   *{box-sizing:border-box}
   body{
-    margin:0;font-family:var(--ui);background:var(--bg);color:#0b1220;
-    -webkit-font-smoothing:antialiased;transition:background .28s, color .28s;
+    margin:0;font-family:var(--ui);background:var(--page-bg);color:var(--text-color);
+    -webkit-font-smoothing:antialiased;transition:background .28s,color .28s;
   }
   .container{max-width:980px;margin:34px auto;padding:20px}
 
@@ -40,16 +54,13 @@
     box-shadow: var(--shadow-1);
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat)) contrast(var(--glass-contrast));
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat)) contrast(var(--glass-contrast));
-    transition:transform .18s ease, box-shadow .18s;
+    transition:transform .18s ease, box-shadow .18s, background .18s;
     overflow:visible;
   }
-  /* soft top gloss */
   header::before{
     content:""; position:absolute; inset:0; border-radius:inherit;
     background: linear-gradient(180deg, rgba(255,255,255,var(--gloss-opa)), rgba(255,255,255,0.02));
-    mask-image: linear-gradient(180deg, rgba(0,0,0,0.85), rgba(0,0,0,0.2));
-    pointer-events:none;
-    mix-blend-mode: overlay;
+    mix-blend-mode: overlay; pointer-events:none;
   }
 
   .logo{
@@ -68,7 +79,7 @@
     display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;
     background: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.68));
     border:1px solid rgba(10,14,20,0.06);
-    color:#0b1220;font-weight:600;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, opacity .12s;
+    color:var(--text-color);font-weight:600;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, opacity .12s;
     box-shadow: 0 3px 10px rgba(8,12,20,0.06), 0 1px 0 rgba(255,255,255,0.7) inset;
     backdrop-filter: blur(6px);
   }
@@ -83,32 +94,31 @@
   }
   .btn.ghost{background:transparent;border:1px solid rgba(10,14,20,0.06)}
 
-  /* theme menu: fixed layout, no overlap, proper z-index and close-on-open */
+  /* theme menu: fixed layout, no overlap */
   .theme-menu{position:relative}
   .theme-toggle{display:flex;align-items:center;gap:8px;padding:8px;border-radius:10px;background:transparent;border:1px solid rgba(12,18,30,0.04);cursor:pointer}
   .theme-panel{
-    position:absolute; right:0; top:calc(100% + 12px); min-width:220px; padding:12px;border-radius:12px;
+    position:absolute; right:0; top:calc(100% + 12px); min-width:260px; padding:12px;border-radius:12px;
     background: linear-gradient(180deg, rgba(255,255,255,0.64), rgba(255,255,255,0.52));
     backdrop-filter: blur(18px) saturate(1.06);
     box-shadow: var(--shadow-2);
     border:1px solid rgba(255,255,255,0.06);
-    display:none; flex-direction:column; gap:10px; z-index:2000;
+    display:none; flex-direction:column; gap:10px; z-index:3000;
     transform-origin: top right;
   }
   .theme-panel.show{display:flex; animation: pop .14s ease;}
   @keyframes pop { from{ transform: translateY(-6px) scale(.995); opacity:0 } to{ transform:none; opacity:1 } }
+  .theme-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .theme-option{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;cursor:pointer}
   .theme-option:hover{background:rgba(0,0,0,0.03)}
   .swatch{width:36px;height:28px;border-radius:6px;box-shadow: 0 6px 18px rgba(0,0,0,0.08)}
   .theme-label{font-weight:600;color:#222}
 
-  /* controls */
   .controls{display:flex;gap:10px;align-items:center;margin-top:18px}
   .search{flex:1;display:flex;gap:8px;align-items:center}
   input[type="search"]{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(10,14,20,0.06);background:rgba(255,255,255,0.8);font-size:14px}
   select{padding:9px;border-radius:10px;border:1px solid rgba(10,14,20,0.06);background:rgba(255,255,255,0.8);font-size:14px}
 
-  /* grid + card */
   .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:18px}
   @media(max-width:820px){.grid{grid-template-columns:1fr}}
   .card{
@@ -130,20 +140,18 @@
   .desc{color:var(--muted);font-size:13px;margin:8px 0 0}
   .pill{font-family:var(--mono);background:rgba(255,255,255,0.06);padding:6px 8px;border-radius:8px;font-size:12px;color:#333}
 
-  /* modal */
-  .modal-wrap{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(6,12,20,0.45);z-index:2500}
-  .modal{width:92%;max-width:980px;border-radius:12px;padding:16px;background:rgba(255,255,255,0.95);color:#0b1220;box-shadow:0 30px 60px rgba(2,6,23,0.45)}
+  .modal-wrap{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(6,12,20,0.45);z-index:3500}
+  .modal{width:92%;max-width:980px;border-radius:12px;padding:16px;background:rgba(255,255,255,0.95);color:var(--text-color);box-shadow:0 30px 60px rgba(2,6,23,0.45)}
   pre{background:rgba(246,248,251,0.6);padding:12px;border-radius:8px;overflow:auto;font-family:var(--mono);font-size:13px;max-height:62vh}
   .close{margin-left:auto;background:transparent;border:1px solid rgba(12,18,30,0.06);padding:8px;border-radius:8px;cursor:pointer}
 
   .copy-toast{position:fixed;right:22px;bottom:22px;background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.18);display:none}
   footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
 
-  /* admin + user panels */
-  .panel{position:fixed;right:20px;top:90px;width:360px;background:rgba(255,255,255,0.92);border-radius:12px;padding:12px;box-shadow:var(--shadow-2);z-index:2200;display:none}
+  .panel{position:fixed;right:20px;top:90px;width:360px;background:rgba(255,255,255,0.92);border-radius:12px;padding:12px;box-shadow:var(--shadow-2);z-index:3200;display:none}
+  .panel.dark{background:rgba(8,12,18,0.88); color:#d9e6ef}
   .panel h3{margin:0 0 8px 0}
   .admin-list{max-height:240px;overflow:auto;border-top:1px dashed rgba(0,0,0,0.04);padding-top:8px;margin-top:8px}
-  .admin-item{display:flex;justify-content:space-between;gap:8px;padding:6px;border-radius:8px}
   .muted-note{font-size:12px;color:var(--muted);margin-top:6px}
 
   /* auth UI */
@@ -157,6 +165,7 @@
 
   /* small interactions */
   .theme-option:active, .admin-item:active{transform:translateY(1px)}
+  .hidden{display:none}
 </style>
 </head>
 <body>
@@ -165,7 +174,7 @@
       <div class="logo">Py</div>
       <div class="title">
         <h1>Python 分发站 · 专业下载</h1>
-        <p>融合 Windows7 手感与透明立体玻璃质感的单文件分发页。</p>
+        <p>透明磨砂、润滑立体；用户空间与管理员功能。</p>
       </div>
 
       <div class="tools" role="toolbar" aria-label="site tools">
@@ -177,45 +186,36 @@
           <button class="theme-toggle" id="themeToggle">主题 ▾</button>
           <div class="theme-panel" id="themePanel" role="menu" aria-hidden="true">
             <div style="display:flex;justify-content:space-between;align-items:center">
-              <div style="font-weight:700">选择主题颜色</div>
-              <div class="small-note">预览并应用</div>
+              <div style="font-weight:700">主题设置</div>
+              <div class="small-note">透明磨砂与色彩</div>
             </div>
 
-            <div class="theme-option" data-theme="orange" role="menuitem" tabindex="0">
-              <div class="swatch" style="background:linear-gradient(135deg,#f57c00,#ffb300)"></div>
-              <div class="theme-label">橙色（默认）</div>
+            <div class="theme-row" aria-hidden="false">
+              <div class="theme-option" data-theme="orange"><div class="swatch" style="background:linear-gradient(135deg,#f57c00,#ffb300)"></div><div class="theme-label">橙色</div></div>
+              <div class="theme-option" data-theme="blue"><div class="swatch" style="background:linear-gradient(135deg,#1976d2,#64b5f6)"></div><div class="theme-label">蓝色</div></div>
+              <div class="theme-option" data-theme="green"><div class="swatch" style="background:linear-gradient(135deg,#2e7d32,#66bb6a)"></div><div class="theme-label">绿色</div></div>
+              <div class="theme-option" data-theme="purple"><div class="swatch" style="background:linear-gradient(135deg,#8e24aa,#b39ddb)"></div><div class="theme-label">紫色</div></div>
             </div>
 
-            <div class="theme-option" data-theme="blue" role="menuitem" tabindex="0">
-              <div class="swatch" style="background:linear-gradient(135deg,#1976d2,#64b5f6)"></div>
-              <div class="theme-label">蓝色</div>
-            </div>
-
-            <div class="theme-option" data-theme="green" role="menuitem" tabindex="0">
-              <div class="swatch" style="background:linear-gradient(135deg,#2e7d32,#66bb6a)"></div>
-              <div class="theme-label">绿色</div>
-            </div>
-
-            <div class="theme-option" data-theme="purple" role="menuitem" tabindex="0">
-              <div class="swatch" style="background:linear-gradient(135deg,#8e24aa,#b39ddb)"></div>
-              <div class="theme-label">紫色</div>
-            </div>
-
-            <div class="theme-controls-row" style="margin-top:6px">
-              <div class="glass-switch">
-                <label><input type="checkbox" id="glassToggle"> 透明玻璃</label>
+            <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+              <div style="display:flex;gap:8px;align-items:center">
+                <label class="small-note">玻璃样式</label>
+                <select id="glassStyle">
+                  <option value="light">浅色磨砂</option>
+                  <option value="dark">深色磨砂</option>
+                  <option value="colored">着色磨砂</option>
+                </select>
               </div>
               <div style="display:flex;gap:6px">
                 <button class="btn" id="themeReset">重置</button>
               </div>
             </div>
-            <div class="small-note">提示：玻璃效果依赖 backdrop-filter，旧浏览器可能不支持。</div>
+
+            <div class="small-note">提示：磨砂效果使用 backdrop-filter，旧浏览器可能不支持。已修复菜单重叠问题与更顺滑的玻璃高光。</div>
           </div>
         </div>
 
-        <div id="authSlot" style="display:flex;align-items:center;gap:8px">
-          <!-- JS 将填充 登录/用户状态 -->
-        </div>
+        <div id="authSlot" style="display:flex;align-items:center;gap:8px"></div>
 
         <button class="btn ghost" id="adminBtn" title="管理员登录">管理员</button>
       </div>
@@ -376,22 +376,19 @@
   </div>
 
 <script>
-/* ---------------------- 数据 + 存储（改为按 owner 保存） ---------------------- */
-/* DEFAULT_FILES 保持示例。实际部署请恢复完整内容 */
+/* ---------------------- 存储与默认数据 ---------------------- */
 const DEFAULT_FILES = [
   { name: "绿梵AI.py", type: "script", platform: "Windows/Linux/macOS", desc: "示例脚本", content: "# 这里放完整脚本" },
   { name: "非爬取方式.py", type: "script", platform: "Cross-platform", desc: "示例脚本", content: "# 这里放完整脚本" }
 ];
 
-/* user list in localStorage: key 'site_users' */
 function loadUsers(){ try{ const r=localStorage.getItem('site_users'); return r? JSON.parse(r):[] }catch(e){return[]} }
 function saveUsers(list){ try{ localStorage.setItem('site_users', JSON.stringify(list)); return true }catch(e){return false} }
 
-/* files saved per owner: localStorage key 'files_by_owner' -> array of { owner, name, type, platform, desc, content } */
 function loadAllOwnedFiles(){ try{ const r=localStorage.getItem('files_by_owner'); return r? JSON.parse(r):[] }catch(e){return[]} }
 function saveAllOwnedFiles(arr){ try{ localStorage.setItem('files_by_owner', JSON.stringify(arr)); return true }catch(e){return false} }
 
-/* migration: if older key 'user_files' exists, migrate to files_by_owner with owner='admin' */
+/* 兼容旧数据（迁移 user_files） */
 (function migrateOldFiles(){
   try{
     const old = localStorage.getItem('user_files');
@@ -399,40 +396,30 @@ function saveAllOwnedFiles(arr){ try{ localStorage.setItem('files_by_owner', JSO
     const arr = JSON.parse(old);
     if(!Array.isArray(arr)) return;
     const cur = loadAllOwnedFiles();
-    let changed = false;
-    arr.forEach(f=>{
-      if(!f.owner){
-        f.owner = 'admin';
-        changed = true;
-      }
-      cur.push(f);
-    });
-    if(changed) saveAllOwnedFiles(cur);
-    // avoid duplicate migration; remove old key
+    arr.forEach(f=> { if(!f.owner) f.owner = 'admin'; cur.push(f); });
+    saveAllOwnedFiles(cur);
     localStorage.removeItem('user_files');
   }catch(e){}
 })();
 
-/* combine default files (owner='builtin') and owned files for rendering */
 let FILES = [];
 function initFiles(){
   const owned = loadAllOwnedFiles();
-  // build map by name so same-name owned files override builtin
   const map = {};
   DEFAULT_FILES.forEach(f => map[f.name] = Object.assign({owner:'builtin'}, f));
-  owned.forEach(f => map[f.name] = Object.assign({}, f)); // owned files have owner field
+  owned.forEach(f => map[f.name] = Object.assign({}, f));
   FILES = Object.values(map);
 }
 
-/* ---------------------- crypto helpers (same as before) ---------------------- */
+/* ---------------------- crypto helpers ---------------------- */
 async function randomBase64(lenBytes=12){ const a=new Uint8Array(lenBytes); crypto.getRandomValues(a); return btoa(String.fromCharCode(...a)); }
 async function sha256Hex(str){ const buf=new TextEncoder().encode(str); const h=await crypto.subtle.digest('SHA-256', buf); return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
 async function saltedHashHex(saltBase64, password){ const saltBytes = atob(saltBase64); return sha256Hex(saltBytes + password); }
 
-/* ---------------------- user/account logic + session ---------------------- */
+/* ---------------------- 用户/会话逻辑 ---------------------- */
 function findUserByNameOrEmail(key){ const users = loadUsers(); const k=String(key||'').toLowerCase(); return users.find(u=>u.username.toLowerCase()===k || (u.email||'').toLowerCase()===k); }
-function getUsers(){ return loadUsers(); }
-function upsertUser(user){ const users=loadUsers(); const i=users.findIndex(u=>u.username===user.username); if(i>=0) users[i]=user; else users.push(user); saveUsers(users); }
+function setCurrentUser(username){ if(username) localStorage.setItem('current_user', username); else localStorage.removeItem('current_user'); renderAuthSlot(); }
+function getCurrentUser(){ const name = localStorage.getItem('current_user'); if(!name) return null; const users = loadUsers(); return users.find(u=>u.username===name) || null; }
 
 const DEFAULT_ADMIN_NAME='admin', DEFAULT_ADMIN_PASSWORD='lhm0627*';
 async function ensureAdmin(){
@@ -445,10 +432,6 @@ async function ensureAdmin(){
   }
 }
 
-function setCurrentUser(username){ if(username) localStorage.setItem('current_user', username); else localStorage.removeItem('current_user'); renderAuthSlot(); }
-function getCurrentUser(){ const name = localStorage.getItem('current_user'); if(!name) return null; const users = loadUsers(); return users.find(u=>u.username===name) || null; }
-
-/* register/login */
 async function registerUser(username, email, password){
   username = String(username||'').trim();
   if(!username) throw new Error('用户名不能为空');
@@ -464,6 +447,7 @@ async function registerUser(username, email, password){
   setCurrentUser(username);
   return user;
 }
+
 async function loginUser(key, password){
   const u = findUserByNameOrEmail(key);
   if(!u) throw new Error('用户不存在');
@@ -472,23 +456,9 @@ async function loginUser(key, password){
   setCurrentUser(u.username);
   return u;
 }
+
 function logoutUser(){ setCurrentUser(null); }
 
-/* switching accounts: require password when switching to another account */
-async function switchToUser(username){
-  const u = loadUsers().find(x=>x.username===username);
-  if(!u) { alert('用户不存在'); return; }
-  const pwd = prompt(`请输入 ${username} 的密码以切换账户：`);
-  if(pwd === null) return;
-  try{
-    const ph = await saltedHashHex(u.salt, pwd);
-    if(ph !== u.passHash) { alert('密码错误，切换失败'); return; }
-    setCurrentUser(username);
-    alert(`已切换到 ${username}`);
-  }catch(e){ alert('切换失败'); }
-}
-
-/* forgot/reset (same flow as earlier) */
 function generateResetCodeFor(userKey){
   const u = findUserByNameOrEmail(userKey);
   if(!u) return {ok:false, msg:'用户不存在'};
@@ -515,30 +485,16 @@ async function resetPassword(username, newPassword){
   users[idx].salt = salt; users[idx].passHash = ph; saveUsers(users); return true;
 }
 
-/* ---------------------- files per user (用户个人空间) ---------------------- */
-function loadOwnedFilesBy(owner){
-  const all = loadAllOwnedFiles();
-  return all.filter(f => f.owner === owner);
-}
-function saveOwnedFileFor(owner, fileObj){
-  const all = loadAllOwnedFiles();
-  const idx = all.findIndex(x => x.owner===owner && x.name === fileObj.name);
-  const item = Object.assign({owner}, fileObj);
-  if(idx>=0) all[idx] = item; else all.push(item);
-  saveAllOwnedFiles(all);
-}
-function deleteOwnedFile(owner, name){
-  let all = loadAllOwnedFiles();
-  all = all.filter(x => !(x.owner===owner && x.name === name));
-  saveAllOwnedFiles(all);
-}
+/* ---------------------- 每用户文件（我的空间） ---------------------- */
+function loadOwnedFilesBy(owner){ const all = loadAllOwnedFiles(); return all.filter(f => f.owner === owner); }
+function saveOwnedFileFor(owner, fileObj){ const all = loadAllOwnedFiles(); const idx = all.findIndex(x => x.owner===owner && x.name === fileObj.name); const item = Object.assign({owner}, fileObj); if(idx>=0) all[idx] = item; else all.push(item); saveAllOwnedFiles(all); }
+function deleteOwnedFile(owner, name){ let all = loadAllOwnedFiles(); all = all.filter(x => !(x.owner===owner && x.name === name)); saveAllOwnedFiles(all); }
 
-/* ---------------------- UI rendering: auth slot & account menu with switch ---------------------- */
+/* ---------------------- UI 渲染：authSlot 与账户菜单（含切换账户） ---------------------- */
 function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
 
 function renderAuthSlot(){
-  const slot = document.getElementById('authSlot');
-  slot.innerHTML = '';
+  const slot = document.getElementById('authSlot'); slot.innerHTML = '';
   const cur = getCurrentUser();
   if(cur){
     const wrapper = document.createElement('div'); wrapper.className='user-bar';
@@ -547,9 +503,9 @@ function renderAuthSlot(){
 
     const menuBtn = document.createElement('button'); menuBtn.className='btn ghost'; menuBtn.textContent='账户 ▾';
     const menu = document.createElement('div');
-    menu.style.position='absolute'; menu.style.right='18px'; menu.style.top='68px'; menu.style.zIndex='3000'; menu.style.display='none';
+    menu.style.position='absolute'; menu.style.right='18px'; menu.style.top='68px'; menu.style.zIndex='3400'; menu.style.display='none';
     menu.style.background='rgba(255,255,255,0.96)'; menu.style.border='1px solid rgba(0,0,0,0.06)'; menu.style.padding='8px'; menu.style.borderRadius='8px'; menu.style.boxShadow='0 12px 40px rgba(0,0,0,0.08)';
-    menu.style.minWidth = '160px';
+    menu.style.minWidth = '180px';
 
     const items = [
       {label:'我的空间', action: ()=>{ openUserPanel(); menu.style.display='none'; }},
@@ -569,12 +525,12 @@ function renderAuthSlot(){
     slot.appendChild(wrapper);
   }else{
     const btn = document.createElement('button'); btn.className='btn ghost'; btn.id='showAuthBtn'; btn.textContent='登录 / 注册';
-    btn.addEventListener('click', ()=> openAuthModal('login'));
+    btn.addEventListener('click', ()=> { openAuthModal('login'); prefillAdminLogin(false); });
     slot.appendChild(btn);
   }
 }
 
-/* showAccountSwitch: list users (excluding current), click one to prompt password and switch */
+/* 切换账户：列出本地用户，点击后提示密码并切换（提高便捷性） */
 function showAccountSwitch(parentMenu){
   parentMenu.innerHTML = '';
   const users = loadUsers();
@@ -587,7 +543,7 @@ function showAccountSwitch(parentMenu){
     row.textContent = u.username + (u.role==='admin' ? ' (管理员)':'');
     row.addEventListener('click', async ()=>{
       if(confirm(`切换到 ${u.username} ?`)){
-        const pwd = prompt(`请输入 ${u.username} 的密码来验证：`);
+        const pwd = prompt(`请输入 ${u.username} 的密码以切换账户：`);
         if(pwd === null) return;
         const ph = await saltedHashHex(u.salt, pwd);
         if(ph === u.passHash){ setCurrentUser(u.username); parentMenu.style.display='none'; alert(`已切换到 ${u.username}`); } else alert('密码错误，无法切换');
@@ -600,7 +556,7 @@ function showAccountSwitch(parentMenu){
   parentMenu.appendChild(back);
 }
 
-/* ---------------------- render files grid + interactions ---------------------- */
+/* ---------------------- 文件列表渲染与交互 ---------------------- */
 async function sha1Hex(str){ const buf=new TextEncoder().encode(str||''); const hash=await crypto.subtle.digest('SHA-1', buf); return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
 
 function makeCard(f, idx){
@@ -634,7 +590,7 @@ function makeCard(f, idx){
 function render(list){ const grid = document.getElementById('grid'); grid.innerHTML=''; list.forEach((f,i)=> grid.appendChild(makeCard(f,i))); }
 function applyFilters(){ const q=document.getElementById('search').value.trim().toLowerCase(); const filter=document.getElementById('filter').value; const sort=document.getElementById('sort').value; let list = FILES.filter(f=>{ if(filter!=='all' && f.type!==filter) return false; if(!q) return true; return (f.name + (f.desc||'') + (f.platform||'')).toLowerCase().includes(q); }); if(sort==='name') list.sort((a,b)=>a.name.localeCompare(b.name)); else if(sort==='size') list.sort((a,b)=> (new Blob([a.content||'']).size) - (new Blob([b.content||'']).size) ); else if(sort==='downloads'){ const counts = JSON.parse(localStorage.getItem('dl_counts')||'{}'); list.sort((a,b)=>(counts[b.name]||0)-(counts[a.name]||0)); } render(list); }
 
-/* download / preview */
+/* ---------------------- 下载/预览 ---------------------- */
 async function downloadFile(i){
   const f = FILES[i];
   const counts = JSON.parse(localStorage.getItem('dl_counts')||'{}'); counts[f.name] = (counts[f.name]||0)+1; localStorage.setItem('dl_counts', JSON.stringify(counts));
@@ -650,11 +606,11 @@ document.getElementById('modClose').onclick = ()=> document.getElementById('moda
 function downloadAll(){ const zip = new JSZip(); FILES.forEach(f=> zip.file(f.name, f.content || '')); zip.generateAsync({type:'blob', compression:'DEFLATE'}).then(blob=>{ const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='python-files.zip'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000); }); }
 function showToast(){ const t=document.getElementById('toast'); t.style.display='block'; setTimeout(()=>t.style.display='none',1400); }
 
-/* ---------------------- admin panel logic (unchanged) ---------------------- */
+/* ---------------------- 管理面板逻辑 ---------------------- */
 function openAdminPanel(){
   const cur = getCurrentUser();
-  if(!cur || cur.role !== 'admin'){ alert('需要管理员权限，请用 admin 登录'); return; }
-  document.getElementById('adminPanel').style.display='block'; refreshAdminList();
+  if(!cur || cur.role !== 'admin'){ alert('需要管理员权限：请用 admin 账户登录'); openAuthModal('login'); prefillAdminLogin(true); return; }
+  const panel = document.getElementById('adminPanel'); panel.style.display='block'; panel.classList.toggle('dark', getCurrentGlassStyle() === 'dark'); refreshAdminList();
 }
 document.getElementById('a_close').addEventListener('click', ()=>{ document.getElementById('adminPanel').style.display='none'; });
 
@@ -669,10 +625,7 @@ document.getElementById('a_file').addEventListener('change', async (e)=>{
 document.getElementById('a_save').addEventListener('click', ()=>{
   const name = document.getElementById('a_name').value.trim(); const type = document.getElementById('a_type').value; const platform = document.getElementById('a_platform').value.trim() || 'Unknown'; const desc = document.getElementById('a_desc').value.trim() || ''; const content = document.getElementById('a_content').value || '';
   if(!name){ alert('请填写文件名'); return; }
-  const all = loadAllOwnedFiles();
-  const idx = all.findIndex(u=>u.name === name && u.owner === 'admin');
-  const item = { owner:'admin', name, type, platform, desc, content };
-  if(idx>=0) all[idx] = item; else all.push(item);
+  const all = loadAllOwnedFiles(); const idx = all.findIndex(u=>u.name === name && u.owner === 'admin'); const item = { owner:'admin', name, type, platform, desc, content }; if(idx>=0) all[idx] = item; else all.push(item);
   if(saveAllOwnedFiles(all)){ alert('已保存并上架（本地）'); initFiles(); applyFilters(); refreshAdminList(); document.getElementById('a_name').value=''; document.getElementById('a_desc').value=''; document.getElementById('a_content').value=''; document.getElementById('a_file').value=''; } else alert('保存失败');
 });
 
@@ -691,7 +644,7 @@ function refreshAdminList(){
   });
 }
 
-/* ---------------------- user panel (个人空间) ---------------------- */
+/* ---------------------- user panel（我的空间） ---------------------- */
 document.getElementById('u_close').addEventListener('click', ()=> { document.getElementById('userPanel').style.display='none'; });
 
 document.getElementById('u_file').addEventListener('change', async (e)=>{
@@ -705,8 +658,7 @@ document.getElementById('u_file').addEventListener('change', async (e)=>{
 document.getElementById('u_save').addEventListener('click', ()=>{
   const cur = getCurrentUser();
   if(!cur){ alert('请先登录'); return; }
-  const owner = cur.username;
-  const name = document.getElementById('u_name').value.trim(); const type = document.getElementById('u_type').value; const platform = document.getElementById('u_platform').value.trim() || 'Unknown'; const desc = document.getElementById('u_desc').value.trim() || ''; const content = document.getElementById('u_content').value || '';
+  const owner = cur.username; const name = document.getElementById('u_name').value.trim(); const type = document.getElementById('u_type').value; const platform = document.getElementById('u_platform').value.trim() || 'Unknown'; const desc = document.getElementById('u_desc').value.trim() || ''; const content = document.getElementById('u_content').value || '';
   if(!name){ alert('请填写文件名'); return; }
   saveOwnedFileFor(owner, { name, type, platform, desc, content });
   alert('已保存到你的个人空间（本地）');
@@ -738,8 +690,8 @@ function refreshUserList(){
   });
 }
 
-/* ---------------------- auth modal logic + eye toggles + register/login/reset */ 
-function openAuthModal(tab='login'){ document.getElementById('authModal').style.display='flex'; showAuthTab(tab); }
+/* ---------------------- auth modal逻辑 + 显示密码眼睛按钮 ---------------------- */
+function openAuthModal(tab='login'){ closeAllFloating(); document.getElementById('authModal').style.display='flex'; showAuthTab(tab); }
 function closeAuthModal(){ document.getElementById('authModal').style.display='none'; }
 document.getElementById('authClose').addEventListener('click', closeAuthModal);
 document.getElementById('tabLogin').addEventListener('click', ()=> showAuthTab('login'));
@@ -748,7 +700,10 @@ document.getElementById('tabForgot').addEventListener('click', ()=> showAuthTab(
 
 function showAuthTab(name){ ['login','register','forgot'].forEach(n=> { const panel = document.getElementById('panel-'+n); if(panel) panel.style.display = (n===name)?'block':'none'; }); document.getElementById('authTitle').textContent = name==='login' ? '用户登录' : name==='register' ? '用户注册' : '忘记密码'; }
 
-function toggleInputVisible(btnId, inputId){ const btn = document.getElementById(btnId), inp = document.getElementById(inputId); if(!btn||!inp) return; btn.addEventListener('click', ()=> inp.type = inp.type === 'password' ? 'text' : 'password'); }
+function toggleInputVisible(btnId, inputId){
+  const btn = document.getElementById(btnId), inp = document.getElementById(inputId);
+  if(!btn||!inp) return; btn.addEventListener('click', ()=> inp.type = inp.type === 'password' ? 'text' : 'password');
+}
 toggleInputVisible('login_eye','login_pass'); toggleInputVisible('reg_eye','reg_pass'); toggleInputVisible('reg_eye2','reg_pass2'); toggleInputVisible('reset_eye','reset_pass');
 
 document.getElementById('openRegisterFromLogin').addEventListener('click', ()=> showAuthTab('register'));
@@ -796,67 +751,145 @@ document.getElementById('doResetPassword').addEventListener('click', async ()=>{
   }catch(err){ alert('重置失败：' + err.message) }
 });
 
-/* ---------------------- theme menu behavior (fix overlap) ---------------------- */
+/* 便捷：admin 按钮行为改进（若已登录为 admin 直接打开面板；否则打开登录并预填 admin） */
+document.getElementById('adminBtn').addEventListener('click', ()=> {
+  const cur = getCurrentUser();
+  if(cur && cur.role === 'admin') openAdminPanel();
+  else { openAuthModal('login'); prefillAdminLogin(true); }
+});
+
+/* 便捷：如果管理员无法使用，预填 admin 用户名并聚焦密码 */
+function prefillAdminLogin(focusPassword){
+  const loginInput = document.getElementById('login_user');
+  if(loginInput) loginInput.value = 'admin';
+  if(focusPassword){
+    setTimeout(()=> { const p = document.getElementById('login_pass'); if(p) { p.focus(); } }, 160);
+  }
+}
+
+/* ---------------------- 主题与玻璃样式控制（增强） ---------------------- */
 const THEMES = {
   orange: {accent:'#f57c00', accent2:'#ffb300'},
   blue:   {accent:'#1976d2', accent2:'#64b5f6'},
   green:  {accent:'#2e7d32', accent2:'#66bb6a'},
   purple: {accent:'#8e24aa', accent2:'#b39ddb'}
 };
+
 function applyTheme(name){
   const t = THEMES[name]; if(!t) return;
-  document.documentElement.style.setProperty('--accent', t.accent); document.documentElement.style.setProperty('--accent-2', t.accent2);
+  document.documentElement.style.setProperty('--accent', t.accent);
+  document.documentElement.style.setProperty('--accent-2', t.accent2);
   document.querySelectorAll('.logo').forEach(el=> el.style.background = `linear-gradient(135deg, ${t.accent}, ${t.accent2})`);
   localStorage.setItem('site_theme', name);
-}
-function restoreTheme(){ const name = localStorage.getItem('site_theme') || 'orange'; applyTheme(name); }
-
-document.getElementById('themeToggle').addEventListener('click', ()=> {
-  const p = document.getElementById('themePanel');
-  // close other popups before opening
-  closeAllFloatingPanels();
-  p.classList.toggle('show'); p.setAttribute('aria-hidden', p.classList.contains('show') ? 'false' : 'true');
-});
-function closeAllFloatingPanels(){ document.querySelectorAll('.theme-panel').forEach(e=>{ e.classList.remove('show'); e.setAttribute('aria-hidden','true'); }); document.querySelectorAll('[role="menu"]').forEach(e=> e.classList.remove('show')); document.querySelectorAll('.panel').forEach(p=> p.style.display='none'); document.getElementById('authModal').style.display='none'; document.getElementById('modal').style.display='none'; }
-
-document.addEventListener('click', e=>{
-  const panel = document.getElementById('themePanel'), toggle = document.getElementById('themeToggle');
-  if(!panel) return;
-  if(panel.classList.contains('show') && !panel.contains(e.target) && e.target !== toggle) {
-    panel.classList.remove('show'); panel.setAttribute('aria-hidden','true');
+  // if colored glass is selected, tint the panel/card slightly
+  if(getCurrentGlassStyle() === 'colored'){
+    document.documentElement.style.setProperty('--panel-bg', hexToRgba(t.accent, 0.14));
+    document.documentElement.style.setProperty('--card-bg', hexToRgba(t.accent, 0.10));
   }
-});
-document.querySelectorAll('.theme-option').forEach(el=> { el.addEventListener('click', ()=> applyTheme(el.getAttribute('data-theme'))); el.addEventListener('keydown', e=> { if(e.key==='Enter' || e.key===' ') { e.preventDefault(); el.click(); } }); });
-document.getElementById('glassToggle').addEventListener('change', ()=> {
-  const on = document.getElementById('glassToggle').checked;
-  if(on){ document.documentElement.style.setProperty('--panel-bg','rgba(255,255,255,0.18)'); document.documentElement.style.setProperty('--card-bg','rgba(255,255,255,0.12)'); localStorage.setItem('glass_mode','1'); }
-  else{ document.documentElement.style.setProperty('--panel-bg','rgba(255,255,255,0.50)'); document.documentElement.style.setProperty('--card-bg','rgba(255,255,255,0.62)'); localStorage.setItem('glass_mode','0'); }
-});
-document.getElementById('themeReset').addEventListener('click', ()=> { localStorage.removeItem('site_theme'); localStorage.removeItem('glass_mode'); restoreTheme(); document.getElementById('glassToggle').checked = false; });
+}
 
-/* ---------------------- misc bindings ---------------------- */
+function hexToRgba(hex, alpha){
+  try{
+    const h = hex.replace('#','');
+    const r = parseInt(h.substr(0,2),16), g = parseInt(h.substr(2,2),16), b = parseInt(h.substr(4,2),16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }catch(e){ return `rgba(255,255,255,${alpha})`; }
+}
+
+function applyGlassStyle(style){
+  localStorage.setItem('glass_style', style);
+  if(style === 'light'){
+    document.documentElement.style.setProperty('--page-bg', getComputedStyle(document.documentElement).getPropertyValue('--bg-light'));
+    document.documentElement.style.setProperty('--panel-bg', getComputedStyle(document.documentElement).getPropertyValue('--panel-bg-light'));
+    document.documentElement.style.setProperty('--card-bg', getComputedStyle(document.documentElement).getPropertyValue('--card-bg-light'));
+    document.documentElement.style.setProperty('--muted', getComputedStyle(document.documentElement).getPropertyValue('--muted-light'));
+    document.documentElement.style.setProperty('--text-color', '#0b1220');
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('dark'));
+  }else if(style === 'dark'){
+    document.documentElement.style.setProperty('--page-bg', getComputedStyle(document.documentElement).getPropertyValue('--bg-dark'));
+    document.documentElement.style.setProperty('--panel-bg', getComputedStyle(document.documentElement).getPropertyValue('--panel-bg-dark'));
+    document.documentElement.style.setProperty('--card-bg', getComputedStyle(document.documentElement).getPropertyValue('--card-bg-dark'));
+    document.documentElement.style.setProperty('--muted', getComputedStyle(document.documentElement).getPropertyValue('--muted-dark'));
+    document.documentElement.style.setProperty('--text-color', '#d9e6ef');
+    document.querySelectorAll('.panel').forEach(p=>p.classList.add('dark'));
+  }else if(style === 'colored'){
+    // keep page bg light but tint panels/cards with accent
+    const name = localStorage.getItem('site_theme') || 'orange';
+    const t = THEMES[name];
+    document.documentElement.style.setProperty('--page-bg', getComputedStyle(document.documentElement).getPropertyValue('--bg-light'));
+    document.documentElement.style.setProperty('--panel-bg', hexToRgba(t.accent, 0.12));
+    document.documentElement.style.setProperty('--card-bg', hexToRgba(t.accent, 0.08));
+    document.documentElement.style.setProperty('--muted', getComputedStyle(document.documentElement).getPropertyValue('--muted-light'));
+    document.documentElement.style.setProperty('--text-color', '#0b1220');
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('dark'));
+  }
+}
+
+function getCurrentGlassStyle(){ return localStorage.getItem('glass_style') || 'light'; }
+
+document.querySelectorAll('.theme-option').forEach(el=> { el.addEventListener('click', ()=> { applyTheme(el.getAttribute('data-theme')); }); });
+document.getElementById('glassStyle').addEventListener('change', (e)=> { applyGlassStyle(e.target.value); });
+document.getElementById('themeToggle').addEventListener('click', ()=> {
+  const p = document.getElementById('themePanel'); closeAllFloating(); p.classList.toggle('show'); p.setAttribute('aria-hidden', p.classList.contains('show') ? 'false' : 'true');
+});
+document.getElementById('themeReset').addEventListener('click', ()=> { localStorage.removeItem('site_theme'); localStorage.removeItem('glass_style'); restoreTheme(); });
+
+function restoreTheme(){
+  const name = localStorage.getItem('site_theme') || 'orange';
+  const style = localStorage.getItem('glass_style') || 'light';
+  applyTheme(name);
+  applyGlassStyle(style);
+  // set controls
+  const sel = document.getElementById('glassStyle'); if(sel) sel.value = style;
+}
+
+/* ---------------------- 便捷：关闭所有浮动面板 ---------------------- */
+function closeAllFloating(){ document.querySelectorAll('.theme-panel').forEach(e=> e.classList.remove('show')); document.querySelectorAll('.panel').forEach(p=> p.style.display='none'); document.getElementById('authModal').style.display='none'; document.getElementById('modal').style.display='none'; }
+
+/* ---------------------- 便捷：当管理员无法使用时收集诊断（控制台输出） ---------------------- */
+function adminDiagnostics(){
+  const users = loadUsers(); const cur = getCurrentUser();
+  console.debug('--- admin diagnostics ---');
+  console.debug('users:', users);
+  console.debug('current user:', cur);
+  console.debug('site_theme:', localStorage.getItem('site_theme'));
+  console.debug('glass_style:', localStorage.getItem('glass_style'));
+}
+
+/* ---------------------- 事件绑定及初始化 ---------------------- */
 document.getElementById('downloadAllBtn').addEventListener('click', downloadAll);
 document.getElementById('refreshBtn').addEventListener('click', ()=> location.reload());
 document.getElementById('readmeBtn').addEventListener('click', ()=> {
   document.getElementById('modName').textContent='说明'; document.getElementById('modTitle').textContent='站点说明';
   document.getElementById('modContent').textContent = `说明：
-- 透明立体玻璃效果和主题菜单已经优化，解决重叠并改为点击展开。
-- 用户系统保存在本地（localStorage），提供注册/登录/忘记/切换/注销/删除等功能。
-- 用户在“我的空间”可创建/编辑/删除属于自己的文件（永久保存在本地浏览器）。
-- 若需跨设备或公开永久保存，请接入后端或 GitHub API。`;
+- 我已增强“透明磨砂”风格，提供浅色 / 深色 / 着色 三种玻璃样式，以及多种主题色（橙/蓝/绿/紫）。
+- 主题菜单为单按钮展开，已修复重叠问题，并更顺滑地渲染高光与阴影。
+- 管理员按钮改进：若当前用户为 admin 会直接打开管理面板；否则会打开登录并预填 admin 用户名，便于管理员登录。
+- 用户可以在“我的空间”创建、编辑、删除自己的文件，保存于 localStorage（浏览器级永久）。要实现跨设备永久请接入服务器或 GitHub API。`;
   document.getElementById('modal').style.display='flex';
   document.getElementById('modDownload').onclick = ()=>{}; document.getElementById('modCopy').onclick = ()=> navigator.clipboard.writeText(document.getElementById('modContent').textContent).then(()=> showToast());
 });
-document.addEventListener('keydown', e=> { if(e.key==='Escape'){ closeAllFloatingPanels(); } });
+document.addEventListener('keydown', e=> { if(e.key==='Escape'){ closeAllFloating(); } });
 
-/* ---------------------- init ---------------------- */
+/* ---------------------- 小工具：预填 admin 登录（在 admin 无法使用时） ---------------------- */
+function prefillAdminIfNeeded(){
+  // if no admin user exists, ensureAdmin will create one on init
+  // if admin exists but cannot login, adminDiagnostics helps debugging
+  const adminUserExists = loadUsers().some(u=>u.username==='admin');
+  if(!adminUserExists){
+    console.debug('admin user missing — ensureAdmin will create default admin on init');
+  }
+}
+
+/* ---------------------- 初始化启动顺序 ---------------------- */
 (async function init(){
-  await ensureAdmin();
-  initFiles();
-  applyFilters();
-  renderAuthSlot();
-  restoreTheme();
-  if(localStorage.getItem('glass_mode')==='1'){ document.getElementById('glassToggle').checked = true; document.getElementById('glassToggle').dispatchEvent(new Event('change')); }
+  await ensureAdmin();          // 确保有 admin 用户
+  initFiles();                  // 合并内置 + 按 owner 存储的文件
+  restoreTheme();               // 恢复主题与玻璃样式
+  applyFilters();               // 渲染文件
+  renderAuthSlot();             // 渲染登录/用户槽位
+  prefillAdminIfNeeded();
+  // compute SHA1 for transparency logs
   FILES.forEach(f=> sha1Hex(f.content || '').then(h=> console.debug(`${f.name} SHA1: ${h}`)).catch(()=>{}));
 })();
 </script>
