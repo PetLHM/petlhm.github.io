@@ -8,116 +8,155 @@
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <style>
   :root{
-    --bg: linear-gradient(180deg,#f6f8fb,#fff);
-    --panel-bg: rgba(255,255,255,0.55);
-    --card-bg: rgba(255,255,255,0.6);
+    --bg: linear-gradient(180deg,#eef5fb,#ffffff);
+    --panel-bg: rgba(255,255,255,0.50);
+    --card-bg: rgba(255,255,255,0.62);
     --muted: #5b6670;
     --accent: #f57c00;
     --accent-2: #ffb300;
-    --glass-opa: 0.12;
     --radius:14px;
-    --shadow-1: 0 6px 22px rgba(16,24,32,0.08);
-    --shadow-2: 0 18px 40px rgba(16,24,32,0.12);
-    --mono: 'Roboto Mono', monospace;
+    --glass-blur:22px;
+    --glass-sat:1.12;
+    --glass-contrast:1.05;
+    --gloss-opa:0.35;
+    --shadow-1: 0 8px 28px rgba(6,12,24,0.08);
+    --shadow-2: 0 20px 56px rgba(6,12,24,0.12);
     --ui: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-    --glass-blur: 18px;
-    --glass-sat: 1.15;
-    --btn-depth: 0.08;
+    --mono: 'Roboto Mono', monospace;
   }
   *{box-sizing:border-box}
   body{
     margin:0;font-family:var(--ui);background:var(--bg);color:#0b1220;
-    -webkit-font-smoothing:antialiased;transition:background .28s ease,color .28s ease;
+    -webkit-font-smoothing:antialiased;transition:background .28s, color .28s;
   }
   .container{max-width:980px;margin:34px auto;padding:20px}
 
+  /* Header glass: layered gloss + blur + soft shadow for "润滑"质感 */
   header{
-    position:relative;display:flex;align-items:center;gap:16px;padding:14px;
+    position:relative; display:flex; align-items:center; gap:16px; padding:16px;
     border-radius:calc(var(--radius) + 4px);
-    background: var(--panel-bg);
-    border:1px solid rgba(255,255,255,var(--glass-opa));
-    box-shadow: var(--shadow-1), 0 2px 0 rgba(255,255,255,0.4) inset;
-    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
-    transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+    background:var(--panel-bg);
+    border:1px solid rgba(255,255,255,0.08);
+    box-shadow: var(--shadow-1);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat)) contrast(var(--glass-contrast));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat)) contrast(var(--glass-contrast));
+    transition:transform .18s ease, box-shadow .18s;
     overflow:visible;
   }
+  /* soft top gloss */
   header::before{
-    content:"";position:absolute;left:0;right:0;top:0;height:40%;
-    border-radius:calc(var(--radius) + 4px) calc(var(--radius) + 4px) 0 0;
-    background:linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.06));
-    pointer-events:none;mix-blend-mode: overlay;
-  }
-  header::after{
-    content:"";position:absolute;left:8px;right:8px;bottom:-10px;height:18px;filter: blur(18px);
-    background: radial-gradient(ellipse at center, rgba(12,18,30,0.12), rgba(12,18,30,0));
-    opacity:0.95;pointer-events:none;
+    content:""; position:absolute; inset:0; border-radius:inherit;
+    background: linear-gradient(180deg, rgba(255,255,255,var(--gloss-opa)), rgba(255,255,255,0.02));
+    mask-image: linear-gradient(180deg, rgba(0,0,0,0.85), rgba(0,0,0,0.2));
+    pointer-events:none;
+    mix-blend-mode: overlay;
   }
 
-  .logo{width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.4rem;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow: 0 6px 18px rgba(0,0,0,0.12), 0 2px 0 rgba(255,255,255,0.12) inset;transform: translateZ(0);}
+  .logo{
+    width:58px; height:58px; border-radius:12px;
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.4rem;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12), 0 2px 0 rgba(255,255,255,0.09) inset;
+    transform: translateZ(0);
+  }
   .title h1{margin:0;font-size:18px}
-  .title p{margin:4px 0 0;color:var(--muted);font-size:13px}
+  .title p{margin:6px 0 0;color:var(--muted);font-size:13px}
   .tools{margin-left:auto;display:flex;gap:10px;align-items:center;position:relative}
 
-  .btn{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(255,255,255,0.65));border:1px solid rgba(10,14,20,0.06);color:#0b1220;font-weight:600;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, opacity .12s;box-shadow: 0 2px 6px rgba(12,18,30,0.06), 0 1px 0 rgba(255,255,255,0.6) inset;backdrop-filter: blur(6px);}
-  .btn:active{transform: translateY(1px)}
-  .btn.primary{background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));color:#fff;border: 1px solid rgba(0,0,0,0.06);box-shadow: 0 14px 32px rgba(0,0,0,var(--btn-depth)), 0 -2px 8px rgba(255,255,255,0.04) inset;background-image: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)), linear-gradient(180deg, var(--accent), var(--accent-2));background-blend-mode: overlay;}
+  /* Buttons: glass + subtle depth */
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.68));
+    border:1px solid rgba(10,14,20,0.06);
+    color:#0b1220;font-weight:600;cursor:pointer;transition:transform .12s ease, box-shadow .12s ease, opacity .12s;
+    box-shadow: 0 3px 10px rgba(8,12,20,0.06), 0 1px 0 rgba(255,255,255,0.7) inset;
+    backdrop-filter: blur(6px);
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{
+    color:#fff;
+    background-image:
+      linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)),
+      linear-gradient(180deg, var(--accent), var(--accent-2));
+    border:1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+  }
   .btn.ghost{background:transparent;border:1px solid rgba(10,14,20,0.06)}
 
+  /* theme menu: fixed layout, no overlap, proper z-index and close-on-open */
   .theme-menu{position:relative}
-  .theme-toggle{display:flex;align-items:center;gap:8px;padding:8px;border-radius:10px;border:1px solid rgba(10,14,20,0.06);background:transparent;color:var(--muted);cursor:pointer;}
-  .theme-panel{position:absolute;right:0;top:calc(100% + 10px);width:260px;padding:10px;border-radius:12px;background: rgba(255,255,255,0.56);backdrop-filter: blur(20px) saturate(1.08);border:1px solid rgba(255,255,255,0.08);box-shadow:var(--shadow-2);display:none;flex-direction:column;gap:10px;z-index:1400;}
-  .theme-panel.show{display:flex}
-  .theme-option{display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px;border-radius:8px}
-  .swatch{width:36px;height:28px;border-radius:6px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 4px 12px rgba(0,0,0,0.06)}
-  .theme-label{font-weight:600;color:#222;font-size:14px}
-  .theme-controls-row{display:flex;gap:8px;align-items:center;justify-content:space-between}
-  .small-note{font-size:12px;color:var(--muted)}
-  .glass-switch{display:flex;align-items:center;gap:8px}
-  .glass-switch input[type="checkbox"]{transform:scale(1.1);}
+  .theme-toggle{display:flex;align-items:center;gap:8px;padding:8px;border-radius:10px;background:transparent;border:1px solid rgba(12,18,30,0.04);cursor:pointer}
+  .theme-panel{
+    position:absolute; right:0; top:calc(100% + 12px); min-width:220px; padding:12px;border-radius:12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.64), rgba(255,255,255,0.52));
+    backdrop-filter: blur(18px) saturate(1.06);
+    box-shadow: var(--shadow-2);
+    border:1px solid rgba(255,255,255,0.06);
+    display:none; flex-direction:column; gap:10px; z-index:2000;
+    transform-origin: top right;
+  }
+  .theme-panel.show{display:flex; animation: pop .14s ease;}
+  @keyframes pop { from{ transform: translateY(-6px) scale(.995); opacity:0 } to{ transform:none; opacity:1 } }
+  .theme-option{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;cursor:pointer}
+  .theme-option:hover{background:rgba(0,0,0,0.03)}
+  .swatch{width:36px;height:28px;border-radius:6px;box-shadow: 0 6px 18px rgba(0,0,0,0.08)}
+  .theme-label{font-weight:600;color:#222}
 
+  /* controls */
   .controls{display:flex;gap:10px;align-items:center;margin-top:18px}
   .search{flex:1;display:flex;gap:8px;align-items:center}
-  input[type="search"]{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(10,14,20,0.06);background:rgba(255,255,255,0.7);font-size:14px}
-  select{padding:9px;border-radius:10px;border:1px solid rgba(10,14,20,0.06);background:rgba(255,255,255,0.7);font-size:14px}
+  input[type="search"]{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(10,14,20,0.06);background:rgba(255,255,255,0.8);font-size:14px}
+  select{padding:9px;border-radius:10px;border:1px solid rgba(10,14,20,0.06);background:rgba(255,255,255,0.8);font-size:14px}
+
+  /* grid + card */
   .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:18px}
   @media(max-width:820px){.grid{grid-template-columns:1fr}}
-  .card{position:relative;background: var(--card-bg);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.06);box-shadow: 0 10px 28px rgba(12,18,30,0.06);display:flex;flex-direction:column;min-height:140px;transition:transform .18s ease, box-shadow .18s;backdrop-filter: blur(calc(var(--glass-blur) - 6px)) saturate(var(--glass-sat));}
-  .card::before{content:"";position:absolute;left:0;right:0;top:0;height:36%;border-radius:12px 12px 0 0;background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.02));mix-blend-mode: overlay;pointer-events:none;}
+  .card{
+    position:relative; background:var(--card-bg); border-radius:12px; padding:14px;
+    border:1px solid rgba(255,255,255,0.06); box-shadow: 0 14px 40px rgba(8,12,24,0.06);
+    display:flex; flex-direction:column; min-height:140px; transition: transform .16s ease, box-shadow .16s;
+    backdrop-filter: blur(14px) saturate(1.04);
+  }
+  .card:hover{ transform: translateY(-6px); box-shadow: 0 26px 60px rgba(8,12,24,0.10) }
+  .card::before{
+    content:""; position:absolute; left:0; right:0; top:0; height:36%; border-radius:12px 12px 0 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.02)); mix-blend-mode: overlay;
+    pointer-events:none;
+  }
+
   .meta{display:flex;align-items:center;gap:12px}
-  .tag{padding:6px 8px;border-radius:8px;font-weight:700;color:var(--accent);font-size:13px;border:1px solid rgba(0,0,0,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02))}
+  .tag{padding:6px 8px;border-radius:8px;font-weight:700;color:var(--accent);font-size:13px;background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02))}
   .name{font-weight:700;margin:0;font-size:15px}
   .desc{color:var(--muted);font-size:13px;margin:8px 0 0}
-  .foot{display:flex;align-items:center;margin-top:auto;gap:10px}
   .pill{font-family:var(--mono);background:rgba(255,255,255,0.06);padding:6px 8px;border-radius:8px;font-size:12px;color:#333}
-  .small{color:var(--muted);font-size:13px}
-  .card .actions{margin-left:auto;display:flex;gap:8px}
-  .count{font-size:12px;color:var(--muted)}
 
-  .modal-wrap{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(6,12,20,0.45);z-index:1500}
-  .modal{width:92%;max-width:980px;border-radius:12px;padding:14px;background:rgba(255,255,255,0.9);color:#0b1220;box-shadow:0 30px 60px rgba(2,6,23,0.45)}
+  /* modal */
+  .modal-wrap{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(6,12,20,0.45);z-index:2500}
+  .modal{width:92%;max-width:980px;border-radius:12px;padding:16px;background:rgba(255,255,255,0.95);color:#0b1220;box-shadow:0 30px 60px rgba(2,6,23,0.45)}
   pre{background:rgba(246,248,251,0.6);padding:12px;border-radius:8px;overflow:auto;font-family:var(--mono);font-size:13px;max-height:62vh}
   .close{margin-left:auto;background:transparent;border:1px solid rgba(12,18,30,0.06);padding:8px;border-radius:8px;cursor:pointer}
+
   .copy-toast{position:fixed;right:22px;bottom:22px;background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.18);display:none}
   footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
 
-  .admin-panel{position:fixed;right:20px;top:90px;width:360px;background:rgba(255,255,255,0.9);border-radius:12px;padding:12px;box-shadow:0 18px 40px rgba(12,18,30,0.12);z-index:1600;display:none}
-  .admin-panel h3{margin:0 0 8px 0;font-size:15px}
-  .admin-row{display:flex;gap:8px;margin-bottom:8px}
-  .admin-row input[type="text"], .admin-row select, .admin-row textarea{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(10,14,20,0.06);background:rgba(255,255,255,0.86)}
+  /* admin + user panels */
+  .panel{position:fixed;right:20px;top:90px;width:360px;background:rgba(255,255,255,0.92);border-radius:12px;padding:12px;box-shadow:var(--shadow-2);z-index:2200;display:none}
+  .panel h3{margin:0 0 8px 0}
   .admin-list{max-height:240px;overflow:auto;border-top:1px dashed rgba(0,0,0,0.04);padding-top:8px;margin-top:8px}
   .admin-item{display:flex;justify-content:space-between;gap:8px;padding:6px;border-radius:8px}
-  .danger{background:#fff1f0;border-color:#ffb4b4;color:#bf2600}
   .muted-note{font-size:12px;color:var(--muted);margin-top:6px}
-  .theme-option:hover, .admin-item:hover{transform:translateY(-4px);transition:transform .14s}
-  /* auth modal specifics */
+
+  /* auth UI */
   .auth-tabs{display:flex;gap:8px;margin-bottom:8px}
-  .auth-tabs button{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(10,14,20,0.06);background:rgba(255,255,255,0.9)}
+  .auth-tabs button{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(10,14,20,0.06);background:rgba(255,255,255,0.9);cursor:pointer}
   .form-row{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
   .input-with-eye{position:relative}
   .eye-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:none;cursor:pointer;padding:6px}
   .user-bar{display:flex;align-items:center;gap:8px}
   .user-badge{padding:6px 10px;border-radius:8px;background:rgba(255,255,255,0.06);font-weight:600}
+
+  /* small interactions */
+  .theme-option:active, .admin-item:active{transform:translateY(1px)}
 </style>
 </head>
 <body>
@@ -126,7 +165,7 @@
       <div class="logo">Py</div>
       <div class="title">
         <h1>Python 分发站 · 专业下载</h1>
-        <p>融合 Windows7 手感、Apple 质感与开发者友好，单文件静态页面分发脚本/安装包。</p>
+        <p>融合 Windows7 手感与透明立体玻璃质感的单文件分发页。</p>
       </div>
 
       <div class="tools" role="toolbar" aria-label="site tools">
@@ -170,13 +209,12 @@
                 <button class="btn" id="themeReset">重置</button>
               </div>
             </div>
-
-            <div class="small-note">提示：玻璃效果使用浏览器 backdrop-filter，部分旧浏览器可能不完全支持。</div>
+            <div class="small-note">提示：玻璃效果依赖 backdrop-filter，旧浏览器可能不支持。</div>
           </div>
         </div>
 
         <div id="authSlot" style="display:flex;align-items:center;gap:8px">
-          <!-- populated by JS: login/register button OR user badge + menu -->
+          <!-- JS 将填充 登录/用户状态 -->
         </div>
 
         <button class="btn ghost" id="adminBtn" title="管理员登录">管理员</button>
@@ -201,7 +239,7 @@
 
     <main class="grid" id="grid" aria-live="polite"></main>
 
-    <footer>将此文件放到静态主机或 GitHub Pages。若需要真实二进制分发，请替换文件 url 指向实际文件。</footer>
+    <footer>部署到静态主机或 GitHub Pages。要跨设备永久保存请接入后端或 GitHub API。</footer>
   </div>
 
   <!-- preview modal -->
@@ -224,14 +262,12 @@
 
   <div class="copy-toast" id="toast">已复制到剪贴板</div>
 
-  <!-- auth modal (login / register / forgot) -->
+  <!-- auth modal -->
   <div class="modal-wrap" id="authModal">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="authTitle" style="max-width:520px">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
         <strong id="authTitle">用户登录</strong>
-        <div style="margin-left:auto">
-          <button class="close" id="authClose">关闭</button>
-        </div>
+        <div style="margin-left:auto"><button class="close" id="authClose">关闭</button></div>
       </div>
 
       <div class="auth-tabs" role="tablist">
@@ -241,7 +277,6 @@
       </div>
 
       <div id="authContent">
-        <!-- login -->
         <div class="auth-panel" id="panel-login">
           <div class="form-row"><label>用户名或邮箱<input id="login_user" type="text" placeholder="用户名或邮箱"></label></div>
           <div class="form-row input-with-eye">
@@ -254,10 +289,9 @@
             <button class="btn primary" id="doLogin">登录</button>
             <button class="btn" id="openRegisterFromLogin">去注册</button>
           </div>
-          <div class="muted-note" style="margin-top:8px">首次使用请注册。密码以哈希和盐形式保存于本地。</div>
+          <div class="muted-note" style="margin-top:8px">首次使用请注册。密码用盐+SHA256保存于本地。</div>
         </div>
 
-        <!-- register -->
         <div class="auth-panel" id="panel-register" style="display:none">
           <div class="form-row"><label>用户名<input id="reg_user" type="text" placeholder="用户名"></label></div>
           <div class="form-row"><label>邮箱<input id="reg_email" type="text" placeholder="邮箱（可选）"></label></div>
@@ -279,7 +313,6 @@
           </div>
         </div>
 
-        <!-- forgot -->
         <div class="auth-panel" id="panel-forgot" style="display:none">
           <div class="form-row"><label>用户名或邮箱<input id="forgot_user" type="text" placeholder="输入用户名或邮箱"></label></div>
           <div style="display:flex;gap:8px">
@@ -288,7 +321,7 @@
           </div>
 
           <div style="margin-top:12px">
-            <div class="muted-note">说明：此站为纯客户端演示，无法发送邮件。系统会生成一个一次性重置码（仅在本浏览器显示），用该码可直接重置密码。</div>
+            <div class="muted-note">此站为纯客户端演示，无法发送邮件。系统会生成一次性重置码（仅在本浏览器显示），用该码可直接重置密码。</div>
 
             <div style="margin-top:8px" id="resetArea" hidden>
               <div class="form-row"><label>重置码<input id="reset_code" type="text" placeholder="粘贴重置码"></label></div>
@@ -302,135 +335,120 @@
     </div>
   </div>
 
-  <!-- 管理面板（客户端实现）-->
-  <div class="admin-panel" id="adminPanel" aria-hidden="true">
+  <!-- admin panel -->
+  <div class="panel" id="adminPanel" aria-hidden="true">
     <h3>管理员面板</h3>
-    <div class="admin-row">
-      <input type="text" id="a_name" placeholder="文件名（含扩展名）" />
-    </div>
+    <div class="admin-row"><input type="text" id="a_name" placeholder="文件名（含扩展名）" /></div>
     <div class="admin-row">
       <select id="a_type"><option value="script">script</option><option value="binary">binary</option></select>
       <input type="text" id="a_platform" placeholder="平台（如 Windows/Linux）" />
     </div>
-    <div class="admin-row">
-      <input type="text" id="a_desc" placeholder="描述" />
-    </div>
-    <div class="admin-row">
-      <input type="file" id="a_file" />
-    </div>
-    <div class="admin-row">
-      <textarea id="a_content" placeholder="或直接粘贴源代码 / 内容" rows="6"></textarea>
-    </div>
+    <div class="admin-row"><input type="text" id="a_desc" placeholder="描述" /></div>
+    <div class="admin-row"><input type="file" id="a_file" /></div>
+    <div class="admin-row"><textarea id="a_content" placeholder="或直接粘贴源代码 / 内容" rows="6"></textarea></div>
     <div style="display:flex;gap:8px">
       <button class="btn primary" id="a_save">保存并上架</button>
       <button class="btn" id="a_import">导出上传(zip)</button>
       <button class="btn ghost" id="a_close">关闭</button>
     </div>
-    <div class="muted-note">说明：管理员密码在客户端验证（不安全）。上传内容保存在本地浏览器 localStorage，仅在该浏览器可见。如需公开永久保存，请接入服务器或 GitHub API。</div>
+    <div class="muted-note">说明：管理员密码在客户端校验（不安全）。上传内容保存在本机 localStorage，仅该浏览器可见。</div>
     <div class="admin-list" id="adminList"></div>
   </div>
 
+  <!-- user personal panel -->
+  <div class="panel" id="userPanel" aria-hidden="true">
+    <h3>我的空间</h3>
+    <div class="admin-row"><input type="text" id="u_name" placeholder="文件名（含扩展名）" /></div>
+    <div class="admin-row">
+      <select id="u_type"><option value="script">script</option><option value="binary">binary</option></select>
+      <input type="text" id="u_platform" placeholder="平台（如 Windows/Linux）" />
+    </div>
+    <div class="admin-row"><input type="text" id="u_desc" placeholder="描述" /></div>
+    <div class="admin-row"><input type="file" id="u_file" /></div>
+    <div class="admin-row"><textarea id="u_content" placeholder="或直接粘贴源代码 / 内容" rows="6"></textarea></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn primary" id="u_save">保存到我的空间</button>
+      <button class="btn" id="u_export">导出我的文件(zip)</button>
+      <button class="btn ghost" id="u_close">关闭</button>
+    </div>
+    <div class="muted-note">你在“我的空间”创建的文件只保存到你的浏览器（localStorage），可导出备份。如需公开保存，请接入后端或 GitHub API。</div>
+    <div class="admin-list" id="userList"></div>
+  </div>
+
 <script>
-/* ---------------------- 数据与持久化 ---------------------- */
-/* 默认文件集（示例，具体内容可保持完整） */
+/* ---------------------- 数据 + 存储（改为按 owner 保存） ---------------------- */
+/* DEFAULT_FILES 保持示例。实际部署请恢复完整内容 */
 const DEFAULT_FILES = [
-  {
-    name: "绿梵AI.py",
-    type: "script",
-    platform: "Windows/Linux/macOS",
-    desc: "tkinter + selenium 自动化聊天脚本（含 webdriver 管理示例）。",
-    content: `# 省略详细脚本以简化示例，请在正式文件中保留完整内容`
-  },
-  {
-    name: "非爬取方式.py",
-    type: "script",
-    platform: "Cross-platform",
-    desc: "轻量的关键字匹配本地问答脚本，适合离线测试与示例。",
-    content: `# 省略详细脚本以简化示例，请在正式文件中保留完整内容`
-  }
+  { name: "绿梵AI.py", type: "script", platform: "Windows/Linux/macOS", desc: "示例脚本", content: "# 这里放完整脚本" },
+  { name: "非爬取方式.py", type: "script", platform: "Cross-platform", desc: "示例脚本", content: "# 这里放完整脚本" }
 ];
 
-/* 用户存储在 localStorage, key = 'site_users'
-   每个用户对象：
-   { username, email, salt (base64), passHash (hex), role: 'user'|'admin', createdAt }
-*/
-function loadUsers(){
-  try{ const raw = localStorage.getItem('site_users'); if(!raw) return []; const arr = JSON.parse(raw); return Array.isArray(arr)?arr:[] } catch(e){ return [] }
-}
-function saveUsers(list){ try{ localStorage.setItem('site_users', JSON.stringify(list)); return true }catch(e){ return false } }
+/* user list in localStorage: key 'site_users' */
+function loadUsers(){ try{ const r=localStorage.getItem('site_users'); return r? JSON.parse(r):[] }catch(e){return[]} }
+function saveUsers(list){ try{ localStorage.setItem('site_users', JSON.stringify(list)); return true }catch(e){return false} }
 
-function loadUserFiles(){
-  try{ const raw = localStorage.getItem('user_files'); if(!raw) return []; const arr = JSON.parse(raw); return Array.isArray(arr)?arr:[] }catch(e){return []}
-}
-function saveUserFiles(list){ try{ localStorage.setItem('user_files', JSON.stringify(list)); return true }catch(e){return false} }
+/* files saved per owner: localStorage key 'files_by_owner' -> array of { owner, name, type, platform, desc, content } */
+function loadAllOwnedFiles(){ try{ const r=localStorage.getItem('files_by_owner'); return r? JSON.parse(r):[] }catch(e){return[]} }
+function saveAllOwnedFiles(arr){ try{ localStorage.setItem('files_by_owner', JSON.stringify(arr)); return true }catch(e){return false} }
 
-/* 合并默认与用户文件；用户文件优先 */
+/* migration: if older key 'user_files' exists, migrate to files_by_owner with owner='admin' */
+(function migrateOldFiles(){
+  try{
+    const old = localStorage.getItem('user_files');
+    if(!old) return;
+    const arr = JSON.parse(old);
+    if(!Array.isArray(arr)) return;
+    const cur = loadAllOwnedFiles();
+    let changed = false;
+    arr.forEach(f=>{
+      if(!f.owner){
+        f.owner = 'admin';
+        changed = true;
+      }
+      cur.push(f);
+    });
+    if(changed) saveAllOwnedFiles(cur);
+    // avoid duplicate migration; remove old key
+    localStorage.removeItem('user_files');
+  }catch(e){}
+})();
+
+/* combine default files (owner='builtin') and owned files for rendering */
 let FILES = [];
 function initFiles(){
-  const users = loadUserFiles();
+  const owned = loadAllOwnedFiles();
+  // build map by name so same-name owned files override builtin
   const map = {};
-  DEFAULT_FILES.concat(users).forEach(f=> map[f.name] = f);
+  DEFAULT_FILES.forEach(f => map[f.name] = Object.assign({owner:'builtin'}, f));
+  owned.forEach(f => map[f.name] = Object.assign({}, f)); // owned files have owner field
   FILES = Object.values(map);
 }
 
-/* ---------------------- crypto helpers ---------------------- */
-async function randomBase64(lenBytes=16){
-  const a = new Uint8Array(lenBytes);
-  crypto.getRandomValues(a);
-  const s = btoa(String.fromCharCode(...a));
-  return s;
-}
-async function sha256Hex(str){
-  const buf = new TextEncoder().encode(str);
-  const hash = await crypto.subtle.digest('SHA-256', buf);
-  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-/* create salted hash: hex(sha256(salt + password)) */
-async function saltedHashHex(saltBase64, password){
-  const saltBytes = atob(saltBase64);
-  return sha256Hex(saltBytes + password);
-}
+/* ---------------------- crypto helpers (same as before) ---------------------- */
+async function randomBase64(lenBytes=12){ const a=new Uint8Array(lenBytes); crypto.getRandomValues(a); return btoa(String.fromCharCode(...a)); }
+async function sha256Hex(str){ const buf=new TextEncoder().encode(str); const h=await crypto.subtle.digest('SHA-256', buf); return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
+async function saltedHashHex(saltBase64, password){ const saltBytes = atob(saltBase64); return sha256Hex(saltBytes + password); }
 
-/* ---------------------- user/account logic ---------------------- */
-function findUserByNameOrEmail(key){
-  const users = loadUsers();
-  const k = String(key||'').toLowerCase();
-  return users.find(u => u.username.toLowerCase() === k || (u.email||'').toLowerCase() === k );
-}
-function upsertUser(user){
-  const users = loadUsers();
-  const idx = users.findIndex(u=>u.username === user.username);
-  if(idx>=0) users[idx] = user; else users.push(user);
-  saveUsers(users);
-}
+/* ---------------------- user/account logic + session ---------------------- */
+function findUserByNameOrEmail(key){ const users = loadUsers(); const k=String(key||'').toLowerCase(); return users.find(u=>u.username.toLowerCase()===k || (u.email||'').toLowerCase()===k); }
+function getUsers(){ return loadUsers(); }
+function upsertUser(user){ const users=loadUsers(); const i=users.findIndex(u=>u.username===user.username); if(i>=0) users[i]=user; else users.push(user); saveUsers(users); }
 
-/* create admin account if not exists (password required by earlier requests) */
-const DEFAULT_ADMIN_NAME = 'admin';
-const DEFAULT_ADMIN_PASSWORD = 'lhm0627*';
+const DEFAULT_ADMIN_NAME='admin', DEFAULT_ADMIN_PASSWORD='lhm0627*';
 async function ensureAdmin(){
   const users = loadUsers();
-  const admin = users.find(u=>u.username === DEFAULT_ADMIN_NAME);
-  if(admin) return;
-  const salt = await randomBase64(12);
-  const h = await saltedHashHex(salt, DEFAULT_ADMIN_PASSWORD);
-  users.push({ username: DEFAULT_ADMIN_NAME, email:'', salt, passHash: h, role:'admin', createdAt: new Date().toISOString() });
-  saveUsers(users);
+  if(!users.find(u=>u.username===DEFAULT_ADMIN_NAME)){
+    const salt = await randomBase64(12);
+    const h = await saltedHashHex(salt, DEFAULT_ADMIN_PASSWORD);
+    users.push({username:DEFAULT_ADMIN_NAME,email:'',salt,passHash:h,role:'admin',createdAt:new Date().toISOString()});
+    saveUsers(users);
+  }
 }
 
-/* session management */
-function setCurrentUser(username){
-  if(username) localStorage.setItem('current_user', username);
-  else localStorage.removeItem('current_user');
-  renderAuthSlot();
-}
-function getCurrentUser(){
-  const name = localStorage.getItem('current_user');
-  if(!name) return null;
-  const users = loadUsers();
-  return users.find(u=>u.username === name) || null;
-}
+function setCurrentUser(username){ if(username) localStorage.setItem('current_user', username); else localStorage.removeItem('current_user'); renderAuthSlot(); }
+function getCurrentUser(){ const name = localStorage.getItem('current_user'); if(!name) return null; const users = loadUsers(); return users.find(u=>u.username===name) || null; }
 
-/* register */
+/* register/login */
 async function registerUser(username, email, password){
   username = String(username||'').trim();
   if(!username) throw new Error('用户名不能为空');
@@ -446,8 +464,6 @@ async function registerUser(username, email, password){
   setCurrentUser(username);
   return user;
 }
-
-/* login */
 async function loginUser(key, password){
   const u = findUserByNameOrEmail(key);
   if(!u) throw new Error('用户不存在');
@@ -456,29 +472,28 @@ async function loginUser(key, password){
   setCurrentUser(u.username);
   return u;
 }
+function logoutUser(){ setCurrentUser(null); }
 
-/* logout */
-function logoutUser(){
-  setCurrentUser(null);
+/* switching accounts: require password when switching to another account */
+async function switchToUser(username){
+  const u = loadUsers().find(x=>x.username===username);
+  if(!u) { alert('用户不存在'); return; }
+  const pwd = prompt(`请输入 ${username} 的密码以切换账户：`);
+  if(pwd === null) return;
+  try{
+    const ph = await saltedHashHex(u.salt, pwd);
+    if(ph !== u.passHash) { alert('密码错误，切换失败'); return; }
+    setCurrentUser(username);
+    alert(`已切换到 ${username}`);
+  }catch(e){ alert('切换失败'); }
 }
 
-/* delete account */
-function deleteCurrentUser(){
-  const cu = getCurrentUser();
-  if(!cu) return false;
-  let users = loadUsers();
-  users = users.filter(u=>u.username !== cu.username);
-  saveUsers(users);
-  setCurrentUser(null);
-  return true;
-}
-
-/* forgot password: generate one-time reset code stored in localStorage with expiry */
+/* forgot/reset (same flow as earlier) */
 function generateResetCodeFor(userKey){
   const u = findUserByNameOrEmail(userKey);
   if(!u) return {ok:false, msg:'用户不存在'};
   const code = Math.random().toString(36).slice(2,10).toUpperCase();
-  const exp = Date.now() + 1000*60*20; // 20 minutes
+  const exp = Date.now() + 1000*60*20;
   const store = JSON.parse(localStorage.getItem('pw_reset')||'{}');
   store[u.username] = { code, exp };
   localStorage.setItem('pw_reset', JSON.stringify(store));
@@ -490,27 +505,37 @@ function verifyResetCode(username, code){
   if(!rec) return false;
   if(Date.now() > rec.exp) { delete store[username]; localStorage.setItem('pw_reset', JSON.stringify(store)); return false; }
   if(rec.code !== code) return false;
-  // consumed
-  delete store[username];
-  localStorage.setItem('pw_reset', JSON.stringify(store));
+  delete store[username]; localStorage.setItem('pw_reset', JSON.stringify(store));
   return true;
 }
 async function resetPassword(username, newPassword){
-  const users = loadUsers();
-  const idx = users.findIndex(u=>u.username === username);
+  const users = loadUsers(); const idx = users.findIndex(u=>u.username===username);
   if(idx<0) throw new Error('用户不存在');
-  const salt = await randomBase64(12);
-  const ph = await saltedHashHex(salt, newPassword);
-  users[idx].salt = salt;
-  users[idx].passHash = ph;
-  saveUsers(users);
-  return true;
+  const salt = await randomBase64(12); const ph = await saltedHashHex(salt, newPassword);
+  users[idx].salt = salt; users[idx].passHash = ph; saveUsers(users); return true;
 }
 
-/* ---------------------- UI: auth slot rendering ---------------------- */
-function createElementFromHTML(html){
-  const tmp = document.createElement('div'); tmp.innerHTML = html.trim(); return tmp.firstChild;
+/* ---------------------- files per user (用户个人空间) ---------------------- */
+function loadOwnedFilesBy(owner){
+  const all = loadAllOwnedFiles();
+  return all.filter(f => f.owner === owner);
 }
+function saveOwnedFileFor(owner, fileObj){
+  const all = loadAllOwnedFiles();
+  const idx = all.findIndex(x => x.owner===owner && x.name === fileObj.name);
+  const item = Object.assign({owner}, fileObj);
+  if(idx>=0) all[idx] = item; else all.push(item);
+  saveAllOwnedFiles(all);
+}
+function deleteOwnedFile(owner, name){
+  let all = loadAllOwnedFiles();
+  all = all.filter(x => !(x.owner===owner && x.name === name));
+  saveAllOwnedFiles(all);
+}
+
+/* ---------------------- UI rendering: auth slot & account menu with switch ---------------------- */
+function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+
 function renderAuthSlot(){
   const slot = document.getElementById('authSlot');
   slot.innerHTML = '';
@@ -519,18 +544,27 @@ function renderAuthSlot(){
     const wrapper = document.createElement('div'); wrapper.className='user-bar';
     const badge = document.createElement('div'); badge.className='user-badge'; badge.textContent = cur.username;
     wrapper.appendChild(badge);
+
     const menuBtn = document.createElement('button'); menuBtn.className='btn ghost'; menuBtn.textContent='账户 ▾';
-    const menu = document.createElement('div'); menu.style.position='absolute'; menu.style.right='18px'; menu.style.top='68px'; menu.style.zIndex='1500'; menu.style.display='none';
-    menu.style.background='rgba(255,255,255,0.95)'; menu.style.border='1px solid rgba(0,0,0,0.06)'; menu.style.padding='8px'; menu.style.borderRadius='8px'; menu.style.boxShadow='0 10px 30px rgba(0,0,0,0.08)';
-    const li1 = document.createElement('div'); li1.style.padding='8px'; li1.style.cursor='pointer'; li1.textContent='个人资料';
-    const li2 = document.createElement('div'); li2.style.padding='8px'; li2.style.cursor='pointer'; li2.textContent='注销';
-    const li3 = document.createElement('div'); li3.style.padding='8px'; li3.style.cursor='pointer'; li3.textContent='删除账户';
-    const li4 = document.createElement('div'); li4.style.padding='8px'; li4.style.cursor='pointer'; li4.textContent='管理面板';
-    menu.appendChild(li1); menu.appendChild(li2); menu.appendChild(li3); menu.appendChild(li4);
-    menuBtn.addEventListener('click', ()=> menu.style.display = menu.style.display==='none'? 'block':'none');
-    li2.addEventListener('click', ()=> { logoutUser(); menu.style.display='none'; alert('已注销'); });
-    li3.addEventListener('click', ()=> { if(!confirm('确认删除当前账户？此操作不可恢复（仅影响本地存储）。')) return; deleteCurrentUser(); menu.style.display='none'; alert('账户已删除'); });
-    li4.addEventListener('click', ()=> { menu.style.display='none'; openAdminPanel(); });
+    const menu = document.createElement('div');
+    menu.style.position='absolute'; menu.style.right='18px'; menu.style.top='68px'; menu.style.zIndex='3000'; menu.style.display='none';
+    menu.style.background='rgba(255,255,255,0.96)'; menu.style.border='1px solid rgba(0,0,0,0.06)'; menu.style.padding='8px'; menu.style.borderRadius='8px'; menu.style.boxShadow='0 12px 40px rgba(0,0,0,0.08)';
+    menu.style.minWidth = '160px';
+
+    const items = [
+      {label:'我的空间', action: ()=>{ openUserPanel(); menu.style.display='none'; }},
+      {label:'切换账户', action: ()=>{ showAccountSwitch(menu); }},
+      {label:'注销', action: ()=>{ logoutUser(); menu.style.display='none'; alert('已注销'); }},
+      {label:'删除账户', action: ()=>{ if(confirm('确认删除当前账户？此操作不可恢复（仅本地）')){ const name = cur.username; let us=loadUsers(); us=us.filter(u=>u.username!==name); saveUsers(us); setCurrentUser(null); menu.style.display='none'; alert('已删除'); } }},
+      {label:'管理员面板', action: ()=>{ menu.style.display='none'; openAdminPanel(); }}
+    ];
+    items.forEach(it=>{
+      const d = document.createElement('div'); d.textContent = it.label; d.style.padding='8px'; d.style.cursor='pointer';
+      d.addEventListener('click', it.action); d.addEventListener('mouseover', ()=> d.style.background='rgba(0,0,0,0.03)'); d.addEventListener('mouseout', ()=> d.style.background='transparent');
+      menu.appendChild(d);
+    });
+
+    menuBtn.addEventListener('click', ()=> menu.style.display = menu.style.display==='none' ? 'block' : 'none');
     wrapper.appendChild(menuBtn); wrapper.appendChild(menu);
     slot.appendChild(wrapper);
   }else{
@@ -540,21 +574,40 @@ function renderAuthSlot(){
   }
 }
 
-/* ---------------------- existing file UI & admin logic (kept) ---------------------- */
-function $q(sel){ return document.querySelector(sel) }
-function g(id){ return document.getElementById(id) }
-
-async function sha1Hex(str){
-  const buf = new TextEncoder().encode(str || '');
-  const hash = await crypto.subtle.digest('SHA-1', buf);
-  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+/* showAccountSwitch: list users (excluding current), click one to prompt password and switch */
+function showAccountSwitch(parentMenu){
+  parentMenu.innerHTML = '';
+  const users = loadUsers();
+  const cur = getCurrentUser();
+  const title = document.createElement('div'); title.textContent='选择要切换的账户'; title.style.fontWeight='700'; title.style.padding='6px 8px';
+  parentMenu.appendChild(title);
+  users.forEach(u=>{
+    const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center'; row.style.padding='6px 8px';
+    row.style.cursor='pointer';
+    row.textContent = u.username + (u.role==='admin' ? ' (管理员)':'');
+    row.addEventListener('click', async ()=>{
+      if(confirm(`切换到 ${u.username} ?`)){
+        const pwd = prompt(`请输入 ${u.username} 的密码来验证：`);
+        if(pwd === null) return;
+        const ph = await saltedHashHex(u.salt, pwd);
+        if(ph === u.passHash){ setCurrentUser(u.username); parentMenu.style.display='none'; alert(`已切换到 ${u.username}`); } else alert('密码错误，无法切换');
+      }
+    });
+    parentMenu.appendChild(row);
+  });
+  const back = document.createElement('div'); back.textContent='← 返回'; back.style.padding='8px'; back.style.cursor='pointer'; back.style.color='#666';
+  back.addEventListener('click', ()=> parentMenu.style.display='none');
+  parentMenu.appendChild(back);
 }
+
+/* ---------------------- render files grid + interactions ---------------------- */
+async function sha1Hex(str){ const buf=new TextEncoder().encode(str||''); const hash=await crypto.subtle.digest('SHA-1', buf); return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
 
 function makeCard(f, idx){
   const div = document.createElement('article'); div.className='card';
   div.innerHTML = `
     <div class="meta">
-      <div class="tag">${(f.type||'file').toUpperCase()}</div>
+      <div class="tag">${escapeHtml((f.type||'file').toUpperCase())}</div>
       <div style="flex:1">
         <p class="name">${escapeHtml(f.name)}</p>
         <div class="desc">${escapeHtml(f.desc||'')}</div>
@@ -578,187 +631,172 @@ function makeCard(f, idx){
   div.querySelector('[data-view]').onclick = ()=> openModal(idx);
   return div;
 }
-function render(list){
-  const grid = g('grid'); grid.innerHTML = ''; list.forEach((f,i)=> grid.appendChild(makeCard(f,i)));
-}
-function applyFilters(){
-  const q = g('search').value.trim().toLowerCase();
-  const filter = g('filter').value; const sort = g('sort').value;
-  let list = FILES.filter(f=>{
-    if(filter!=='all' && f.type!==filter) return false;
-    if(!q) return true;
-    return (f.name+ (f.desc||'') + (f.platform||'')).toLowerCase().includes(q);
-  });
-  if(sort==='name') list.sort((a,b)=>a.name.localeCompare(b.name));
-  else if(sort==='size') list.sort((a,b)=> (new Blob([a.content||'']).size) - (new Blob([b.content||'']).size) );
-  else if(sort==='downloads'){ const counts = JSON.parse(localStorage.getItem('dl_counts')||'{}'); list.sort((a,b)=>(counts[b.name]||0)-(counts[a.name]||0)); }
-  render(list);
-}
+function render(list){ const grid = document.getElementById('grid'); grid.innerHTML=''; list.forEach((f,i)=> grid.appendChild(makeCard(f,i))); }
+function applyFilters(){ const q=document.getElementById('search').value.trim().toLowerCase(); const filter=document.getElementById('filter').value; const sort=document.getElementById('sort').value; let list = FILES.filter(f=>{ if(filter!=='all' && f.type!==filter) return false; if(!q) return true; return (f.name + (f.desc||'') + (f.platform||'')).toLowerCase().includes(q); }); if(sort==='name') list.sort((a,b)=>a.name.localeCompare(b.name)); else if(sort==='size') list.sort((a,b)=> (new Blob([a.content||'']).size) - (new Blob([b.content||'']).size) ); else if(sort==='downloads'){ const counts = JSON.parse(localStorage.getItem('dl_counts')||'{}'); list.sort((a,b)=>(counts[b.name]||0)-(counts[a.name]||0)); } render(list); }
 
+/* download / preview */
 async function downloadFile(i){
   const f = FILES[i];
   const counts = JSON.parse(localStorage.getItem('dl_counts')||'{}'); counts[f.name] = (counts[f.name]||0)+1; localStorage.setItem('dl_counts', JSON.stringify(counts));
   applyFilters();
-  if(f.url){ const a = document.createElement('a'); a.href = f.url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); return; }
-  if(typeof f.content === 'string' && f.content.startsWith('__base64__:')){
-    const b64 = f.content.slice('__base64__:'.length);
-    const byteChars = atob(b64);
-    const byteNumbers = new Array(byteChars.length);
-    for (let j = 0; j < byteChars.length; j++) byteNumbers[j] = byteChars.charCodeAt(j);
-    const byteArray = new Uint8Array(byteNumbers);
-    const blob = new Blob([byteArray], {type: 'application/octet-stream'});
-    const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),5000); return;
-  }
+  if(f.url){ const a=document.createElement('a'); a.href=f.url; a.download=f.name; document.body.appendChild(a); a.click(); a.remove(); return; }
+  if(typeof f.content === 'string' && f.content.startsWith('__base64__:')){ const b64=f.content.slice('__base64__:'.length); const byteChars=atob(b64); const byteNumbers=new Array(byteChars.length); for(let j=0;j<byteChars.length;j++) byteNumbers[j]=byteChars.charCodeAt(j); const byteArray=new Uint8Array(byteNumbers); const blob=new Blob([byteArray], {type:'application/octet-stream'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=f.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000); return; }
   const blob = new Blob([f.content || ''], {type: f.type==='script' ? 'text/x-python;charset=utf-8' : 'application/octet-stream'});
   sha1Hex(f.content || '').then(h=> console.log(`${f.name} SHA1: ${h}`)).catch(()=>{});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),5000);
+  const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=f.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000);
 }
-function openModal(i){
-  const f = FILES[i];
-  g('modName').textContent = f.name; g('modTitle').textContent = `${(f.type||'file').toUpperCase()} 预览`; g('modContent').textContent = f.content || '(无内容)'; g('modal').style.display = 'flex';
-  g('modDownload').onclick = ()=> downloadFile(i); g('modCopy').onclick = ()=> { navigator.clipboard.writeText(f.content || '').then(()=> showToast()) };
-}
-g('modClose').onclick = ()=> g('modal').style.display='none';
-function downloadAll(){
-  const zip = new JSZip(); FILES.forEach(f=> zip.file(f.name, f.content || ''));
-  zip.generateAsync({type:'blob', compression:'DEFLATE'}).then(blob=>{ const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'python-files.zip'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000); });
-}
-function escapeHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
-function showToast(){ const t=g('toast'); t.style.display='block'; setTimeout(()=>t.style.display='none',1400) }
+function openModal(i){ const f = FILES[i]; document.getElementById('modName').textContent = f.name; document.getElementById('modTitle').textContent = `${(f.type||'file').toUpperCase()} 预览`; document.getElementById('modContent').textContent = f.content || '(无内容)'; document.getElementById('modal').style.display='flex'; document.getElementById('modDownload').onclick = ()=> downloadFile(i); document.getElementById('modCopy').onclick = ()=> navigator.clipboard.writeText(f.content || '').then(()=> showToast()); }
+document.getElementById('modClose').onclick = ()=> document.getElementById('modal').style.display='none';
+function downloadAll(){ const zip = new JSZip(); FILES.forEach(f=> zip.file(f.name, f.content || '')); zip.generateAsync({type:'blob', compression:'DEFLATE'}).then(blob=>{ const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='python-files.zip'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000); }); }
+function showToast(){ const t=document.getElementById('toast'); t.style.display='block'; setTimeout(()=>t.style.display='none',1400); }
 
-/* ---------------------- admin panel (client-side) ---------------------- */
+/* ---------------------- admin panel logic (unchanged) ---------------------- */
 function openAdminPanel(){
   const cur = getCurrentUser();
-  if(!cur || cur.role !== 'admin'){ alert('需要管理员权限：请使用 admin 账户登录'); return; }
-  const panel = g('adminPanel'); panel.style.display='block'; panel.setAttribute('aria-hidden','false'); refreshAdminList();
+  if(!cur || cur.role !== 'admin'){ alert('需要管理员权限，请用 admin 登录'); return; }
+  document.getElementById('adminPanel').style.display='block'; refreshAdminList();
 }
-g('a_close').addEventListener('click', ()=>{ g('adminPanel').style.display='none'; g('adminPanel').setAttribute('aria-hidden','true'); });
+document.getElementById('a_close').addEventListener('click', ()=>{ document.getElementById('adminPanel').style.display='none'; });
 
-g('a_file').addEventListener('change', async (e)=>{
+document.getElementById('a_file').addEventListener('change', async (e)=>{
   const f = e.target.files && e.target.files[0]; if(!f) return;
   const isText = f.type.startsWith('text') || /\.(py|txt|md|json|js|html|css)$/i.test(f.name);
-  if(isText){ const txt = await f.text(); g('a_content').value = txt; g('a_name').value = f.name; } else {
-    const reader = new FileReader(); reader.onload = ()=> { g('a_content').value = `__base64__:${reader.result.split(',')[1]}`; g('a_name').value = f.name; g('a_type').value = 'binary'; }; reader.readAsDataURL(f);
+  if(isText){ const txt = await f.text(); document.getElementById('a_content').value = txt; document.getElementById('a_name').value = f.name; } else {
+    const reader = new FileReader(); reader.onload = ()=> { document.getElementById('a_content').value = `__base64__:${reader.result.split(',')[1]}`; document.getElementById('a_name').value = f.name; document.getElementById('a_type').value = 'binary'; }; reader.readAsDataURL(f);
   }
 });
 
-g('a_save').addEventListener('click', ()=> {
-  const name = g('a_name').value.trim(); const type = g('a_type').value; const platform = g('a_platform').value.trim() || 'Unknown'; const desc = g('a_desc').value.trim() || ''; const content = g('a_content').value || '';
+document.getElementById('a_save').addEventListener('click', ()=>{
+  const name = document.getElementById('a_name').value.trim(); const type = document.getElementById('a_type').value; const platform = document.getElementById('a_platform').value.trim() || 'Unknown'; const desc = document.getElementById('a_desc').value.trim() || ''; const content = document.getElementById('a_content').value || '';
   if(!name){ alert('请填写文件名'); return; }
-  const users = loadUserFiles(); const idx = users.findIndex(u=>u.name === name); const item = { name, type, platform, desc, content };
-  if(idx>=0) users[idx] = item; else users.push(item);
-  if(saveUserFiles(users)){ alert('保存成功（保存在浏览器 localStorage）'); initFiles(); applyFilters(); refreshAdminList(); g('a_name').value=''; g('a_desc').value=''; g('a_content').value=''; g('a_file').value=''; } else { alert('保存失败（localStorage 写入错误）'); }
+  const all = loadAllOwnedFiles();
+  const idx = all.findIndex(u=>u.name === name && u.owner === 'admin');
+  const item = { owner:'admin', name, type, platform, desc, content };
+  if(idx>=0) all[idx] = item; else all.push(item);
+  if(saveAllOwnedFiles(all)){ alert('已保存并上架（本地）'); initFiles(); applyFilters(); refreshAdminList(); document.getElementById('a_name').value=''; document.getElementById('a_desc').value=''; document.getElementById('a_content').value=''; document.getElementById('a_file').value=''; } else alert('保存失败');
 });
 
-g('a_import').addEventListener('click', async ()=>{
-  const users = loadUserFiles(); if(!users.length){ alert('没有用户上传内容'); return; }
-  const zip = new JSZip(); users.forEach(u=>{ if(typeof u.content === 'string' && u.content.startsWith('__base64__:')){ const b64 = u.content.slice('__base64__:'.length); const byteChars = atob(b64); const byteNumbers = new Array(byteChars.length); for (let i = 0; i < byteChars.length; i++) byteNumbers[i] = byteChars.charCodeAt(i); const byteArray = new Uint8Array(byteNumbers); zip.file(u.name, byteArray); } else { zip.file(u.name, u.content || ''); } });
-  const blob = await zip.generateAsync({type:'blob', compression:'DEFLATE'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'user-uploads.zip'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000);
+document.getElementById('a_import').addEventListener('click', async ()=>{
+  const all = loadAllOwnedFiles(); if(!all.length){ alert('无上传文件'); return; }
+  const zip = new JSZip(); all.forEach(u=>{ if(typeof u.content === 'string' && u.content.startsWith('__base64__:')){ const b64 = u.content.slice('__base64__:'.length); const byteChars = atob(b64); const byteNumbers = new Array(byteChars.length); for (let i = 0; i < byteChars.length; i++) byteNumbers[i] = byteChars.charCodeAt(i); const byteArray = new Uint8Array(byteNumbers); zip.file(u.name, byteArray); } else zip.file(u.name, u.content || ''); });
+  const blob = await zip.generateAsync({type:'blob', compression:'DEFLATE'}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='user-uploads.zip'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000);
 });
 
 function refreshAdminList(){
-  const list = g('adminList'); const users = loadUserFiles(); list.innerHTML = '';
-  if(users.length === 0){ list.innerHTML = '<div class="muted-note">暂无用户上传文件</div>'; return; }
-  users.forEach((u,i)=>{ const div = document.createElement('div'); div.className='admin-item'; div.innerHTML = `<div style="flex:1"><strong>${escapeHtml(u.name)}</strong><div style="font-size:12px;color:var(--muted)">${escapeHtml(u.desc||'')}</div></div><div style="display:flex;gap:6px"><button class="btn" data-load="${i}">加载</button><button class="btn danger" data-del="${i}">删除</button></div>`; list.appendChild(div);
-    div.querySelector('[data-load]').onclick = ()=> { g('a_name').value = u.name; g('a_type').value = u.type; g('a_platform').value = u.platform; g('a_desc').value = u.desc; g('a_content').value = u.content || ''; };
-    div.querySelector('[data-del]').onclick = ()=> { if(!confirm('确认删除此用户上传并从 localStorage 中移除？')) return; users.splice(i,1); saveUserFiles(users); initFiles(); applyFilters(); refreshAdminList(); };
+  const list = document.getElementById('adminList'); const all = loadAllOwnedFiles(); list.innerHTML = '';
+  if(!all.length){ list.innerHTML = '<div class="muted-note">暂无文件</div>'; return; }
+  all.forEach((u,i)=>{ const div=document.createElement('div'); div.className='admin-item'; div.innerHTML = `<div style="flex:1"><strong>${escapeHtml(u.name)}</strong><div style="font-size:12px;color:var(--muted)">owner: ${escapeHtml(u.owner)}</div></div><div style="display:flex;gap:6px"><button class="btn" data-load="${i}">加载</button><button class="btn" data-del="${i}">删除</button></div>`; list.appendChild(div);
+    div.querySelector('[data-load]').onclick = ()=> { document.getElementById('a_name').value=u.name; document.getElementById('a_type').value=u.type; document.getElementById('a_platform').value=u.platform; document.getElementById('a_desc').value=u.desc; document.getElementById('a_content').value=u.content||''; };
+    div.querySelector('[data-del]').onclick = ()=> { if(!confirm('确认删除？')) return; const arr = loadAllOwnedFiles(); arr.splice(i,1); saveAllOwnedFiles(arr); initFiles(); applyFilters(); refreshAdminList(); };
   });
 }
 
-/* ---------------------- auth modal behavior ---------------------- */
-function openAuthModal(tab='login'){ g('authModal').style.display='flex'; showAuthTab(tab); }
-function closeAuthModal(){ g('authModal').style.display='none'; }
-g('authClose').addEventListener('click', closeAuthModal);
+/* ---------------------- user panel (个人空间) ---------------------- */
+document.getElementById('u_close').addEventListener('click', ()=> { document.getElementById('userPanel').style.display='none'; });
+
+document.getElementById('u_file').addEventListener('change', async (e)=>{
+  const f = e.target.files && e.target.files[0]; if(!f) return;
+  const isText = f.type.startsWith('text') || /\.(py|txt|md|json|js|html|css)$/i.test(f.name);
+  if(isText){ const txt = await f.text(); document.getElementById('u_content').value = txt; document.getElementById('u_name').value = f.name; } else {
+    const reader = new FileReader(); reader.onload = ()=> { document.getElementById('u_content').value = `__base64__:${reader.result.split(',')[1]}`; document.getElementById('u_name').value = f.name; document.getElementById('u_type').value = 'binary'; }; reader.readAsDataURL(f);
+  }
+});
+
+document.getElementById('u_save').addEventListener('click', ()=>{
+  const cur = getCurrentUser();
+  if(!cur){ alert('请先登录'); return; }
+  const owner = cur.username;
+  const name = document.getElementById('u_name').value.trim(); const type = document.getElementById('u_type').value; const platform = document.getElementById('u_platform').value.trim() || 'Unknown'; const desc = document.getElementById('u_desc').value.trim() || ''; const content = document.getElementById('u_content').value || '';
+  if(!name){ alert('请填写文件名'); return; }
+  saveOwnedFileFor(owner, { name, type, platform, desc, content });
+  alert('已保存到你的个人空间（本地）');
+  initFiles(); applyFilters(); refreshUserList();
+  document.getElementById('u_name').value=''; document.getElementById('u_desc').value=''; document.getElementById('u_content').value=''; document.getElementById('u_file').value='';
+});
+
+document.getElementById('u_export').addEventListener('click', async ()=>{
+  const cur = getCurrentUser();
+  if(!cur){ alert('请先登录'); return; }
+  const files = loadOwnedFilesBy(cur.username); if(!files.length){ alert('暂无个人文件'); return; }
+  const zip = new JSZip(); files.forEach(u=>{ if(typeof u.content === 'string' && u.content.startsWith('__base64__:')){ const b64 = u.content.slice('__base64__:'.length); const byteChars = atob(b64); const byteNumbers = new Array(byteChars.length); for (let i = 0; i < byteChars.length; i++) byteNumbers[i] = byteChars.charCodeAt(i); const byteArray = new Uint8Array(byteNumbers); zip.file(u.name, byteArray); } else zip.file(u.name, u.content || ''); });
+  const blob = await zip.generateAsync({type:'blob', compression:'DEFLATE'}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`${cur.username}-files.zip`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000);
+});
+
+function openUserPanel(){
+  const cur = getCurrentUser();
+  if(!cur){ alert('请先登录'); openAuthModal('login'); return; }
+  document.getElementById('userPanel').style.display='block';
+  refreshUserList();
+}
+
+function refreshUserList(){
+  const cur = getCurrentUser(); const list = document.getElementById('userList'); list.innerHTML=''; if(!cur){ list.innerHTML = '<div class="muted-note">请先登录查看个人空间</div>'; return; }
+  const files = loadOwnedFilesBy(cur.username); if(!files.length){ list.innerHTML = '<div class="muted-note">你的空间还没有文件</div>'; return; }
+  files.forEach((u,i)=>{ const div=document.createElement('div'); div.className='admin-item'; div.innerHTML = `<div style="flex:1"><strong>${escapeHtml(u.name)}</strong><div style="font-size:12px;color:var(--muted)">${escapeHtml(u.desc||'')}</div></div><div style="display:flex;gap:6px"><button class="btn" data-load="${i}">加载</button><button class="btn" data-del="${i}">删除</button></div>`; list.appendChild(div);
+    div.querySelector('[data-load]').onclick = ()=> { document.getElementById('u_name').value=u.name; document.getElementById('u_type').value=u.type; document.getElementById('u_platform').value=u.platform; document.getElementById('u_desc').value=u.desc; document.getElementById('u_content').value=u.content||''; };
+    div.querySelector('[data-del]').onclick = ()=> { if(!confirm('确认删除？')) return; deleteOwnedFile(cur.username, u.name); initFiles(); applyFilters(); refreshUserList(); };
+  });
+}
+
+/* ---------------------- auth modal logic + eye toggles + register/login/reset */ 
+function openAuthModal(tab='login'){ document.getElementById('authModal').style.display='flex'; showAuthTab(tab); }
+function closeAuthModal(){ document.getElementById('authModal').style.display='none'; }
+document.getElementById('authClose').addEventListener('click', closeAuthModal);
 document.getElementById('tabLogin').addEventListener('click', ()=> showAuthTab('login'));
 document.getElementById('tabRegister').addEventListener('click', ()=> showAuthTab('register'));
 document.getElementById('tabForgot').addEventListener('click', ()=> showAuthTab('forgot'));
 
-function showAuthTab(name){
-  ['login','register','forgot'].forEach(n=> {
-    const panel = g('panel-'+n);
-    if(panel) panel.style.display = (n===name)?'block':'none';
-  });
-  g('authTitle').textContent = name==='login' ? '用户登录' : name==='register' ? '用户注册' : '忘记密码';
-}
+function showAuthTab(name){ ['login','register','forgot'].forEach(n=> { const panel = document.getElementById('panel-'+n); if(panel) panel.style.display = (n===name)?'block':'none'; }); document.getElementById('authTitle').textContent = name==='login' ? '用户登录' : name==='register' ? '用户注册' : '忘记密码'; }
 
-/* eye toggles */
-function toggleInputVisible(btnId, inputId){
-  const btn = g(btnId), inp = g(inputId);
-  if(!btn || !inp) return;
-  btn.addEventListener('click', ()=> {
-    inp.type = inp.type === 'password' ? 'text' : 'password';
-  });
-}
-toggleInputVisible('login_eye','login_pass');
-toggleInputVisible('reg_eye','reg_pass');
-toggleInputVisible('reg_eye2','reg_pass2');
-toggleInputVisible('reset_eye','reset_pass');
+function toggleInputVisible(btnId, inputId){ const btn = document.getElementById(btnId), inp = document.getElementById(inputId); if(!btn||!inp) return; btn.addEventListener('click', ()=> inp.type = inp.type === 'password' ? 'text' : 'password'); }
+toggleInputVisible('login_eye','login_pass'); toggleInputVisible('reg_eye','reg_pass'); toggleInputVisible('reg_eye2','reg_pass2'); toggleInputVisible('reset_eye','reset_pass');
 
-/* register / login handlers */
-g('openRegisterFromLogin').addEventListener('click', ()=> showAuthTab('register'));
-g('openLoginFromReg').addEventListener('click', ()=> showAuthTab('login'));
-g('openLoginFromForgot').addEventListener('click', ()=> showAuthTab('login'));
+document.getElementById('openRegisterFromLogin').addEventListener('click', ()=> showAuthTab('register'));
+document.getElementById('openLoginFromReg').addEventListener('click', ()=> showAuthTab('login'));
+document.getElementById('openLoginFromForgot').addEventListener('click', ()=> showAuthTab('login'));
 
-g('doRegister').addEventListener('click', async ()=>{
+document.getElementById('doRegister').addEventListener('click', async ()=>{
   try{
-    const u = g('reg_user').value.trim(); const e = g('reg_email').value.trim(); const p = g('reg_pass').value; const p2 = g('reg_pass2').value;
+    const u = document.getElementById('reg_user').value.trim(); const e = document.getElementById('reg_email').value.trim(); const p = document.getElementById('reg_pass').value; const p2 = document.getElementById('reg_pass2').value;
     if(p !== p2) { alert('两次密码不一致'); return; }
     await registerUser(u, e, p);
     alert('注册成功，已自动登录');
-    closeAuthModal(); renderAuthSlot();
-    initFiles(); applyFilters();
+    closeAuthModal(); renderAuthSlot(); initFiles(); applyFilters();
   }catch(err){ alert('注册失败：' + err.message) }
 });
 
-g('doLogin').addEventListener('click', async ()=>{
+document.getElementById('doLogin').addEventListener('click', async ()=>{
   try{
-    const key = g('login_user').value.trim(); const p = g('login_pass').value;
+    const key = document.getElementById('login_user').value.trim(); const p = document.getElementById('login_pass').value;
     await loginUser(key, p);
-    alert('登录成功');
-    closeAuthModal(); renderAuthSlot();
+    alert('登录成功'); closeAuthModal(); renderAuthSlot();
   }catch(err){ alert('登录失败：' + err.message) }
 });
 
-/* forgot password flow */
-g('doRequestReset').addEventListener('click', ()=>{
-  const key = g('forgot_user').value.trim();
-  if(!key) { alert('请输入用户名或邮箱'); return; }
+document.getElementById('doRequestReset').addEventListener('click', ()=>{
+  const key = document.getElementById('forgot_user').value.trim();
+  if(!key){ alert('请输入用户名或邮箱'); return; }
   const res = generateResetCodeFor(key);
   if(!res.ok){ alert('找不到用户'); return; }
-  // show code on screen (no email available)
-  const area = g('resetArea'); area.hidden = false;
-  alert(`重置码（仅在本浏览器显示）：${res.code}\n请复制并粘贴到下方以继续重置。有效期 20 分钟。`);
-  g('reset_code').value = res.code;
+  const area = document.getElementById('resetArea'); area.hidden = false;
+  alert(`重置码（仅在本浏览器显示）：${res.code}\n请复制粘贴到下方以继续重置。有效期20分钟。`);
+  document.getElementById('reset_code').value = res.code;
 });
-g('doResetPassword').addEventListener('click', async ()=>{
+document.getElementById('doResetPassword').addEventListener('click', async ()=>{
   try{
-    const code = g('reset_code').value.trim(); const pass = g('reset_pass').value;
-    if(!code || !pass) { alert('请输入重置码和新密码'); return; }
-    // need to map reset code to username
-    // we loop stored pw_reset to find matching username
-    const store = JSON.parse(localStorage.getItem('pw_reset')||'{}');
-    let foundUser = null;
+    const code = document.getElementById('reset_code').value.trim(); const pass = document.getElementById('reset_pass').value;
+    if(!code || !pass){ alert('请输入重置码和新密码'); return; }
+    const store = JSON.parse(localStorage.getItem('pw_reset')||'{}'); let foundUser = null;
     for(const uname in store){ if(store[uname].code === code) { foundUser = uname; break; } }
     if(!foundUser){ alert('重置码无效或已过期'); return; }
     const ok = verifyResetCode(foundUser, code);
     if(!ok){ alert('重置码无效或已过期'); return; }
     await resetPassword(foundUser, pass);
-    alert('密码已重置，请使用新密码登录');
-    showAuthTab('login');
+    alert('密码已重置，请使用新密码登录'); showAuthTab('login');
   }catch(err){ alert('重置失败：' + err.message) }
 });
 
-/* admin button should prefer admin user login: open auth modal if not admin */
-g('adminBtn').addEventListener('click', ()=> {
-  const cur = getCurrentUser();
-  if(cur && cur.role === 'admin') openAdminPanel();
-  else openAuthModal('login');
-});
-
-/* ---------------------- theme menu behavior ---------------------- */
+/* ---------------------- theme menu behavior (fix overlap) ---------------------- */
 const THEMES = {
   orange: {accent:'#f57c00', accent2:'#ffb300'},
   blue:   {accent:'#1976d2', accent2:'#64b5f6'},
@@ -772,35 +810,53 @@ function applyTheme(name){
   localStorage.setItem('site_theme', name);
 }
 function restoreTheme(){ const name = localStorage.getItem('site_theme') || 'orange'; applyTheme(name); }
-g('themeToggle').addEventListener('click', ()=> { const p = g('themePanel'); p.classList.toggle('show'); p.setAttribute('aria-hidden', p.classList.contains('show') ? 'false' : 'true'); });
-document.addEventListener('click', e=> { const panel = g('themePanel'), toggle = g('themeToggle'); if(!panel) return; if(panel.classList.contains('show') && !panel.contains(e.target) && e.target !== toggle) { panel.classList.remove('show'); panel.setAttribute('aria-hidden','true'); } });
+
+document.getElementById('themeToggle').addEventListener('click', ()=> {
+  const p = document.getElementById('themePanel');
+  // close other popups before opening
+  closeAllFloatingPanels();
+  p.classList.toggle('show'); p.setAttribute('aria-hidden', p.classList.contains('show') ? 'false' : 'true');
+});
+function closeAllFloatingPanels(){ document.querySelectorAll('.theme-panel').forEach(e=>{ e.classList.remove('show'); e.setAttribute('aria-hidden','true'); }); document.querySelectorAll('[role="menu"]').forEach(e=> e.classList.remove('show')); document.querySelectorAll('.panel').forEach(p=> p.style.display='none'); document.getElementById('authModal').style.display='none'; document.getElementById('modal').style.display='none'; }
+
+document.addEventListener('click', e=>{
+  const panel = document.getElementById('themePanel'), toggle = document.getElementById('themeToggle');
+  if(!panel) return;
+  if(panel.classList.contains('show') && !panel.contains(e.target) && e.target !== toggle) {
+    panel.classList.remove('show'); panel.setAttribute('aria-hidden','true');
+  }
+});
 document.querySelectorAll('.theme-option').forEach(el=> { el.addEventListener('click', ()=> applyTheme(el.getAttribute('data-theme'))); el.addEventListener('keydown', e=> { if(e.key==='Enter' || e.key===' ') { e.preventDefault(); el.click(); } }); });
-g('glassToggle').addEventListener('change', ()=> { const on = g('glassToggle').checked; if(on){ document.documentElement.style.setProperty('--panel-bg','rgba(255,255,255,0.18)'); document.documentElement.style.setProperty('--card-bg','rgba(255,255,255,0.12)'); localStorage.setItem('glass_mode','1'); } else { document.documentElement.style.setProperty('--panel-bg','rgba(255,255,255,0.55)'); document.documentElement.style.setProperty('--card-bg','rgba(255,255,255,0.6)'); localStorage.setItem('glass_mode','0'); } });
-g('themeReset').addEventListener('click', ()=> { localStorage.removeItem('site_theme'); localStorage.removeItem('glass_mode'); restoreTheme(); g('glassToggle').checked = false; });
+document.getElementById('glassToggle').addEventListener('change', ()=> {
+  const on = document.getElementById('glassToggle').checked;
+  if(on){ document.documentElement.style.setProperty('--panel-bg','rgba(255,255,255,0.18)'); document.documentElement.style.setProperty('--card-bg','rgba(255,255,255,0.12)'); localStorage.setItem('glass_mode','1'); }
+  else{ document.documentElement.style.setProperty('--panel-bg','rgba(255,255,255,0.50)'); document.documentElement.style.setProperty('--card-bg','rgba(255,255,255,0.62)'); localStorage.setItem('glass_mode','0'); }
+});
+document.getElementById('themeReset').addEventListener('click', ()=> { localStorage.removeItem('site_theme'); localStorage.removeItem('glass_mode'); restoreTheme(); document.getElementById('glassToggle').checked = false; });
 
 /* ---------------------- misc bindings ---------------------- */
-g('downloadAllBtn').addEventListener('click', downloadAll);
-g('refreshBtn').addEventListener('click', ()=> location.reload());
-g('readmeBtn').addEventListener('click', ()=> {
-  g('modName').textContent='说明'; g('modTitle').textContent='站点说明';
-  g('modContent').textContent = `说明：
-- 注册/登录/忘记密码/注销/删除账户 功能均在本地浏览器保存（localStorage）。密码以 salt+SHA256 存储（客户端）。
-- 若需要真正的“永久跨设备保存”，请接入后端或 GitHub API（我可以帮你改造）。
-- 管理面板需要管理员权限（admin）；如无 admin 用户系统会在首次运行时自动创建 admin（初始密码：lhm0627*），上线请修改或删除默认密码。`;
-  g('modal').style.display='flex';
-  g('modDownload').onclick = ()=>{}; g('modCopy').onclick = ()=> { navigator.clipboard.writeText(g('modContent').textContent).then(()=> showToast()) };
+document.getElementById('downloadAllBtn').addEventListener('click', downloadAll);
+document.getElementById('refreshBtn').addEventListener('click', ()=> location.reload());
+document.getElementById('readmeBtn').addEventListener('click', ()=> {
+  document.getElementById('modName').textContent='说明'; document.getElementById('modTitle').textContent='站点说明';
+  document.getElementById('modContent').textContent = `说明：
+- 透明立体玻璃效果和主题菜单已经优化，解决重叠并改为点击展开。
+- 用户系统保存在本地（localStorage），提供注册/登录/忘记/切换/注销/删除等功能。
+- 用户在“我的空间”可创建/编辑/删除属于自己的文件（永久保存在本地浏览器）。
+- 若需跨设备或公开永久保存，请接入后端或 GitHub API。`;
+  document.getElementById('modal').style.display='flex';
+  document.getElementById('modDownload').onclick = ()=>{}; document.getElementById('modCopy').onclick = ()=> navigator.clipboard.writeText(document.getElementById('modContent').textContent).then(()=> showToast());
 });
-document.addEventListener('keydown', e=> { if(e.key==='Escape'){ g('modal').style.display='none'; g('authModal').style.display='none'; } });
+document.addEventListener('keydown', e=> { if(e.key==='Escape'){ closeAllFloatingPanels(); } });
 
 /* ---------------------- init ---------------------- */
 (async function init(){
-  await ensureAdmin(); // create admin account if missing
+  await ensureAdmin();
   initFiles();
   applyFilters();
   renderAuthSlot();
   restoreTheme();
-  if(localStorage.getItem('glass_mode') === '1'){ g('glassToggle').checked = true; g('glassToggle').dispatchEvent(new Event('change')); }
-  // compute SHA1 for transparency
+  if(localStorage.getItem('glass_mode')==='1'){ document.getElementById('glassToggle').checked = true; document.getElementById('glassToggle').dispatchEvent(new Event('change')); }
   FILES.forEach(f=> sha1Hex(f.content || '').then(h=> console.debug(`${f.name} SHA1: ${h}`)).catch(()=>{}));
 })();
 </script>
