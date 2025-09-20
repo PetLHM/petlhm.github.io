@@ -458,6 +458,116 @@
     font-size: 14px; /* 稍大 */
     padding: var(--spacing-sm);
   }
+
+  /* Login/Register Modal */
+  .auth-modal {
+    display: none;
+    position: fixed;
+    z-index: 1300;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    backdrop-filter: blur(5px);
+  }
+
+  .auth-modal-content {
+    background-color: var(--card-bg);
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--glass-shadow);
+    width: 90%;
+    max-width: 400px;
+    backdrop-filter: var(--backdrop-filter);
+  }
+
+  .auth-modal-content h2 {
+    margin-top: 0;
+    text-align: center;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .auth-form input {
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.5);
+    font-size: 15px;
+    font-family: var(--ui);
+    box-shadow: inset 0 1px 3px var(--shadow-color);
+  }
+
+  .auth-form input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: inset 0 1px 3px var(--shadow-color), 0 0 0 2px rgba(58, 134, 255, 0.2);
+  }
+
+  .auth-form button {
+    padding: 12px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(180deg, var(--accent), var(--accent-hover));
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .auth-form button:hover {
+    background: linear-gradient(180deg, #4a95ff, #2d7ce6);
+  }
+
+  .auth-toggle {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+  }
+
+  .auth-toggle a {
+    color: var(--accent);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .auth-toggle a:hover {
+    text-decoration: underline;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-info span {
+    font-weight: 600;
+  }
+
+  .logout-btn {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s ease;
+  }
+
+  .logout-btn:hover {
+    background: rgba(230, 230, 230, 0.5);
+  }
+
 </style>
 </head>
 <body>
@@ -472,6 +582,16 @@
         <button class="btn primary" id="downloadAllBtn">下载全部 (zip)</button>
         <button class="btn" id="refreshBtn">刷新列表</button>
         <button class="btn ghost" id="readmeBtn">说明</button>
+        <!-- User Authentication Buttons -->
+        <div id="authButtons">
+            <button class="btn" id="loginBtn">登录</button>
+            <button class="btn" id="registerBtn">注册</button>
+        </div>
+        <!-- User Info (shown when logged in) -->
+        <div id="userInfo" class="user-info" style="display: none;">
+            <span id="usernameDisplay"></span>
+            <button class="logout-btn" id="logoutBtn">登出</button>
+        </div>
       </div>
     </header>
 
@@ -511,6 +631,23 @@
         </div>
       </div>
       <pre id="modContent" tabindex="0"></pre>
+    </div>
+  </div>
+
+  <!-- Login/Register Modal -->
+  <div id="authModal" class="auth-modal">
+    <div class="auth-modal-content">
+      <span class="close" id="authClose">&times;</span>
+      <h2 id="authModalTitle">用户登录</h2>
+      <form class="auth-form" id="authForm">
+        <input type="text" id="authUsername" placeholder="用户名" required>
+        <input type="password" id="authPassword" placeholder="密码" required>
+        <div id="authMessage" style="color: red; font-size: 14px; min-height: 20px;"></div>
+        <button type="submit" id="authSubmitBtn">登录</button>
+      </form>
+      <div class="auth-toggle">
+        <span>还没有账户? <a id="toggleAuthMode">立即注册</a></span>
+      </div>
     </div>
   </div>
 
@@ -583,7 +720,7 @@ def main():
     green_AIf.title(f'绿梵AI [{main_版本}]')
     entry3 = ttk.Entry(green_AIf, font=('微软雅黑', 13))
     entry3.place(x=22, y=175, height=46, width=250)
-    txt_edit = tk.Text(green_AIf, wrap=tk.WORD, width=33, font=('微软雅黑', 11), height=7, undo=True)
+    txt_edit = tk.Text(green_AIf, wrap=tk.WORD, width=33, font=('微软雅黑', 13), height=7, undo=True)
     txt_edit.place(x=22, y=13)
 
 
@@ -1131,6 +1268,139 @@ async function downloadAll(){
 /* helpers */
 function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
 function showToast(){ const t=g('toast'); t.style.display='block'; setTimeout(()=>t.style.display='none',1300) }
+
+/* ---------------------- 用户认证 ---------------------- */
+// 模拟用户数据存储 (在实际应用中，这应该在服务器端)
+const USERS_KEY = 'registered_users';
+const CURRENT_USER_KEY = 'current_user';
+
+// 初始化用户数据
+function initUsers() {
+    if (!localStorage.getItem(USERS_KEY)) {
+        localStorage.setItem(USERS_KEY, JSON.stringify({}));
+    }
+}
+initUsers();
+
+// 显示/隐藏认证模态框
+function showAuthModal(isLogin = true) {
+    const modal = g('authModal');
+    const title = g('authModalTitle');
+    const submitBtn = g('authSubmitBtn');
+    const toggleLink = g('toggleAuthMode');
+    const messageEl = g('authMessage');
+    
+    messageEl.textContent = ''; // 清空消息
+    g('authUsername').value = '';
+    g('authPassword').value = '';
+    
+    if (isLogin) {
+        title.textContent = '用户登录';
+        submitBtn.textContent = '登录';
+        toggleLink.textContent = '立即注册';
+        toggleLink.onclick = () => showAuthModal(false);
+    } else {
+        title.textContent = '用户注册';
+        submitBtn.textContent = '注册';
+        toggleLink.textContent = '立即登录';
+        toggleLink.onclick = () => showAuthModal(true);
+    }
+    modal.style.display = 'block';
+}
+
+function hideAuthModal() {
+    g('authModal').style.display = 'none';
+}
+
+// 切换认证模式
+g('toggleAuthMode').addEventListener('click', function() {
+    const isLogin = g('authModalTitle').textContent === '用户登录';
+    showAuthModal(!isLogin);
+});
+
+// 处理认证表单提交
+g('authForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = g('authUsername').value.trim();
+    const password = g('authPassword').value;
+    const isLogin = g('authModalTitle').textContent === '用户登录';
+    const messageEl = g('authMessage');
+    
+    if (!username || !password) {
+        messageEl.textContent = '用户名和密码不能为空';
+        return;
+    }
+    
+    const users = JSON.parse(localStorage.getItem(USERS_KEY));
+    
+    if (isLogin) {
+        // 登录逻辑
+        if (users[username] && users[username] === password) {
+            // 登录成功
+            localStorage.setItem(CURRENT_USER_KEY, username);
+            updateAuthUI();
+            hideAuthModal();
+            messageEl.textContent = '';
+        } else {
+            messageEl.textContent = '用户名或密码错误';
+        }
+    } else {
+        // 注册逻辑
+        if (users[username]) {
+            messageEl.textContent = '用户名已存在';
+        } else {
+            // 注册新用户
+            users[username] = password;
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+            messageEl.style.color = 'green';
+            messageEl.textContent = '注册成功，请登录';
+            // 自动切换到登录
+            setTimeout(() => showAuthModal(true), 1500);
+        }
+    }
+});
+
+// 登出
+function logout() {
+    localStorage.removeItem(CURRENT_USER_KEY);
+    updateAuthUI();
+}
+
+// 更新认证UI (显示登录/注册按钮 或 用户信息)
+function updateAuthUI() {
+    const currentUser = localStorage.getItem(CURRENT_USER_KEY);
+    const authButtons = g('authButtons');
+    const userInfo = g('userInfo');
+    const usernameDisplay = g('usernameDisplay');
+    
+    if (currentUser) {
+        authButtons.style.display = 'none';
+        userInfo.style.display = 'flex';
+        usernameDisplay.textContent = currentUser;
+    } else {
+        authButtons.style.display = 'flex';
+        userInfo.style.display = 'none';
+        usernameDisplay.textContent = '';
+    }
+}
+
+// 页面加载时检查登录状态
+document.addEventListener('DOMContentLoaded', function() {
+    updateAuthUI();
+});
+
+// 事件绑定
+g('loginBtn').addEventListener('click', () => showAuthModal(true));
+g('registerBtn').addEventListener('click', () => showAuthModal(false));
+g('logoutBtn').addEventListener('click', logout);
+g('authClose').addEventListener('click', hideAuthModal);
+// 点击模态框外部关闭
+window.addEventListener('click', function(event) {
+    const modal = g('authModal');
+    if (event.target == modal) {
+        hideAuthModal();
+    }
+});
 
 /* ---------------------- 事件绑定 ---------------------- */
 g('search').addEventListener('keydown', e=>{ if(e.key==='Enter') applyFilters() });
