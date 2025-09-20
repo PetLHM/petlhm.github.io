@@ -52,7 +52,10 @@
   }
 
   .container {
-    max-width: 1000px; /* 稍微宽一点 */
+    /* 修改：使用更大宽度并设置最小宽度，更好地利用屏幕空间 */
+    width: 100%;
+    min-width: 320px;
+    max-width: 1400px; /* 增加最大宽度 */
     margin: var(--spacing-lg) auto;
     padding: var(--spacing-md);
   }
@@ -70,6 +73,8 @@
     box-shadow: var(--glass-shadow);
     position: relative;
     overflow: hidden;
+    /* 新增：确保header拉伸填充容器 */
+    width: 100%;
   }
   header::before {
     content: "";
@@ -96,6 +101,13 @@
     box-shadow: 
       inset 0 -8px 18px rgba(255, 255, 255, 0.15),
       0 4px 12px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0; /* 防止logo被压缩 */
+  }
+
+  .title {
+    /* 新增：让标题区域占据剩余空间 */
+    flex-grow: 1;
+    min-width: 0; /* 防止内部文本溢出 */
   }
 
   .title h1 {
@@ -103,6 +115,8 @@
     font-size: 20px; /* 稍大 */
     font-weight: 700;
     color: var(--primary-text);
+    /* 新增：处理长标题换行 */
+    word-break: break-word;
   }
 
   .title p {
@@ -110,14 +124,19 @@
     color: var(--secondary-text);
     font-size: 14px; /* 稍大 */
     line-height: 1.5;
+    /* 新增：处理长描述换行 */
+    word-break: break-word;
   }
 
   .tools {
-    margin-left: auto;
+    /* 修改：使用flex布局并允许换行 */
     display: flex;
     gap: var(--spacing-sm);
     align-items: center;
-    flex-wrap: wrap; /* 允许工具栏换行 */
+    flex-wrap: wrap;
+    justify-content: flex-end; /* 靠右对齐 */
+    /* 新增：设置最小宽度以保持按钮可读性 */
+    min-width: 200px;
   }
 
   /* Responsive adjustments for header */
@@ -130,6 +149,7 @@
         margin-left: 0;
         justify-content: center;
         margin-top: var(--spacing-sm);
+        width: 100%; /* 在小屏幕上占满宽度 */
     }
     .title p {
         font-size: 13px;
@@ -156,6 +176,8 @@
     backdrop-filter: var(--backdrop-filter);
     position: relative;
     overflow: hidden;
+    /* 新增：防止按钮在小屏幕上过窄 */
+    white-space: nowrap;
   }
   .btn:hover {
     background: rgba(255, 255, 255, 0.75);
@@ -212,9 +234,12 @@
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     box-shadow: var(--glass-shadow);
+    /* 新增：确保controls拉伸填充容器 */
+    width: 100%;
   }
 
   .search {
+    /* 修改：在大屏幕上占据更多空间 */
     flex: 1;
     min-width: 200px; /* 设置最小宽度 */
     display: flex;
@@ -253,6 +278,8 @@
     background-position: right 14px center;
     padding-right: 36px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    /* 新增：在小屏幕上设置最小宽度 */
+    min-width: 120px;
   }
   select:focus {
     outline: none;
@@ -263,9 +290,12 @@
   /* Grid */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 响应式网格 */
+    /* 修改：优化网格列宽，更好地利用空间 */
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* 增加最小宽度 */
     gap: var(--spacing-md);
     margin-top: var(--spacing-md);
+    /* 新增：确保grid拉伸填充容器 */
+    width: 100%;
   }
 
   /* Card with Glass Effect */
@@ -281,6 +311,8 @@
     position: relative;
     overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* 新增：确保卡片拉伸填充网格单元 */
+    width: 100%;
   }
   .card:hover {
     transform: translateY(-2px);
@@ -322,6 +354,8 @@
     margin: 0;
     font-size: 18px; /* 稍大 */
     color: var(--primary-text);
+    /* 新增：处理长文件名换行 */
+    word-break: break-word;
   }
 
   .desc {
@@ -329,6 +363,8 @@
     font-size: 14px; /* 稍大 */
     margin: var(--spacing-xs) 0 0;
     line-height: 1.5;
+    /* 新增：处理长描述换行 */
+    word-break: break-word;
   }
 
   .foot {
@@ -348,6 +384,8 @@
     font-size: 12px; /* 稍大 */
     color: var(--muted);
     border: 1px solid var(--border-color);
+    /* 新增：防止标签内容被压缩 */
+    white-space: nowrap;
   }
 
   .small {
@@ -359,6 +397,8 @@
     margin-left: auto;
     display: flex;
     gap: var(--spacing-xs);
+    /* 新增：防止按钮被压缩 */
+    flex-shrink: 0;
   }
 
   .count {
@@ -457,6 +497,8 @@
     color: var(--muted);
     font-size: 14px; /* 稍大 */
     padding: var(--spacing-sm);
+    /* 新增：确保footer拉伸填充容器 */
+    width: 100%;
   }
 
   /* Login/Register Modal */
