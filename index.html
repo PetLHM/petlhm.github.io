@@ -76,7 +76,9 @@
     --backdrop-filter: none;
     --gradient-start: #00ffff;
     --gradient-end: #00ffff;
-  }
+  } 
+
+
 
   * {
     box-sizing: border-box;
@@ -693,6 +695,7 @@
     border: 1px solid white;
   }
 
+  /* 修改 footer 样式以匹配主题背景 */
   footer {
     margin-top: var(--spacing-lg);
     text-align: center;
@@ -700,6 +703,22 @@
     font-size: 14px;
     padding: var(--spacing-sm);
     width: 100%;
+    /* 关键修改：继承 body 的背景和背景图片 */
+    background: linear-gradient(180deg, var(--bg-start), var(--bg-end));
+    background-image: radial-gradient(circle at 10% 20%, rgba(96, 165, 250, 0.05) 0%, transparent 20%),
+                      radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 20%);
+    /* 为了确保 footer 有背景，需要相对定位或确保它不透明 */
+    position: relative; /* 或者使用 isolation: isolate; */
+    z-index: 0; /* 确保它在正常层级 */
+    border-radius: var(--radius-sm); /* 可选：添加圆角 */
+  }
+
+  /* 高对比度主题下 footer 的特殊处理 */
+  .high-contrast-theme footer {
+    background: var(--bg-start); /* 固定背景色 */
+    background-image: none; /* 移除纹理 */
+    color: var(--primary-text); /* 确保文字可见 */
+    border: 1px solid var(--border-color); /* 可选：添加边框 */
   }
 
   /* Login/Register Modal */
@@ -1758,7 +1777,7 @@ function setTheme(theme) {
     // 保存主题选择到 localStorage
     localStorage.setItem('theme', theme);
     
-    // 动态更新 body 的 background 样式以匹配 CSS 变量
+    // 动态更新 body 和 footer 的 background 样式以匹配 CSS 变量
     // 这样可以确保背景渐变和纹理也能随主题切换
     requestAnimationFrame(() => { // 确保 DOM 已更新
         const computedStyle = getComputedStyle(body);
@@ -1774,6 +1793,18 @@ function setTheme(theme) {
         
         body.style.background = `linear-gradient(180deg, ${bgStart}, ${bgEnd})`;
         body.style.backgroundImage = bgImage;
+
+        // 更新 footer 的背景样式以匹配主题
+        const footer = document.querySelector('footer');
+        if (footer) {
+             footer.style.background = `linear-gradient(180deg, ${bgStart}, ${bgEnd})`;
+             footer.style.backgroundImage = bgImage;
+             // 高对比度主题特殊处理
+             if (theme === 'high-contrast') {
+                 footer.style.background = bgStart;
+                 footer.style.backgroundImage = 'none';
+             }
+        }
     });
 }
 
@@ -1796,5 +1827,35 @@ document.addEventListener('DOMContentLoaded', function() {
     g('search').addEventListener('input', applyFilters);
     g('filter').addEventListener('change', applyFilters);
     g('sort').addEventListener('change', applyFilters);
+    
+    // 绑定按钮事件
+    g('downloadAllBtn').addEventListener('click', downloadAll);
+    g('refreshBtn').addEventListener('click', () => {
+        render(FILES);
+        applyFilters();
+    });
+    g('readmeBtn').addEventListener('click', () => {
+        alert('说明：\\n这是一个静态页面的 Python 文件分发站。\\n你可以预览、下载脚本或将其打包成 ZIP。\\n\\n将此 HTML 文件放在静态服务器上即可使用。\\n如果需要分发真实文件，请修改 FILES 数组中的 url 字段。');
+    });
+    
+    // 认证相关事件
+    g('loginBtn').addEventListener('click', () => showAuthModal(true));
+    g('registerBtn').addEventListener('click', () => showAuthModal(false));
+    g('logoutBtn').addEventListener('click', logout);
+    g('authClose').addEventListener('click', hideAuthModal);
+    window.addEventListener('click', function(event) {
+        const modal = g('authModal');
+        if (event.target == modal) {
+            hideAuthModal();
+        }
+    });
+
+    // 初始更新认证UI
+    updateAuthUI();
+});
+</script>
+</body>
+</html>
+
 
 
