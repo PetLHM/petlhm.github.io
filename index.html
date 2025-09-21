@@ -8,7 +8,8 @@
 <!-- JSZip for real zip packaging -->
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <style>
-  :root{
+  /* 默认深色主题变量 */
+  :root {
     /* 增强科技感的深色配色方案 */
     --bg-start: #0f172a; /* 深蓝 */
     --bg-end: #020617;   /* 更深的蓝黑 */
@@ -39,6 +40,44 @@
     --spacing-lg: 32px;
   }
 
+  /* 浅色主题 */
+  .light-theme {
+    --bg-start: #f8fafc;
+    --bg-end: #e2e8f0;
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --muted: #64748b;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --primary-text: #0f172a;
+    --secondary-text: #334155;
+    --border-color: rgba(100, 116, 139, 0.2);
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --glass-border: rgba(0, 0, 0, 0.05);
+    --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --backdrop-filter: blur(8px);
+    --gradient-start: #4f46e5;
+    --gradient-end: #06b6d4;
+  }
+
+  /* 高对比度主题 */
+  .high-contrast-theme {
+    --bg-start: #000000;
+    --bg-end: #000000;
+    --card-bg: #000000;
+    --muted: #aaaaaa;
+    --accent: #00ffff;
+    --accent-hover: #00cccc;
+    --primary-text: #ffffff;
+    --secondary-text: #dddddd;
+    --border-color: #ffffff;
+    --shadow-color: rgba(255, 255, 255, 0.2);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --glass-shadow: 0 0 0 2px white;
+    --backdrop-filter: none;
+    --gradient-start: #00ffff;
+    --gradient-end: #00ffff;
+  }
+
   * {
     box-sizing: border-box;
   }
@@ -46,7 +85,8 @@
   body {
     margin: 0;
     font-family: var(--ui);
-    background: linear-gradient(180deg, var(--bg-start), var(--bg-end));
+    /* 初始背景，将由JS根据主题动态设置 */
+    background: linear-gradient(180deg, var(--bg-start), var(--bg-end)); 
     color: var(--primary-text);
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
@@ -54,6 +94,12 @@
     /* 添加微妙的背景纹理或渐变增强科技感 */
     background-image: radial-gradient(circle at 10% 20%, rgba(96, 165, 250, 0.05) 0%, transparent 20%),
                       radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 20%);
+    transition: background-color 0.3s ease, background-image 0.3s ease; /* 平滑过渡 */
+  }
+
+  /* 高对比度主题下的特殊处理 */
+  .high-contrast-theme body {
+    background-image: none;
   }
 
   .container {
@@ -81,6 +127,11 @@
     /* 添加发光边框 */
     box-shadow: 0 0 15px rgba(96, 165, 250, 0.2), var(--glass-shadow);
   }
+  
+  .high-contrast-theme header {
+    box-shadow: 0 0 0 2px white;
+  }
+  
   header::before {
     content: "";
     position: absolute;
@@ -179,6 +230,12 @@
     overflow: hidden;
     white-space: nowrap;
   }
+  
+  .high-contrast-theme .btn {
+    box-shadow: 0 0 0 1px white;
+    backdrop-filter: none;
+  }
+  
   .btn:hover {
     background: rgba(51, 65, 85, 0.75);
     transform: translateY(-2px);
@@ -186,11 +243,21 @@
       0 6px 15px rgba(0, 0, 0, 0.2),
       inset 0 0 0 1px var(--border-color);
   }
+  
+  .high-contrast-theme .btn:hover {
+    background: #333;
+    box-shadow: 0 0 0 2px white;
+  }
+  
   .btn:active {
     transform: translateY(0);
     box-shadow: 
       0 1px 4px var(--shadow-color),
       inset 0 0 0 1px var(--border-color);
+  }
+  
+  .high-contrast-theme .btn:active {
+    box-shadow: 0 0 0 1px white;
   }
 
   .btn.primary {
@@ -202,6 +269,13 @@
       0 4px 15px rgba(79, 70, 229, 0.4),
       inset 0 1px 1px rgba(255, 255, 255, 0.2);
   }
+  
+  .high-contrast-theme .btn.primary {
+    background: var(--accent);
+    color: #000;
+    box-shadow: 0 0 0 1px black;
+  }
+  
   .btn.primary:hover {
     background: linear-gradient(90deg, #4338ca, #0891b2); /* 稍微深一点的渐变 */
     box-shadow: 
@@ -209,6 +283,12 @@
       inset 0 1px 1px rgba(255, 255, 255, 0.2);
     transform: translateY(-2px) scale(1.02);
   }
+  
+  .high-contrast-theme .btn.primary:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 0 0 2px black;
+  }
+  
   .btn.primary:active {
     background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
     box-shadow: 
@@ -216,15 +296,31 @@
       inset 0 1px 2px rgba(0, 0, 0, 0.1);
     transform: translateY(0) scale(0.98);
   }
+  
+  .high-contrast-theme .btn.primary:active {
+    background: var(--accent);
+    box-shadow: 0 0 0 1px black;
+  }
 
   .btn.ghost {
     background: transparent;
     box-shadow: inset 0 0 0 1px var(--border-color);
     color: var(--accent);
   }
+  
+  .high-contrast-theme .btn.ghost {
+    box-shadow: 0 0 0 1px white;
+    color: var(--accent);
+  }
+  
   .btn.ghost:hover {
     background: rgba(96, 165, 250, 0.1);
     box-shadow: inset 0 0 0 1px var(--accent);
+  }
+  
+  .high-contrast-theme .btn.ghost:hover {
+    background: rgba(0, 255, 255, 0.1);
+    box-shadow: 0 0 0 2px white;
   }
 
   /* Controls */
@@ -241,6 +337,10 @@
     border: 1px solid var(--border-color);
     box-shadow: var(--glass-shadow);
     width: 100%;
+  }
+  
+  .high-contrast-theme .controls {
+    box-shadow: 0 0 0 2px white;
   }
 
   .search {
@@ -263,11 +363,26 @@
     box-shadow: inset 0 1px 3px var(--shadow-color);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
+  
+  .light-theme input[type="search"] {
+    background: rgba(255, 255, 255, 0.7);
+  }
+  
+  .high-contrast-theme input[type="search"] {
+    background: #000;
+    box-shadow: 0 0 0 1px white;
+  }
+  
   input[type="search"]:focus {
     outline: none;
     border-color: var(--accent);
     box-shadow: inset 0 1px 3px var(--shadow-color), 0 0 0 2px rgba(96, 165, 250, 0.3);
   }
+  
+  .high-contrast-theme input[type="search"]:focus {
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+  
   /* 占位符颜色 */
   input[type="search"]::placeholder {
     color: var(--muted);
@@ -291,10 +406,24 @@
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     min-width: 120px;
   }
+  
+  .light-theme select {
+    background: rgba(255, 255, 255, 0.7);
+  }
+  
+  .high-contrast-theme select {
+    background: #000;
+    box-shadow: 0 0 0 1px white;
+  }
+  
   select:focus {
     outline: none;
     border-color: var(--accent);
     box-shadow: inset 0 1px 3px var(--shadow-color), 0 0 0 2px rgba(96, 165, 250, 0.3);
+  }
+  
+  .high-contrast-theme select:focus {
+    box-shadow: 0 0 0 2px var(--accent);
   }
 
   /* Grid */
@@ -322,6 +451,11 @@
     width: 100%;
     /* 添加悬停时的发光效果 */
   }
+  
+  .high-contrast-theme .card {
+    box-shadow: 0 0 0 2px white;
+  }
+  
   .card:hover {
     transform: translateY(-3px);
     box-shadow: 
@@ -330,6 +464,12 @@
       0 0 0 1px var(--border-color);
     border-color: rgba(96, 165, 250, 0.3);
   }
+  
+  .high-contrast-theme .card:hover {
+    box-shadow: 0 0 0 2px white;
+    border-color: white;
+  }
+  
   .card::before {
     content: "";
     position: absolute;
@@ -357,6 +497,11 @@
     border: 1px solid var(--border-color);
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
     flex-shrink: 0;
+  }
+  
+  .high-contrast-theme .tag {
+    background: transparent;
+    box-shadow: 0 0 0 1px white;
   }
 
   .name {
@@ -393,6 +538,16 @@
     color: var(--muted);
     border: 1px solid var(--border-color);
     white-space: nowrap;
+  }
+  
+  .light-theme .pill {
+    background: rgba(255, 255, 255, 0.7);
+  }
+  
+  .high-contrast-theme .pill {
+    background: #000;
+    border: 1px solid white;
+    color: white;
   }
 
   .small {
@@ -441,6 +596,16 @@
     max-height: 88vh;
     border: 1px solid var(--border-color);
   }
+  
+  .light-theme .modal {
+    background: rgba(255, 255, 255, 0.9);
+  }
+  
+  .high-contrast-theme .modal {
+    background: #000;
+    box-shadow: 0 0 0 2px white;
+    border: 1px solid white;
+  }
 
   .modal .meta {
     display: flex;
@@ -464,8 +629,17 @@
     transition: background-color 0.2s ease;
     font-size: 14px;
   }
+  
+  .high-contrast-theme .close {
+    border: 1px solid white;
+  }
+  
   .close:hover {
     background: rgba(51, 65, 85, 0.5);
+  }
+  
+  .high-contrast-theme .close:hover {
+    background: #333;
   }
 
   pre {
@@ -480,6 +654,16 @@
     border: 1px solid var(--border-color);
     box-shadow: inset 0 2px 4px var(--shadow-color);
     color: var(--primary-text);
+  }
+  
+  .light-theme pre {
+    background: rgba(241, 245, 249, 0.7);
+  }
+  
+  .high-contrast-theme pre {
+    background: #000;
+    border: 1px solid white;
+    box-shadow: 0 0 0 1px white;
   }
 
   /* Toast */
@@ -497,6 +681,16 @@
     font-size: 15px;
     backdrop-filter: var(--backdrop-filter);
     border: 1px solid var(--border-color);
+  }
+  
+  .light-theme .copy-toast {
+    background: rgba(255, 255, 255, 0.95);
+  }
+  
+  .high-contrast-theme .copy-toast {
+    background: #000;
+    box-shadow: 0 0 0 2px white;
+    border: 1px solid white;
   }
 
   footer {
@@ -533,6 +727,11 @@
     max-width: 400px;
     backdrop-filter: var(--backdrop-filter);
   }
+  
+  .high-contrast-theme .auth-modal-content {
+    box-shadow: 0 0 0 2px white;
+    border: 1px solid white;
+  }
 
   .auth-modal-content h2 {
     margin-top: 0;
@@ -555,11 +754,24 @@
     font-family: var(--ui);
     box-shadow: inset 0 1px 3px var(--shadow-color);
   }
+  
+  .light-theme .auth-form input {
+    background: rgba(255, 255, 255, 0.7);
+  }
+  
+  .high-contrast-theme .auth-form input {
+    background: #000;
+    box-shadow: 0 0 0 1px white;
+  }
 
   .auth-form input:focus {
     outline: none;
     border-color: var(--accent);
     box-shadow: inset 0 1px 3px var(--shadow-color), 0 0 0 2px rgba(96, 165, 250, 0.3);
+  }
+  
+  .high-contrast-theme .auth-form input:focus {
+    box-shadow: 0 0 0 2px var(--accent);
   }
 
   .auth-form button {
@@ -574,15 +786,31 @@
     transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
     box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
   }
+  
+  .high-contrast-theme .auth-form button {
+    background: var(--accent);
+    color: #000;
+    box-shadow: 0 0 0 1px black;
+  }
 
   .auth-form button:hover {
     background: linear-gradient(90deg, #4338ca, #0891b2);
     box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4);
     transform: translateY(-2px);
   }
+  
+  .high-contrast-theme .auth-form button:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 0 0 2px black;
+  }
+  
   .auth-form button:active {
     transform: translateY(0);
     box-shadow: 0 2px 5px rgba(79, 70, 229, 0.2);
+  }
+  
+  .high-contrast-theme .auth-form button:active {
+    box-shadow: 0 0 0 1px black;
   }
 
 
@@ -597,6 +825,10 @@
     text-decoration: none;
     cursor: pointer;
     font-weight: 600;
+  }
+  
+  .high-contrast-theme .auth-toggle a {
+    color: var(--accent);
   }
 
   .auth-toggle a:hover {
@@ -623,10 +855,57 @@
     transition: background 0.2s ease;
     color: var(--primary-text);
   }
+  
+  .high-contrast-theme .logout-btn {
+    background: #000;
+    border: 1px solid white;
+  }
 
   .logout-btn:hover {
     background: rgba(239, 68, 68, 0.1);
     border-color: rgba(239, 68, 68, 0.5);
+  }
+  
+  .high-contrast-theme .logout-btn:hover {
+    background: #333;
+    border-color: white;
+  }
+  
+  /* 主题切换按钮样式 */
+  .theme-selector {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+  
+  .theme-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .theme-btn:hover {
+    transform: scale(1.1);
+  }
+  
+  .theme-btn.active {
+    border-color: var(--primary-text);
+    transform: scale(1.1);
+  }
+  
+  .theme-btn.light {
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  }
+  
+  .theme-btn.dark {
+    background: linear-gradient(135deg, #0f172a, #020617);
+  }
+  
+  .theme-btn.high-contrast {
+    background: linear-gradient(135deg, #000000, #ffffff);
   }
 
 </style>
@@ -640,6 +919,13 @@
         <p>融合 Windows7 手感、Apple 质感与开发者友好，单文件静态页面分发脚本/安装包。</p>
       </div>
       <div class="tools" role="toolbar" aria-label="site tools">
+        <!-- 主题切换器 -->
+        <div class="theme-selector">
+          <div class="theme-btn light" data-theme="light" title="浅色主题"></div>
+          <div class="theme-btn dark active" data-theme="dark" title="深色主题"></div>
+          <div class="theme-btn high-contrast" data-theme="high-contrast" title="高对比度"></div>
+        </div>
+        
         <button class="btn primary" id="downloadAllBtn">下载全部 (zip)</button>
         <button class="btn" id="refreshBtn">刷新列表</button>
         <button class="btn ghost" id="readmeBtn">说明</button>
@@ -1445,45 +1731,70 @@ function updateAuthUI() {
     }
 }
 
-// 页面加载时检查登录状态
-document.addEventListener('DOMContentLoaded', function() {
-    updateAuthUI();
-});
-
-// 事件绑定
-g('search').addEventListener('keydown', e=>{ if(e.key==='Enter') applyFilters() });
-g('filter').addEventListener('change', applyFilters);
-g('sort').addEventListener('change', applyFilters);
-g('downloadAllBtn').addEventListener('click', downloadAll);
-g('refreshBtn').addEventListener('click', ()=>{ location.reload() });
-g('readmeBtn').addEventListener('click', ()=> {
-  // simple modal readme
-  g('modName').textContent='说明';
-  g('modTitle').textContent='站点说明';
-  g('modContent').textContent = `说明：
-- 点击“下载”会把内置内容另存为文件。
-- 若要分发真实安装包，把对应条目替换为 { url: "https://your.host/path/to/file.exe" }，并把 content 留空或简短说明。
-- 本页面为单文件静态分发模板，可上 GitHub Pages 或任意静态主机部署。`;
-  g('modal').style.display='flex';
-});
-g('loginBtn').addEventListener('click', () => showAuthModal(true));
-g('registerBtn').addEventListener('click', () => showAuthModal(false));
-g('logoutBtn').addEventListener('click', logout);
-g('authClose').addEventListener('click', hideAuthModal);
-// 点击模态框外部关闭
-window.addEventListener('click', function(event) {
-    const modal = g('authModal');
-    if (event.target == modal) {
-        hideAuthModal();
+// ---------------------- 主题切换功能 ----------------------
+function setTheme(theme) {
+    const body = document.body;
+    
+    // 移除所有主题类
+    body.classList.remove('light-theme', 'dark-theme', 'high-contrast-theme');
+    
+    // 添加新主题类
+    if (theme === 'light') {
+        body.classList.add('light-theme');
+    } else if (theme === 'high-contrast') {
+        body.classList.add('high-contrast-theme');
     }
-});
+    // dark theme is default (no class needed or 'dark-theme')
+    else if (theme === 'dark') {
+        body.classList.add('dark-theme'); // Explicitly add for clarity if needed, though default styles apply
+    }
+    
+    // 更新按钮状态
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`.theme-btn[data-theme="${theme}"]`).classList.add('active');
+    
+    // 保存主题选择到 localStorage
+    localStorage.setItem('theme', theme);
+    
+    // 动态更新 body 的 background 样式以匹配 CSS 变量
+    // 这样可以确保背景渐变和纹理也能随主题切换
+    requestAnimationFrame(() => { // 确保 DOM 已更新
+        const computedStyle = getComputedStyle(body);
+        const bgStart = computedStyle.getPropertyValue('--bg-start').trim();
+        const bgEnd = computedStyle.getPropertyValue('--bg-end').trim();
+        
+        // 更新 body 的 background-image 以匹配主题
+        let bgImage = 'none';
+        if (theme !== 'high-contrast') {
+            // 重新应用渐变和纹理
+            bgImage = `radial-gradient(circle at 10% 20%, rgba(96, 165, 250, 0.05) 0%, transparent 20%), radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 20%)`;
+        }
+        
+        body.style.background = `linear-gradient(180deg, ${bgStart}, ${bgEnd})`;
+        body.style.backgroundImage = bgImage;
+    });
+}
 
-// 初始渲染
-document.addEventListener('DOMContentLoaded', applyFilters);
 
-</script>
-</body>
-</html>
+// 页面加载时应用保存的主题
+document.addEventListener('DOMContentLoaded', function() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    setTheme(savedTheme);
+    
+    // 绑定主题切换按钮事件
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const theme = btn.getAttribute('data-theme');
+            setTheme(theme);
+        });
+    });
 
+    // 其他初始化逻辑
+    render(FILES);
+    g('search').addEventListener('input', applyFilters);
+    g('filter').addEventListener('change', applyFilters);
+    g('sort').addEventListener('change', applyFilters);
 
 
