@@ -999,6 +999,45 @@
         justify-content: flex-end;
       }
     }
+    
+    /* Menu Styles */
+    .menu-bar {
+      display: flex;
+      background: var(--card-bg);
+      border-radius: var(--radius-sm);
+      padding: var(--spacing-xs);
+      margin-bottom: var(--spacing-md);
+      box-shadow: var(--glass-shadow);
+      border: 1px solid var(--border-color);
+      flex-wrap: wrap;
+      gap: var(--spacing-xs);
+    }
+    
+    .menu-item {
+      padding: 10px 15px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.2s ease;
+      font-weight: 500;
+      color: var(--primary-text);
+    }
+    
+    .menu-item:hover {
+      background: rgba(96, 165, 250, 0.1);
+    }
+    
+    .menu-item.active {
+      background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+      color: white;
+    }
+    
+    .content-section {
+      display: none;
+    }
+    
+    .content-section.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -1035,34 +1074,53 @@
       </div>
     </header>
 
-    <!-- Directory Controls -->
-    <div class="directory-controls" id="directoryControls" style="display: none;">
-      <div class="directory-path" id="directoryPath">
-        <!-- Path will be populated by JS -->
-      </div>
-      <div class="directory-actions">
-        <!-- 原来的创建目录按钮被移除 -->
-        <button class="btn ghost" id="backToRootBtn">返回根目录</button>
-      </div>
+    <!-- Menu Bar -->
+    <div class="menu-bar">
+      <div class="menu-item active" data-section="files">文件列表</div>
+      <div class="menu-item" data-section="about">关于</div>
     </div>
 
-    <div class="controls">
-      <div class="search">
-        <input type="search" id="search" placeholder="搜索文件名、描述或平台（回车搜索）" />
+    <!-- About Section -->
+    <section id="aboutSection" class="content-section">
+      <div class="card">
+        <h2>关于 Python 分发站</h2>
+        <p>这是一个增强科技感的Python文件分发站，支持目录管理和用户认证。</p>
+        <p>您可以在这里浏览、搜索、下载和预览Python脚本。</p>
+        <p>登录后，您可以创建目录来组织您的文件。</p>
       </div>
-      <select id="filter">
-        <option value="all">全部类型</option>
-        <option value="script">脚本 (.py)</option>
-        <option value="binary">二进制/安装包</option>
-      </select>
-      <select id="sort">
-        <option value="name">按名称</option>
-        <option value="size">按大小</option>
-        <option value="downloads">按下载量</option>
-      </select>
-    </div>
+    </section>
 
-    <main class="grid" id="grid" aria-live="polite"></main>
+    <!-- Files Section -->
+    <section id="filesSection" class="content-section active">
+      <!-- Directory Controls -->
+      <div class="directory-controls" id="directoryControls" style="display: none;">
+        <div class="directory-path" id="directoryPath">
+          <!-- Path will be populated by JS -->
+        </div>
+        <div class="directory-actions">
+          <!-- 原来的创建目录按钮被移除 -->
+          <button class="btn ghost" id="backToRootBtn">返回根目录</button>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="search">
+          <input type="search" id="search" placeholder="搜索文件名、描述或平台（回车搜索）" />
+        </div>
+        <select id="filter">
+          <option value="all">全部类型</option>
+          <option value="script">脚本 (.py)</option>
+          <option value="binary">二进制/安装包</option>
+        </select>
+        <select id="sort">
+          <option value="name">按名称</option>
+          <option value="size">按大小</option>
+          <option value="downloads">按下载量</option>
+        </select>
+      </div>
+
+      <main class="grid" id="grid" aria-live="polite"></main>
+    </section>
 
     <footer>将此文件放到静态主机或 GitHub Pages。若需要真实二进制分发，请替换文件 url 指向实际文件。</footer>
   </div>
@@ -2146,43 +2204,63 @@ g('createDirForm').addEventListener('submit', function(e) {
     // 关闭模态框
     hideCreateDirModal();
     
-    // 刷新文件列表显示
+    // 刷新文件列表
     applyFilters();
 });
 
-// ---------------------- 初始化和事件绑定 ----------------------
+// ---------------------- 页面初始化 ----------------------
 document.addEventListener('DOMContentLoaded', function() {
-    // 恢复主题设置
+    // 初始化主题
     const savedTheme = localStorage.getItem('theme') || 'dark';
     setTheme(savedTheme);
     
     // 绑定主题切换按钮事件
     document.querySelectorAll('.theme-btn').forEach(btn => {
-        btn.addEventListener('click', () => setTheme(btn.dataset.theme));
+        btn.addEventListener('click', () => {
+            const theme = btn.getAttribute('data-theme');
+            setTheme(theme);
+        });
     });
-    
-    // 绑定其他事件
-    g('search').addEventListener('input', applyFilters);
-    g('filter').addEventListener('change', applyFilters);
-    g('sort').addEventListener('change', applyFilters);
+
+    // 绑定其他按钮事件
     g('downloadAllBtn').addEventListener('click', downloadAll);
     g('refreshBtn').addEventListener('click', applyFilters);
     g('readmeBtn').addEventListener('click', () => {
-        alert('这是一个增强科技感的Python文件分发站，支持目录管理和用户认证。');
+        alert('说明：这是一个增强科技感的Python文件分发站，支持目录管理和用户认证。\n您可以在这里浏览、搜索、下载和预览Python脚本。\n登录后，您可以创建目录来组织您的文件。');
     });
     g('loginBtn').addEventListener('click', () => showAuthModal(true));
     g('registerBtn').addEventListener('click', () => showAuthModal(false));
     g('logoutBtn').addEventListener('click', logout);
     g('authClose').addEventListener('click', hideAuthModal);
-    g('createDirBtnTop').addEventListener('click', showCreateDirModal);
+    g('createDirBtnTop').addEventListener('click', showCreateDirModal); // 绑定顶部按钮
     g('createDirClose').addEventListener('click', hideCreateDirModal);
     g('backToRootBtn').addEventListener('click', backToRoot);
 
-    // 初始化UI状态
+    // 绑定搜索和筛选事件
+    g('search').addEventListener('input', applyFilters);
+    g('search').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') applyFilters();
+    });
+    g('filter').addEventListener('change', applyFilters);
+    g('sort').addEventListener('change', applyFilters);
+
+    // 绑定菜单切换事件
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const section = this.getAttribute('data-section');
+            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            g(`${section}Section`).classList.add('active');
+        });
+    });
+
+    // 初始化UI和文件列表
     updateAuthUI();
     updateDirectoryPath();
     applyFilters();
 });
+
 </script>
 </body>
 </html>
