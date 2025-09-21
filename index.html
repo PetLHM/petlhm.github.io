@@ -3,38 +3,40 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Python 分发站 — 专业下载（优化版）</title>
+<title>Python 分发站 — 专业下载（增强科技感版）</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
 <!-- JSZip for real zip packaging -->
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <style>
   :root{
-    /* 更柔和的配色方案 */
-    --bg-start: #f2f6fa; /* 更浅的蓝灰色 */
-    --bg-end: #e8eff7;   /* 更浅的蓝灰色 */
-    --card-bg: rgba(255, 255, 255, 0.6); /* 更透明的卡片背景 */
-    --muted: #6a7a8a; /* 更柔和的深灰色 */
-    --accent: #3a86ff; /* 稍微偏青的蓝色，更柔和 */
-    --accent-hover: #2a75e0; /* 悬停时稍暗 */
-    --primary-text: #1a2639; /* 更深的文本色 */
-    --secondary-text: #526475; /* 更柔和的次级文本 */
-    --border-color: rgba(0, 0, 0, 0.06); /* 更淡的边框 */
-    --shadow-color: rgba(0, 0, 0, 0.04); /* 更淡的阴影 */
-    --glass-border: rgba(255, 255, 255, 0.4); /* 更淡的玻璃高光 */
-    --glass-shadow: 0 8px 24px 0 rgba(31, 38, 135, 0.08); /* 更柔和的玻璃阴影 */
-    --backdrop-filter: blur(10px); /* 稍微减弱模糊 */
+    /* 增强科技感的深色配色方案 */
+    --bg-start: #0f172a; /* 深蓝 */
+    --bg-end: #020617;   /* 更深的蓝黑 */
+    --card-bg: rgba(30, 41, 59, 0.6); /* 深蓝灰卡片背景，带透明度 */
+    --muted: #94a3b8; /* 柔和的灰蓝 */
+    --accent: #60a5fa; /* 明亮的蓝色作为主色 */
+    --accent-hover: #3b82f6; /* 悬停时更深的蓝色 */
+    --primary-text: #f1f5f9; /* 几乎白色的文字 */
+    --secondary-text: #cbd5e1; /* 次级文字，稍暗 */
+    --border-color: rgba(148, 163, 184, 0.1); /* 柔和的边框 */
+    --shadow-color: rgba(0, 0, 0, 0.3); /* 更深的阴影 */
+    --glass-border: rgba(255, 255, 255, 0.05); /* 极淡的玻璃高光 */
+    --glass-shadow: 0 10px 25px 0 rgba(0, 0, 0, 0.5); /* 更深的玻璃阴影 */
+    --backdrop-filter: blur(12px); /* 稍微加强模糊 */
+    --gradient-start: #4f46e5; /* 紫色 */
+    --gradient-end: #06b6d4; /* 青色 */
 
     /* Typography */
     --mono:'Roboto Mono', monospace;
     --ui:'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 
     /* Spacing & Sizing */
-    --radius: 18px; /* 稍微圆润一点 */
-    --radius-sm: 12px;
+    --radius: 16px;
+    --radius-sm: 10px;
     --spacing-xs: 6px;
     --spacing-sm: 12px;
     --spacing-md: 20px;
-    --spacing-lg: 24px;
+    --spacing-lg: 32px;
   }
 
   * {
@@ -49,18 +51,20 @@
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
     padding: var(--spacing-md);
+    /* 添加微妙的背景纹理或渐变增强科技感 */
+    background-image: radial-gradient(circle at 10% 20%, rgba(96, 165, 250, 0.05) 0%, transparent 20%),
+                      radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 20%);
   }
 
   .container {
-    /* 修改：使用更大宽度并设置最小宽度，更好地利用屏幕空间 */
     width: 100%;
     min-width: 320px;
-    max-width: 1400px; /* 增加最大宽度 */
+    max-width: 1400px;
     margin: var(--spacing-lg) auto;
     padding: var(--spacing-md);
   }
 
-  /* Header with Glass Effect */
+  /* Header with Enhanced Glass Effect and Glow */
   header {
     display: flex;
     align-items: center;
@@ -73,8 +77,9 @@
     box-shadow: var(--glass-shadow);
     position: relative;
     overflow: hidden;
-    /* 新增：确保header拉伸填充容器 */
     width: 100%;
+    /* 添加发光边框 */
+    box-shadow: 0 0 15px rgba(96, 165, 250, 0.2), var(--glass-shadow);
   }
   header::before {
     content: "";
@@ -91,7 +96,8 @@
     width: 56px;
     height: 56px;
     border-radius: calc(var(--radius) - 2px);
-    background: linear-gradient(135deg, var(--accent), #5fa2ff); /* 更柔和的渐变 */
+    /* 使用更酷的渐变和发光效果 */
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -100,42 +106,37 @@
     font-size: 20px;
     box-shadow: 
       inset 0 -8px 18px rgba(255, 255, 255, 0.15),
-      0 4px 12px rgba(0, 0, 0, 0.05);
-    flex-shrink: 0; /* 防止logo被压缩 */
+      0 0 20px rgba(96, 165, 250, 0.5); /* 发光 */
+    flex-shrink: 0;
   }
 
   .title {
-    /* 新增：让标题区域占据剩余空间 */
     flex-grow: 1;
-    min-width: 0; /* 防止内部文本溢出 */
+    min-width: 0;
   }
 
   .title h1 {
     margin: 0;
-    font-size: 20px; /* 稍大 */
+    font-size: 20px;
     font-weight: 700;
     color: var(--primary-text);
-    /* 新增：处理长标题换行 */
     word-break: break-word;
   }
 
   .title p {
     margin: var(--spacing-xs) 0 0;
     color: var(--secondary-text);
-    font-size: 14px; /* 稍大 */
+    font-size: 14px;
     line-height: 1.5;
-    /* 新增：处理长描述换行 */
     word-break: break-word;
   }
 
   .tools {
-    /* 修改：使用flex布局并允许换行 */
     display: flex;
     gap: var(--spacing-sm);
     align-items: center;
     flex-wrap: wrap;
-    justify-content: flex-end; /* 靠右对齐 */
-    /* 新增：设置最小宽度以保持按钮可读性 */
+    justify-content: flex-end;
     min-width: 200px;
   }
 
@@ -149,41 +150,40 @@
         margin-left: 0;
         justify-content: center;
         margin-top: var(--spacing-sm);
-        width: 100%; /* 在小屏幕上占满宽度 */
+        width: 100%;
     }
     .title p {
         font-size: 13px;
     }
   }
 
-  /* iOS-Style Buttons (Glass + Subtle Shadow) */
+  /* Enhanced Buttons with Glow and Gradient */
   .btn {
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-sm);
-    padding: 10px 18px; /* 稍大 */
+    padding: 10px 18px;
     border-radius: 100px;
     border: none;
     background: var(--card-bg);
     color: var(--primary-text);
     font-weight: 600;
-    font-size: 15px; /* 稍大 */
+    font-size: 15px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
     box-shadow: 
       0 2px 6px var(--shadow-color),
       inset 0 0 0 1px var(--border-color);
     backdrop-filter: var(--backdrop-filter);
     position: relative;
     overflow: hidden;
-    /* 新增：防止按钮在小屏幕上过窄 */
     white-space: nowrap;
   }
   .btn:hover {
-    background: rgba(255, 255, 255, 0.75);
-    transform: translateY(-1px);
+    background: rgba(51, 65, 85, 0.75);
+    transform: translateY(-2px);
     box-shadow: 
-      0 4px 10px rgba(0, 0, 0, 0.08),
+      0 6px 15px rgba(0, 0, 0, 0.2),
       inset 0 0 0 1px var(--border-color);
   }
   .btn:active {
@@ -194,37 +194,43 @@
   }
 
   .btn.primary {
-    background: linear-gradient(180deg, var(--accent), var(--accent-hover));
+    /* 使用更吸引人的渐变 */
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
     color: #fff;
+    /* 添加发光效果 */
     box-shadow: 
-      0 4px 12px rgba(58, 134, 255, 0.2),
+      0 4px 15px rgba(79, 70, 229, 0.4),
       inset 0 1px 1px rgba(255, 255, 255, 0.2);
   }
   .btn.primary:hover {
-    background: linear-gradient(180deg, #4a95ff, #2d7ce6);
+    background: linear-gradient(90deg, #4338ca, #0891b2); /* 稍微深一点的渐变 */
     box-shadow: 
-      0 6px 16px rgba(58, 134, 255, 0.25),
+      0 6px 20px rgba(79, 70, 229, 0.6),
       inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px) scale(1.02);
   }
   .btn.primary:active {
-    background: linear-gradient(180deg, var(--accent-hover), var(--accent));
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
     box-shadow: 
-      0 2px 6px rgba(58, 134, 255, 0.15),
+      0 2px 8px rgba(79, 70, 229, 0.3),
       inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    transform: translateY(0) scale(0.98);
   }
 
   .btn.ghost {
     background: transparent;
     box-shadow: inset 0 0 0 1px var(--border-color);
+    color: var(--accent);
   }
   .btn.ghost:hover {
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(96, 165, 250, 0.1);
+    box-shadow: inset 0 0 0 1px var(--accent);
   }
 
   /* Controls */
   .controls {
     display: flex;
-    flex-wrap: wrap; /* 允许控件换行 */
+    flex-wrap: wrap;
     gap: var(--spacing-sm);
     align-items: center;
     margin-top: var(--spacing-md);
@@ -234,14 +240,12 @@
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     box-shadow: var(--glass-shadow);
-    /* 新增：确保controls拉伸填充容器 */
     width: 100%;
   }
 
   .search {
-    /* 修改：在大屏幕上占据更多空间 */
     flex: 1;
-    min-width: 200px; /* 设置最小宽度 */
+    min-width: 200px;
     display: flex;
     gap: var(--spacing-sm);
     align-items: center;
@@ -249,11 +253,12 @@
 
   input[type="search"] {
     width: 100%;
-    padding: 12px 16px; /* 稍大 */
+    padding: 12px 16px;
     border-radius: 100px;
     border: 1px solid var(--border-color);
-    background: rgba(255, 255, 255, 0.5);
-    font-size: 15px; /* 稍大 */
+    background: rgba(15, 23, 42, 0.5); /* 更深的背景 */
+    color: var(--primary-text);
+    font-size: 15px;
     font-family: var(--ui);
     box-shadow: inset 0 1px 3px var(--shadow-color);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -261,44 +266,47 @@
   input[type="search"]:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: inset 0 1px 3px var(--shadow-color), 0 0 0 2px rgba(58, 134, 255, 0.2);
+    box-shadow: inset 0 1px 3px var(--shadow-color), 0 0 0 2px rgba(96, 165, 250, 0.3);
+  }
+  /* 占位符颜色 */
+  input[type="search"]::placeholder {
+    color: var(--muted);
   }
 
+
   select {
-    padding: 11px 14px; /* 稍大 */
+    padding: 11px 14px;
     border-radius: 100px;
     border: 1px solid var(--border-color);
-    background: rgba(255, 255, 255, 0.5);
-    font-size: 15px; /* 稍大 */
+    background: rgba(15, 23, 42, 0.5);
+    color: var(--primary-text);
+    font-size: 15px;
     font-family: var(--ui);
     box-shadow: inset 0 1px 3px var(--shadow-color);
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236a7a8a' d='M6 8.586L2.707 5.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l4-4a1 1 0 00-1.414-1.414L6 8.586z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8.586L2.707 5.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l4-4a1 1 0 00-1.414-1.414L6 8.586z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 14px center;
     padding-right: 36px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    /* 新增：在小屏幕上设置最小宽度 */
     min-width: 120px;
   }
   select:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: inset 0 1px 3px var(--shadow-color), 0 0 0 2px rgba(58, 134, 255, 0.2);
+    box-shadow: inset 0 1px 3px var(--shadow-color), 0 0 0 2px rgba(96, 165, 250, 0.3);
   }
 
   /* Grid */
   .grid {
     display: grid;
-    /* 修改：优化网格列宽，更好地利用空间 */
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* 增加最小宽度 */
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: var(--spacing-md);
     margin-top: var(--spacing-md);
-    /* 新增：确保grid拉伸填充容器 */
     width: 100%;
   }
 
-  /* Card with Glass Effect */
+  /* Card with Enhanced Glass Effect and Glow */
   .card {
     background: var(--card-bg);
     border-radius: var(--radius);
@@ -307,18 +315,20 @@
     box-shadow: var(--glass-shadow);
     display: flex;
     flex-direction: column;
-    min-height: 180px; /* 稍高 */
+    min-height: 180px;
     position: relative;
     overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    /* 新增：确保卡片拉伸填充网格单元 */
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     width: 100%;
+    /* 添加悬停时的发光效果 */
   }
   .card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: 
-      0 12px 40px rgba(0, 0, 0, 0.08),
+      0 15px 35px rgba(0, 0, 0, 0.25),
+      0 0 15px rgba(96, 165, 250, 0.1),
       0 0 0 1px var(--border-color);
+    border-color: rgba(96, 165, 250, 0.3);
   }
   .card::before {
     content: "";
@@ -338,32 +348,30 @@
   }
 
   .tag {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(240, 245, 255, 0.9));
-    padding: 7px 12px; /* 稍大 */
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(240, 245, 255, 0.05));
+    padding: 7px 12px;
     border-radius: 100px;
     font-weight: 700;
     color: var(--accent);
-    font-size: 13px; /* 稍大 */
+    font-size: 13px;
     border: 1px solid var(--border-color);
-    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
     flex-shrink: 0;
   }
 
   .name {
     font-weight: 700;
     margin: 0;
-    font-size: 18px; /* 稍大 */
+    font-size: 18px;
     color: var(--primary-text);
-    /* 新增：处理长文件名换行 */
     word-break: break-word;
   }
 
   .desc {
     color: var(--secondary-text);
-    font-size: 14px; /* 稍大 */
+    font-size: 14px;
     margin: var(--spacing-xs) 0 0;
     line-height: 1.5;
-    /* 新增：处理长描述换行 */
     word-break: break-word;
   }
 
@@ -378,31 +386,29 @@
 
   .pill {
     font-family: var(--mono);
-    background: rgba(243, 244, 246, 0.7);
-    padding: 6px 10px; /* 稍大 */
+    background: rgba(30, 41, 59, 0.7);
+    padding: 6px 10px;
     border-radius: 6px;
-    font-size: 12px; /* 稍大 */
+    font-size: 12px;
     color: var(--muted);
     border: 1px solid var(--border-color);
-    /* 新增：防止标签内容被压缩 */
     white-space: nowrap;
   }
 
   .small {
     color: var(--muted);
-    font-size: 13px; /* 稍大 */
+    font-size: 13px;
   }
 
   .card .actions {
     margin-left: auto;
     display: flex;
     gap: var(--spacing-xs);
-    /* 新增：防止按钮被压缩 */
     flex-shrink: 0;
   }
 
   .count {
-    font-size: 13px; /* 稍大 */
+    font-size: 13px;
     color: var(--muted);
     align-self: center;
   }
@@ -414,30 +420,31 @@
     display: none;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.25); /* 稍暗 */
+    background: rgba(0, 0, 0, 0.4);
     z-index: 1200;
-    backdrop-filter: blur(3px); /* 稍弱 */
+    backdrop-filter: blur(5px);
   }
 
   .modal {
     width: 94%;
-    max-width: 1000px; /* 稍宽 */
+    max-width: 1000px;
     border-radius: var(--radius);
     padding: var(--spacing-md);
-    background: rgba(255, 255, 255, 0.85); /* 稍不透明 */
+    background: rgba(15, 23, 42, 0.9);
     color: var(--primary-text);
     box-shadow: 
-      0 25px 50px -12px rgba(0, 0, 0, 0.2),
+      0 25px 50px -12px rgba(0, 0, 0, 0.5),
       inset 0 0 0 1px var(--border-color);
     backdrop-filter: var(--backdrop-filter);
     display: flex;
     flex-direction: column;
     max-height: 88vh;
+    border: 1px solid var(--border-color);
   }
 
   .modal .meta {
     display: flex;
-    flex-wrap: wrap; /* 允许元信息换行 */
+    flex-wrap: wrap;
     align-items: center;
     gap: var(--spacing-md);
     margin-bottom: var(--spacing-sm);
@@ -449,29 +456,30 @@
     margin-left: auto;
     background: transparent;
     border: 1px solid var(--border-color);
-    padding: 8px 14px; /* 稍大 */
+    padding: 8px 14px;
     border-radius: 6px;
     color: var(--primary-text);
     cursor: pointer;
     font-weight: 500;
     transition: background-color 0.2s ease;
-    font-size: 14px; /* 稍大 */
+    font-size: 14px;
   }
   .close:hover {
-    background: rgba(230, 230, 230, 0.5);
+    background: rgba(51, 65, 85, 0.5);
   }
 
   pre {
-    background: rgba(245, 245, 247, 0.6);
+    background: rgba(15, 23, 42, 0.7);
     padding: var(--spacing-md);
     border-radius: var(--radius-sm);
     overflow: auto;
     font-family: var(--mono);
-    font-size: 14px; /* 稍大 */
+    font-size: 14px;
     flex-grow: 1;
     margin: 0;
     border: 1px solid var(--border-color);
     box-shadow: inset 0 2px 4px var(--shadow-color);
+    color: var(--primary-text);
   }
 
   /* Toast */
@@ -479,25 +487,24 @@
     position: fixed;
     right: var(--spacing-lg);
     bottom: var(--spacing-lg);
-    background: rgba(17, 24, 39, 0.85);
-    color: #fff;
-    padding: 12px 18px; /* 稍大 */
-    border-radius: 12px; /* 稍圆 */
-    box-shadow: 0 8px 30px rgba(2, 6, 23, 0.3);
+    background: rgba(15, 23, 42, 0.95);
+    color: var(--accent);
+    padding: 12px 18px;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
     display: none;
     z-index: 1300;
-    font-size: 15px; /* 稍大 */
+    font-size: 15px;
     backdrop-filter: var(--backdrop-filter);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
   }
 
   footer {
     margin-top: var(--spacing-lg);
     text-align: center;
     color: var(--muted);
-    font-size: 14px; /* 稍大 */
+    font-size: 14px;
     padding: var(--spacing-sm);
-    /* 新增：确保footer拉伸填充容器 */
     width: 100%;
   }
 
@@ -511,7 +518,7 @@
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgba(0,0,0,0.6);
     backdrop-filter: blur(5px);
   }
 
@@ -542,7 +549,8 @@
     padding: 12px;
     border-radius: var(--radius-sm);
     border: 1px solid var(--border-color);
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(15, 23, 42, 0.5);
+    color: var(--primary-text);
     font-size: 15px;
     font-family: var(--ui);
     box-shadow: inset 0 1px 3px var(--shadow-color);
@@ -551,24 +559,32 @@
   .auth-form input:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: inset 0 1px 3px var(--shadow-color), 0 0 0 2px rgba(58, 134, 255, 0.2);
+    box-shadow: inset 0 1px 3px var(--shadow-color), 0 0 0 2px rgba(96, 165, 250, 0.3);
   }
 
   .auth-form button {
     padding: 12px;
     border: none;
     border-radius: var(--radius-sm);
-    background: linear-gradient(180deg, var(--accent), var(--accent-hover));
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
     color: white;
     font-weight: 600;
     font-size: 16px;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
   }
 
   .auth-form button:hover {
-    background: linear-gradient(180deg, #4a95ff, #2d7ce6);
+    background: linear-gradient(90deg, #4338ca, #0891b2);
+    box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4);
+    transform: translateY(-2px);
   }
+  .auth-form button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(79, 70, 229, 0.2);
+  }
+
 
   .auth-toggle {
     text-align: center;
@@ -580,6 +596,7 @@
     color: var(--accent);
     text-decoration: none;
     cursor: pointer;
+    font-weight: 600;
   }
 
   .auth-toggle a:hover {
@@ -598,16 +615,18 @@
 
   .logout-btn {
     padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-color);
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
     transition: background 0.2s ease;
+    color: var(--primary-text);
   }
 
   .logout-btn:hover {
-    background: rgba(230, 230, 230, 0.5);
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.5);
   }
 
 </style>
@@ -684,7 +703,7 @@
       <form class="auth-form" id="authForm">
         <input type="text" id="authUsername" placeholder="用户名" required>
         <input type="password" id="authPassword" placeholder="密码" required>
-        <div id="authMessage" style="color: red; font-size: 14px; min-height: 20px;"></div>
+        <div id="authMessage" style="color: #f87171; font-size: 14px; min-height: 20px;"></div>
         <button type="submit" id="authSubmitBtn">登录</button>
       </form>
       <div class="auth-toggle">
@@ -1394,7 +1413,7 @@ g('authForm').addEventListener('submit', function(e) {
             // 注册新用户
             users[username] = password;
             localStorage.setItem(USERS_KEY, JSON.stringify(users));
-            messageEl.style.color = 'green';
+            messageEl.style.color = '#34d399'; // 绿色成功消息
             messageEl.textContent = '注册成功，请登录';
             // 自动切换到登录
             setTimeout(() => showAuthModal(true), 1500);
@@ -1432,19 +1451,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // 事件绑定
-g('loginBtn').addEventListener('click', () => showAuthModal(true));
-g('registerBtn').addEventListener('click', () => showAuthModal(false));
-g('logoutBtn').addEventListener('click', logout);
-g('authClose').addEventListener('click', hideAuthModal);
-// 点击模态框外部关闭
-window.addEventListener('click', function(event) {
-    const modal = g('authModal');
-    if (event.target == modal) {
-        hideAuthModal();
-    }
-});
-
-/* ---------------------- 事件绑定 ---------------------- */
 g('search').addEventListener('keydown', e=>{ if(e.key==='Enter') applyFilters() });
 g('filter').addEventListener('change', applyFilters);
 g('sort').addEventListener('change', applyFilters);
@@ -1459,18 +1465,21 @@ g('readmeBtn').addEventListener('click', ()=> {
 - 若要分发真实安装包，把对应条目替换为 { url: "https://your.host/path/to/file.exe" }，并把 content 留空或简短说明。
 - 本页面为单文件静态分发模板，可上 GitHub Pages 或任意静态主机部署。`;
   g('modal').style.display='flex';
-  g('modDownload').onclick = ()=>{}; // noop
-  g('modCopy').onclick = ()=>{ navigator.clipboard.writeText(g('modContent').textContent).then(()=>showToast()) };
+});
+g('loginBtn').addEventListener('click', () => showAuthModal(true));
+g('registerBtn').addEventListener('click', () => showAuthModal(false));
+g('logoutBtn').addEventListener('click', logout);
+g('authClose').addEventListener('click', hideAuthModal);
+// 点击模态框外部关闭
+window.addEventListener('click', function(event) {
+    const modal = g('authModal');
+    if (event.target == modal) {
+        hideAuthModal();
+    }
 });
 
-/* keyboard ESC close modal */
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') g('modal').style.display='none' });
-
-/* ---------------------- 初始化 ---------------------- */
-applyFilters();
-
-/* compute and attach SHA1 asynchronously and show in console for transparency */
-FILES.forEach(f=> sha1Hex(f.content).then(h=> console.debug(`${f.name} SHA1: ${h}`)).catch(()=>{}));
+// 初始渲染
+document.addEventListener('DOMContentLoaded', applyFilters);
 
 </script>
 </body>
