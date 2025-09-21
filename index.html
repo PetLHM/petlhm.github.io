@@ -92,7 +92,7 @@
     color: var(--primary-text);
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
-    padding: var(--spacing-md);
+    padding: var(--spacing-md); /* 保留 body 的 padding 以防止内容贴边 */
     /* 添加微妙的背景纹理或渐变增强科技感 */
     background-image: radial-gradient(circle at 10% 20%, rgba(96, 165, 250, 0.05) 0%, transparent 20%),
                       radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 20%);
@@ -104,20 +104,23 @@
     background-image: none;
   }
 
+  /* --- 修改点1: 调整 .container 样式 --- */
   .container {
     width: 100%;
     min-width: 320px;
-    max-width: 1400px;
-    margin: var(--spacing-lg) auto;
-    padding: var(--spacing-md);
+    /* 移除 max-width 和 margin，使其内容可以延伸 */
+    /* max-width: 1400px; */
+    /* margin: var(--spacing-lg) auto; */
+    padding: 0; /* 移除内部 padding */
   }
 
+  /* --- 修改点2: 调整 header 样式 --- */
   /* Header with Enhanced Glass Effect and Glow */
   header {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
-    padding: var(--spacing-md);
+    /* 减小左右 padding */
+    padding: var(--spacing-md) var(--spacing-sm); 
     border-radius: var(--radius);
     backdrop-filter: var(--backdrop-filter);
     background: var(--card-bg);
@@ -128,6 +131,9 @@
     width: 100%;
     /* 添加发光边框 */
     box-shadow: 0 0 15px rgba(96, 165, 250, 0.2), var(--glass-shadow);
+    /* --- 修改点3: 使用 flex-wrap 和调整 gap --- */
+    flex-wrap: wrap; /* 允许在小屏幕上换行 */
+    gap: var(--spacing-sm) var(--spacing-md); /* 垂直间距小，水平间距可调 */
   }
   
   .high-contrast-theme header {
@@ -165,7 +171,7 @@
 
   .title {
     flex-grow: 1;
-    min-width: 0;
+    min-width: 0; /* 允许标题在空间不足时收缩 */
   }
 
   .title h1 {
@@ -184,13 +190,17 @@
     word-break: break-word;
   }
 
+  /* --- 修改点4: 调整 .tools 样式 --- */
   .tools {
     display: flex;
-    gap: var(--spacing-sm);
+    /* 减小 gap */
+    gap: var(--spacing-xs); 
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* 允许按钮在空间不足时换行 */
     justify-content: flex-end;
     min-width: 200px;
+    /* 移除 margin-left，因为父容器使用了 gap */
+    /* margin-left: auto; */
   }
 
   /* Responsive adjustments for header */
@@ -198,6 +208,7 @@
     header {
         flex-direction: column;
         text-align: center;
+        padding: var(--spacing-md) var(--spacing-xs); /* 进一步减小 padding */
     }
     .tools {
         margin-left: 0;
