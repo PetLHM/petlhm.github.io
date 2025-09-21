@@ -1897,20 +1897,36 @@ function updateDirectoryPath() {
   });
   
   // 显示/隐藏目录控件
-  g('directoryControls').style.display = currentPath.length > 0 ? 'flex' : 'none';
+  const directoryControls = g('directoryControls');
+  if (directoryControls) {
+      directoryControls.style.display = currentPath.length > 0 ? 'flex' : 'none';
+      // --- 关键修改：仅在根目录显示创建目录按钮 ---
+      const createDirBtn = g('createDirBtn');
+      if(createDirBtn) {
+          createDirBtn.style.display = currentPath.length === 0 ? 'inline-flex' : 'none';
+      }
+  }
   
   // 更新站点标题
   const siteTitle = g('siteTitle');
-  if (currentPath.length > 0) {
-    siteTitle.textContent = `Python 分发站 · ${currentPath[currentPath.length - 1]}`;
-  } else {
-    siteTitle.textContent = 'Python 分发站 · 专业下载';
+  if (siteTitle) {
+      if (currentPath.length > 0) {
+        siteTitle.textContent = `Python 分发站 · ${currentPath[currentPath.length - 1]}`;
+      } else {
+        siteTitle.textContent = 'Python 分发站 · 专业下载';
+      }
   }
 }
 
+
 /* helpers */
 function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
-function showToast(){ const t=g('toast'); t.style.display='block'; setTimeout(()=>t.style.display='none',1300) }
+function showToast(message = '已复制到剪贴板'){ 
+    const t=g('toast'); 
+    t.textContent = message;
+    t.style.display='block'; 
+    setTimeout(()=>t.style.display='none',1300) 
+}
 
 /* ---------------------- 用户认证 ---------------------- */
 // 模拟用户数据存储 (在实际应用中，这应该在服务器端)
@@ -2023,12 +2039,12 @@ function updateAuthUI() {
         authButtons.style.display = 'none';
         userInfo.style.display = 'flex';
         usernameDisplay.textContent = currentUser;
-        directoryControls.style.display = 'flex';
+        if (directoryControls) directoryControls.style.display = 'flex';
     } else {
         authButtons.style.display = 'flex';
         userInfo.style.display = 'none';
         usernameDisplay.textContent = '';
-        directoryControls.style.display = 'none';
+        if (directoryControls) directoryControls.style.display = 'none';
     }
     
     // 更新目录路径显示
@@ -2096,6 +2112,18 @@ function setTheme(theme) {
 
 // ---------------------- 目录创建功能 ----------------------
 function showCreateDirModal() {
+    const currentUser = localStorage.getItem(CURRENT_USER_KEY);
+    if (!currentUser) {
+        alert('请先登录');
+        return;
+    }
+    // --- 关键修改：确保只在根目录允许创建目录 ---
+    const currentPath = getCurrentDirectory();
+    if (currentPath.length !== 0) {
+        alert('只能在根目录创建新目录。');
+        return;
+    }
+    
     const modal = g('createDirModal');
     const messageEl = g('createDirMessage');
     
@@ -2146,7 +2174,10 @@ g('createDirForm').addEventListener('submit', function(e) {
     
     // 关闭模态框并刷新列表
     hideCreateDirModal();
+    // --- 关键修改：明确调用 applyFilters 刷新视图 ---
     applyFilters();
+    // --- 可选：显示成功提示 ---
+    showToast('目录创建成功！');
 });
 
 // 页面加载时应用保存的主题
@@ -2196,17 +2227,5 @@ document.addEventListener('DOMContentLoaded', function() {
     g('createDirClose').addEventListener('click', hideCreateDirModal);
     window.addEventListener('click', function(event) {
         const modal = g('createDirModal');
-        if (event.target == modal) {
-            hideCreateDirModal();
-        }
-    });
-
-    // 初始更新认证UI
-    updateAuthUI();
-});
-</script>
-</body>
-</html>
-
 
 
