@@ -1,515 +1,2268 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Python 分发站 · 科技感玻璃版</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Python 分发站 — 专业下载（增强科技感版 - 修复目录）</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <!-- JSZip for real zip packaging -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <style>
-    /* ========== 基础设置 ========== */
+    /* 默认深色主题变量 */
+    :root {
+      /* 增强科技感的深色配色方案 */
+      --bg-start: #0f172a; /* 深蓝 */
+      --bg-end: #020617;   /* 更深的蓝黑 */
+      --card-bg: rgba(30, 41, 59, 0.6); /* 深蓝灰卡片背景，带透明度 */
+      --muted: #94a3b8; /* 柔和的灰蓝 */
+      --accent: #60a5fa; /* 明亮的蓝色作为主色 */
+      --accent-hover: #3b82f6; /* 悬停时更深的蓝色 */
+      --primary-text: #f1f5f9; /* 几乎白色的文字 */
+      --secondary-text: #cbd5e1; /* 次级文字，稍暗 */
+      --border-color: rgba(148, 163, 184, 0.1); /* 柔和的边框 */
+      --shadow-color: rgba(0, 0, 0, 0.3); /* 更深的阴影 */
+      --glass-border: rgba(255, 255, 255, 0.05); /* 极淡的玻璃高光 */
+      --glass-shadow: 0 10px 25px 0 rgba(0, 0, 0, 0.5); /* 更深的玻璃阴影 */
+      --backdrop-filter: blur(12px); /* 稍微加强模糊 */
+      --gradient-start: #4f46e5; /* 紫色 */
+      --gradient-end: #06b6d4; /* 青色 */
+
+      /* Typography */
+      --mono:'Roboto Mono', monospace;
+      --ui:'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+      /* Spacing & Sizing */
+      --radius: 16px;
+      --radius-sm: 10px;
+      --spacing-xs: 6px;
+      --spacing-sm: 12px;
+      --spacing-md: 20px;
+      --spacing-lg: 32px;
+    }
+
+    /* 浅色主题 */
+    .light-theme {
+      --bg-start: #f8fafc;
+      --bg-end: #e2e8f0;
+      --card-bg: rgba(255, 255, 255, 0.8);
+      --muted: #64748b;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --primary-text: #0f172a;
+      --secondary-text: #334155;
+      --border-color: rgba(100, 116, 139, 0.2);
+      --shadow-color: rgba(0, 0, 0, 0.1);
+      --glass-border: rgba(0, 0, 0, 0.05);
+      --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --backdrop-filter: blur(8px);
+      --gradient-start: #4f46e5;
+      --gradient-end: #06b6d4;
+    }
+
+    /* 高对比度主题 */
+    .high-contrast-theme {
+      --bg-start: #000000;
+      --bg-end: #000000;
+      --card-bg: #000000;
+      --muted: #aaaaaa;
+      --accent: #00ffff;
+      --accent-hover: #00cccc;
+      --primary-text: #ffffff;
+      --secondary-text: #dddddd;
+      --border-color: #ffffff;
+      --shadow-color: rgba(255, 255, 255, 0.2);
+      --glass-border: rgba(255, 255, 255, 0.3);
+      --glass-shadow: 0 0 0 2px white;
+      --backdrop-filter: none;
+      --gradient-start: #00ffff;
+      --gradient-end: #00ffff;
+    } 
+
     * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box; /* 让padding和border不撑大盒子 */
+      box-sizing: border-box;
     }
 
     body {
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(135deg, #0f172a, #1e40af); /* 深蓝渐变背景 */
-      color: white;
+      margin: 0;
+      font-family: var(--ui);
+      /* 初始背景，将由JS根据主题动态设置 */
+      background: linear-gradient(180deg, var(--bg-start), var(--bg-end)); 
+      color: var(--primary-text);
+      -webkit-font-smoothing: antialiased;
       min-height: 100vh;
-      padding: 20px;
-      /* 背景加点星光点缀 */
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(96, 165, 250, 0.1) 0%, transparent 20%),
-        radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 20%);
+      padding: var(--spacing-md); /* 保留 body 的 padding 以防止内容贴边 */
+      /* 添加微妙的背景纹理或渐变增强科技感 */
+      background-image: radial-gradient(circle at 10% 20%, rgba(96, 165, 250, 0.05) 0%, transparent 20%),
+                        radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 20%);
+      transition: background-color 0.3s ease, background-image 0.3s ease; /* 平滑过渡 */
     }
 
-    /* ========== 玻璃卡片通用样式 ========== */
-    .glass-card {
-      background: rgba(30, 41, 59, 0.6); /* 半透明白色背景 = 玻璃感 */
-      backdrop-filter: blur(10px); /* 毛玻璃模糊效果！超重要！ */
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.1); /* 白色半透明边框 = 玻璃边缘 */
-      box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.3), /* 投影 */
-        0 0 15px rgba(96, 165, 250, 0.3); /* 蓝色发光 */
-      padding: 20px;
-      margin: 15px 0;
+    /* 高对比度主题下的特殊处理 */
+    .high-contrast-theme body {
+      background-image: none;
     }
 
-    /* 按钮样式 - 也做成玻璃质感 */
-    .glass-btn {
-      background: rgba(59, 130, 246, 0.7); /* 半透明蓝色 */
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 50px; /* 圆角按钮 */
-      color: white;
-      padding: 10px 20px;
-      margin: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); /* 发光 */
-      transition: all 0.3s; /* 平滑过渡 */
+    /* --- 修改点1: 调整 .container 样式 --- */
+    .container {
+      width: 100%;
+      min-width: 320px;
+      /* 移除 max-width 和 margin，使其内容可以延伸 */
+      /* max-width: 1400px; */
+      /* margin: var(--spacing-lg) auto; */
+      padding: 0; /* 移除内部 padding */
     }
 
-    .glass-btn:hover {
-      background: rgba(59, 130, 246, 0.9); /* 悬停更亮 */
-      transform: translateY(-2px); /* 轻微上浮 */
-      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
-    }
-
-    /* 次要按钮 */
-    .glass-btn-secondary {
-      background: rgba(75, 85, 99, 0.6);
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: white;
-    }
-
-    .glass-btn-secondary:hover {
-      background: rgba(107, 114, 128, 0.8);
-    }
-
-    /* ========== 头部栏 - 玻璃质感 ========== */
-    .header {
+    /* --- 修改点2: 调整 header 样式 --- */
+    /* Header with Enhanced Glass Effect and Glow */
+    header {
       display: flex;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 15px;
-      padding: 20px;
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 15px rgba(96, 165, 250, 0.3);
-      margin-bottom: 20px;
+      /* 减小左右 padding */
+      padding: var(--spacing-md) var(--spacing-sm); 
+      border-radius: var(--radius);
+      backdrop-filter: var(--backdrop-filter);
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--glass-shadow);
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      /* 添加发光边框 */
+      box-shadow: 0 0 15px rgba(96, 165, 250, 0.2), var(--glass-shadow);
+      /* --- 修改点3: 使用 flex-wrap 和调整 gap --- */
+      flex-wrap: wrap; /* 允许在小屏幕上换行 */
+      gap: var(--spacing-sm) var(--spacing-md); /* 垂直间距小，水平间距可调 */
     }
+    
+    .high-contrast-theme header {
+      box-shadow: 0 0 0 2px white;
+    }
+    
+    header::before {
+      content: "";
+      position: absolute;
+      top: 0; right: 0; bottom: 0; left: 0;
+      border-radius: var(--radius);
+      pointer-events: none;
+      border: 1px solid var(--glass-border);
+      z-index: 1;
+    }
+    header > * { position: relative; z-index: 2; }
 
     .logo {
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, #60a5fa, #06b6d4);
-      border-radius: 16px;
+      width: 56px;
+      height: 56px;
+      border-radius: calc(var(--radius) - 2px);
+      /* 使用更酷的渐变和发光效果 */
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
-      font-size: 24px;
-      color: white;
-      box-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+      color: #fff;
+      font-weight: 800;
+      font-size: 20px;
+      box-shadow: 
+        inset 0 -8px 18px rgba(255, 255, 255, 0.15),
+        0 0 20px rgba(96, 165, 250, 0.5); /* 发光 */
+      flex-shrink: 0;
     }
 
-    .header-title h1 {
+    .title {
+      flex-grow: 1;
+      min-width: 0; /* 允许标题在空间不足时收缩 */
+    }
+
+    .title h1 {
       margin: 0;
-      font-size: 24px;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary-text);
+      word-break: break-word;
+    }
+
+    .title p {
+      margin: var(--spacing-xs) 0 0;
+      color: var(--secondary-text);
+      font-size: 14px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    /* --- 修改点4: 调整 .tools 样式 --- */
+    .tools {
+      display: flex;
+      /* 减小 gap */
+      gap: var(--spacing-xs); 
+      align-items: center;
+      flex-wrap: wrap; /* 允许按钮在空间不足时换行 */
+      justify-content: flex-end;
+      min-width: 200px;
+      /* 移除 margin-left，因为父容器使用了 gap */
+      /* margin-left: auto; */
+    }
+
+    /* Responsive adjustments for header */
+    @media (max-width: 768px) {
+      header {
+          flex-direction: column;
+          text-align: center;
+          padding: var(--spacing-md) var(--spacing-xs); /* 进一步减小 padding */
+      }
+      .tools {
+          margin-left: 0;
+          justify-content: center;
+          margin-top: var(--spacing-sm);
+          width: 100%;
+      }
+      .title p {
+          font-size: 13px;
+      }
+    }
+
+    /* Enhanced Buttons with Glow and Gradient */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: 10px 18px;
+      border-radius: 100px;
+      border: none;
+      background: var(--card-bg);
+      color: var(--primary-text);
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 
+        0 2px 6px var(--shadow-color),
+        inset 0 0 0 1px var(--border-color);
+      backdrop-filter: var(--backdrop-filter);
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    
+    .high-contrast-theme .btn {
+      box-shadow: 0 0 0 1px white;
+      backdrop-filter: none;
+    }
+    
+    .btn:hover {
+      background: rgba(51, 65, 85, 0.75);
+      transform: translateY(-2px);
+      box-shadow: 
+        0 6px 15px rgba(0, 0, 0, 0.2),
+        inset 0 0 0 1px var(--border-color);
+    }
+    
+    .high-contrast-theme .btn:hover {
+      background: #333;
+      box-shadow: 0 0 0 2px white;
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 
+        0 1px 4px var(--shadow-color),
+        inset 0 0 0 1px var(--border-color);
+    }
+    
+    .high-contrast-theme .btn:active {
+      box-shadow: 0 0 0 1px white;
+    }
+
+    .btn.primary {
+      /* 使用更吸引人的渐变 */
+      background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+      color: #fff;
+      /* 添加发光效果 */
+      box-shadow: 
+        0 4px 15px rgba(79, 70, 229, 0.4),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    }
+    
+    .high-contrast-theme .btn.primary {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 0 1px black;
+    }
+    
+    .btn.primary:hover {
+      background: linear-gradient(90deg, #4338ca, #0891b2); /* 稍微深一点的渐变 */
+      box-shadow: 
+        0 6px 20px rgba(79, 70, 229, 0.6),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px) scale(1.02);
+    }
+    
+    .high-contrast-theme .btn.primary:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 0 0 2px black;
+    }
+    
+    .btn.primary:active {
+      background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+      box-shadow: 
+        0 2px 8px rgba(79, 70, 229, 0.3),
+        inset 0 1px 2px rgba(0, 0, 0, 0.1);
+      transform: translateY(0) scale(0.98);
+    }
+    
+    .high-contrast-theme .btn.primary:active {
+      background: var(--accent);
+      box-shadow: 0 0 0 1px black;
+    }
+
+    .btn.ghost {
+      background: transparent;
+      box-shadow: inset 0 0 0 1px var(--border-color);
+      color: var(--accent);
+    }
+    
+    .high-contrast-theme .btn.ghost {
+      box-shadow: 0 0 0 1px white;
+      color: var(--accent);
+    }
+    
+    .btn.ghost:hover {
+      background: rgba(96, 165, 250, 0.1);
+      box-shadow: inset 0 0 0 1px var(--accent);
+    }
+    
+    .high-contrast-theme .btn.ghost:hover {
+      background: rgba(0, 255, 255, 0.1);
+      box-shadow: 0 0 0 2px white;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+      align-items: center;
+      margin-top: var(--spacing-md);
+      padding: var(--spacing-sm);
+      border-radius: var(--radius-sm);
+      backdrop-filter: var(--backdrop-filter);
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--glass-shadow);
+      width: 100%;
+    }
+    
+    .high-contrast-theme .controls {
+      box-shadow: 0 0 0 2px white;
+    }
+
+    .search {
+      flex: 1;
+      min-width: 200px;
+      display: flex;
+      gap: var(--spacing-sm);
+      align-items: center;
+    }
+
+    input[type="search"] {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 100px;
+      border: 1px solid var(--border-color);
+      background: rgba(15, 23, 42, 0.5); /* 更深的背景 */
+      color: var(--primary-text);
+      font-size: 15px;
+      font-family: var(--ui);
+      box-shadow: inset 0 1px 3px var(--shadow-color);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .light-theme input[type="search"] {
+      background: rgba(255, 255, 255, 0.7);
+    }
+    
+    .high-contrast-theme input[type="search"] {
+      background: #000;
+      box-shadow: 0 0 0 1px white;
+    }
+    
+    input[type="search"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: inset 0 1px 3px var(--shadow-color), 0 0 0 2px rgba(96, 165, 250, 0.3);
+    }
+    
+    .high-contrast-theme input[type="search"]:focus {
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+    
+    /* 占位符颜色 */
+    input[type="search"]::placeholder {
+      color: var(--muted);
+    }
+
+
+    select {
+      padding: 11px 14px;
+      border-radius: 100px;
+      border: 1px solid var(--border-color);
+      background: rgba(15, 23, 42, 0.5);
+      color: var(--primary-text);
+      font-size: 15px;
+      font-family: var(--ui);
+      box-shadow: inset 0 1px 3px var(--shadow-color);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8.586L2.707 5.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l4-4a1 1 0 00-1.414-1.414L6 8.586z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      min-width: 120px;
+    }
+    
+    .light-theme select {
+      background: rgba(255, 255, 255, 0.7);
+    }
+    
+    .high-contrast-theme select {
+      background: #000;
+      box-shadow: 0 0 0 1px white;
+    }
+    
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: inset 0 1px 3px var(--shadow-color), 0 0 0 2px rgba(96, 165, 250, 0.3);
+    }
+    
+    .high-contrast-theme select:focus {
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      width: 100%;
+    }
+
+    /* Card with Enhanced Glass Effect and Glow */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: var(--spacing-md);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--glass-shadow);
+      display: flex;
+      flex-direction: column;
+      min-height: 180px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      width: 100%;
+      /* 添加悬停时的发光效果 */
+    }
+    
+    .high-contrast-theme .card {
+      box-shadow: 0 0 0 2px white;
+    }
+    
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.25),
+        0 0 15px rgba(96, 165, 250, 0.1),
+        0 0 0 1px var(--border-color);
+      border-color: rgba(96, 165, 250, 0.3);
+    }
+    
+    .high-contrast-theme .card:hover {
+      box-shadow: 0 0 0 2px white;
+      border-color: white;
+    }
+    
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0; right: 0; bottom: 0; left: 0;
+      border-radius: var(--radius);
+      pointer-events: none;
+      border: 1px solid var(--glass-border);
+      z-index: 1;
+    }
+    .card > * { position: relative; z-index: 2; }
+
+    .meta {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-md);
+    }
+
+    .tag {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(240, 245, 255, 0.05));
+      padding: 7px 12px;
+      border-radius: 100px;
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 13px;
+      border: 1px solid var(--border-color);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+      flex-shrink: 0;
+    }
+    
+    .high-contrast-theme .tag {
+      background: transparent;
+      box-shadow: 0 0 0 1px white;
+    }
+
+    .name {
+      font-weight: 700;
+      margin: 0;
+      font-size: 18px;
+      color: var(--primary-text);
+      word-break: break-word;
+    }
+
+    .desc {
+      color: var(--secondary-text);
+      font-size: 14px;
+      margin: var(--spacing-xs) 0 0;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .foot {
+      display: flex;
+      align-items: center;
+      margin-top: auto;
+      gap: var(--spacing-sm);
+      padding-top: var(--spacing-sm);
+      border-top: 1px solid var(--border-color);
+    }
+
+    .pill {
+      font-family: var(--mono);
+      background: rgba(30, 41, 59, 0.7);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+    
+    .light-theme .pill {
+      background: rgba(255, 255, 255, 0.7);
+    }
+    
+    .high-contrast-theme .pill {
+      background: #000;
+      border: 1px solid white;
       color: white;
     }
 
-    .header-title p {
-      margin: 5px 0 0;
-      color: #94a3b8;
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .card .actions {
+      margin-left: auto;
+      display: flex;
+      gap: var(--spacing-xs);
+      flex-shrink: 0;
+    }
+
+    .count {
+      font-size: 13px;
+      color: var(--muted);
+      align-self: center;
+    }
+
+    /* Modal */
+    .modal-wrap {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1200;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal {
+      width: 94%;
+      max-width: 1000px;
+      border-radius: var(--radius);
+      padding: var(--spacing-md);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--primary-text);
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        inset 0 0 0 1px var(--border-color);
+      backdrop-filter: var(--backdrop-filter);
+      display: flex;
+      flex-direction: column;
+      max-height: 88vh;
+      border: 1px solid var(--border-color);
+    }
+    
+    .light-theme .modal {
+      background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .high-contrast-theme .modal {
+      background: #000;
+      box-shadow: 0 0 0 2px white;
+      border: 1px solid white;
+    }
+
+    .modal .meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-sm);
+      padding-bottom: var(--spacing-sm);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .close {
+      margin-left: auto;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      padding: 8px 14px;
+      border-radius: 6px;
+      color: var(--primary-text);
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s ease;
+      font-size: 14px;
+    }
+    
+    .high-contrast-theme .close {
+      border: 1px solid white;
+    }
+    
+    .close:hover {
+      background: rgba(51, 65, 85, 0.5);
+    }
+    
+    .high-contrast-theme .close:hover {
+      background: #333;
+    }
+
+    pre {
+      background: rgba(15, 23, 42, 0.7);
+      padding: var(--spacing-md);
+      border-radius: var(--radius-sm);
+      overflow: auto;
+      font-family: var(--mono);
+      font-size: 14px;
+      flex-grow: 1;
+      margin: 0;
+      border: 1px solid var(--border-color);
+      box-shadow: inset 0 2px 4px var(--shadow-color);
+      color: var(--primary-text);
+    }
+    
+    .light-theme pre {
+      background: rgba(241, 245, 249, 0.7);
+    }
+    
+    .high-contrast-theme pre {
+      background: #000;
+      border: 1px solid white;
+      box-shadow: 0 0 0 1px white;
+    }
+
+    /* Toast */
+    .copy-toast {
+      position: fixed;
+      right: var(--spacing-lg);
+      bottom: var(--spacing-lg);
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--accent);
+      padding: 12px 18px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      display: none;
+      z-index: 1300;
+      font-size: 15px;
+      backdrop-filter: var(--backdrop-filter);
+      border: 1px solid var(--border-color);
+    }
+    
+    .light-theme .copy-toast {
+      background: rgba(255, 255, 255, 0.95);
+    }
+    
+    .high-contrast-theme .copy-toast {
+      background: #000;
+      box-shadow: 0 0 0 2px white;
+      border: 1px solid white;
+    }
+
+    /* 修改 footer 样式以匹配主题背景 */
+    footer {
+      margin-top: var(--spacing-lg);
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      padding: var(--spacing-sm);
+      width: 100%;
+      /* 关键修改：继承 body 的背景和背景图片 */
+      background: linear-gradient(180deg, var(--bg-start), var(--bg-end));
+      background-image: radial-gradient(circle at 10% 20%, rgba(96, 165, 250, 0.05) 0%, transparent 20%),
+                        radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 20%);
+      /* 为了确保 footer 有背景，需要相对定位或确保它不透明 */
+      position: relative; /* 或者使用 isolation: isolate; */
+      z-index: 0; /* 确保它在正常层级 */
+      border-radius: var(--radius-sm); /* 可选：添加圆角 */
+    }
+
+    /* 高对比度主题下 footer 的特殊处理 */
+    .high-contrast-theme footer {
+      background: var(--bg-start); /* 固定背景色 */
+      background-image: none; /* 移除纹理 */
+      color: var(--primary-text); /* 确保文字可见 */
+      border: 1px solid var(--border-color); /* 可选：添加边框 */
+    }
+
+    /* Login/Register Modal */
+    .auth-modal {
+      display: none;
+      position: fixed;
+      z-index: 1300;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+      backdrop-filter: blur(5px);
+    }
+
+    .auth-modal-content {
+      background-color: var(--card-bg);
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      box-shadow: var(--glass-shadow);
+      width: 90%;
+      max-width: 400px;
+      backdrop-filter: var(--backdrop-filter);
+    }
+    
+    .high-contrast-theme .auth-modal-content {
+      box-shadow: 0 0 0 2px white;
+      border: 1px solid white;
+    }
+
+    .auth-modal-content h2 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .auth-form input {
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: rgba(15, 23, 42, 0.5);
+      color: var(--primary-text);
+      font-size: 15px;
+      font-family: var(--ui);
+      box-shadow: inset 0 1px 3px var(--shadow-color);
+    }
+    
+    .light-theme .auth-form input {
+      background: rgba(255, 255, 255, 0.7);
+    }
+    
+    .high-contrast-theme .auth-form input {
+      background: #000;
+      box-shadow: 0 0 0 1px white;
+    }
+
+    .auth-form input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: inset 0 1px 3px var(--shadow-color), 0 0 0 2px rgba(96, 165, 250, 0.3);
+    }
+    
+    .high-contrast-theme .auth-form input:focus {
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+
+    .auth-form button {
+      padding: 12px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+    }
+    
+    .high-contrast-theme .auth-form button {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 0 1px black;
+    }
+
+    .auth-form button:hover {
+      background: linear-gradient(90deg, #4338ca, #0891b2);
+      box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4);
+      transform: translateY(-2px);
+    }
+    
+    .high-contrast-theme .auth-form button:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 0 0 2px black;
+    }
+    
+    .auth-form button:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 5px rgba(79, 70, 229, 0.2);
+    }
+    
+    .high-contrast-theme .auth-form button:active {
+      box-shadow: 0 0 0 1px black;
+    }
+
+
+    .auth-toggle {
+      text-align: center;
+      margin-top: 10px;
       font-size: 14px;
     }
 
-    /* 主题按钮 - 小圆点 */
-    .theme-selector {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-left: auto;
-    }
-
-    .theme-dot {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
+    .auth-toggle a {
+      color: var(--accent);
+      text-decoration: none;
       cursor: pointer;
-      border: 2px solid transparent;
-      transition: transform 0.2s;
+      font-weight: 600;
+    }
+    
+    .high-contrast-theme .auth-toggle a {
+      color: var(--accent);
     }
 
-    .theme-dot:hover {
-      transform: scale(1.2);
+    .auth-toggle a:hover {
+      text-decoration: underline;
     }
 
-    .theme-dot.active {
-      border-color: white;
-    }
-
-    .theme-dot.dark {
-      background: linear-gradient(135deg, #0f172a, #1e40af);
-    }
-
-    .theme-dot.light {
-      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-    }
-
-    .theme-dot.high {
-      background: linear-gradient(135deg, black, white);
-    }
-
-    /* ========== 菜单栏 ========== */
-    .menu-bar {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    .menu-item {
-      padding: 10px 20px;
-      background: rgba(59, 130, 246, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 50px;
-      cursor: pointer;
-      color: white;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-
-    .menu-item:hover {
-      background: rgba(59, 130, 246, 0.5);
-    }
-
-    .menu-item.active {
-      background: rgba(59, 130, 246, 0.8);
-      box-shadow: 0 0 15px rgba(96, 165, 250, 0.5);
-    }
-
-    /* 隐藏不用的区域 */
-    .hidden {
-      display: none;
-    }
-
-    /* 弹窗遮罩 */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(5px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 20px;
-    }
-
-    .modal-content {
-      background: rgba(30, 41, 59, 0.9);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 25px;
-      width: 100%;
-      max-width: 500px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(96, 165, 250, 0.3);
-    }
-
-    .modal-content h3 {
-      margin-top: 0;
-      color: #60a5fa;
-    }
-
-    .modal-content input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      background: rgba(15, 23, 42, 0.6);
-      color: white;
-      font-size: 16px;
-    }
-
-    .close-modal {
-      margin-top: 20px;
-      background: rgba(239, 68, 68, 0.7);
-    }
-
-    .close-modal:hover {
-      background: rgba(239, 68, 68, 0.9);
-    }
-
-    /* 用户信息区域 */
     .user-info {
       display: flex;
       align-items: center;
       gap: 10px;
     }
+
+    .user-info span {
+      font-weight: 600;
+    }
+
+    .logout-btn {
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s ease;
+      color: var(--primary-text);
+    }
+    
+    .high-contrast-theme .logout-btn {
+      background: #000;
+      border: 1px solid white;
+    }
+
+    .logout-btn:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.5);
+    }
+    
+    .high-contrast-theme .logout-btn:hover {
+      background: #333;
+      border-color: white;
+    }
+    
+    /* 主题切换按钮样式 */
+    .theme-selector {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+    
+    .theme-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .theme-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    .theme-btn.active {
+      border-color: var(--primary-text);
+      transform: scale(1.1);
+    }
+    
+    .theme-btn.light {
+      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    }
+    
+    .theme-btn.dark {
+      background: linear-gradient(135deg, #0f172a, #020617);
+    }
+    
+    .theme-btn.high-contrast {
+      background: linear-gradient(135deg, #000000, #ffffff);
+    }
+
+    /* Directory Styles */
+    .directory-controls {
+      display: flex;
+      gap: var(--spacing-sm);
+      align-items: center;
+      margin-top: var(--spacing-sm);
+      padding: var(--spacing-sm);
+      border-radius: var(--radius-sm);
+      backdrop-filter: var(--backdrop-filter);
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--glass-shadow);
+      width: 100%;
+      flex-wrap: wrap;
+    }
+    
+    .directory-path {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
+      color: var(--secondary-text);
+      flex-wrap: wrap;
+    }
+    
+    .directory-path span {
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    
+    .directory-path span:hover {
+      background: rgba(96, 165, 250, 0.2);
+    }
+    
+    .directory-path .current {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    
+    .directory-actions {
+      margin-left: auto;
+      display: flex;
+      gap: var(--spacing-xs);
+    }
+    
+    @media (max-width: 768px) {
+      .directory-controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .directory-path {
+        margin-bottom: var(--spacing-xs);
+      }
+      
+      .directory-actions {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+    
+    /* Menu Styles */
+    .menu-bar {
+      display: flex;
+      background: var(--card-bg);
+      border-radius: var(--radius-sm);
+      padding: var(--spacing-xs);
+      margin-bottom: var(--spacing-md);
+      box-shadow: var(--glass-shadow);
+      border: 1px solid var(--border-color);
+      flex-wrap: wrap;
+      gap: var(--spacing-xs);
+    }
+    
+    .menu-item {
+      padding: 10px 15px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.2s ease;
+      font-weight: 500;
+      color: var(--primary-text);
+    }
+    
+    .menu-item:hover {
+      background: rgba(96, 165, 250, 0.1);
+    }
+    
+    .menu-item.active {
+      background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+      color: white;
+    }
+    
+    .content-section {
+      display: none;
+    }
+    
+    .content-section.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
-
-  <!-- ====== 顶部玻璃栏 ====== -->
-  <div class="header">
-    <div class="logo">Py</div>
-    <div class="header-title">
-      <h1>Python 分发站 · 科技玻璃版</h1>
-      <p>初中生友好 · 保留磨砂玻璃科技感</p>
-    </div>
-
-    <div class="theme-selector">
-      <span style="color: #94a3b8; font-size: 14px;">主题：</span>
-      <div class="theme-dot dark active" data-theme="dark"></div>
-      <div class="theme-dot light" data-theme="light"></div>
-      <div class="theme-dot high" data-theme="high-contrast"></div>
-    </div>
-
-    <button class="glass-btn" id="downloadAllBtn">💾 打包下载</button>
-    <button class="glass-btn-secondary" id="refreshBtn">🔄 刷新</button>
-    <button class="glass-btn-secondary" id="readmeBtn">📖 说明</button>
-
-    <!-- 登录前 -->
-    <div id="authButtons">
-      <button class="glass-btn-secondary" id="loginBtn">🔑 登录</button>
-      <button class="glass-btn-secondary" id="registerBtn">📝 注册</button>
-    </div>
-
-    <!-- 登录后 -->
-    <div id="userInfo" class="user-info hidden">
-      <span id="usernameDisplay" style="font-weight: bold; color: #60a5fa;"></span>
-      <button class="glass-btn-secondary" id="logoutBtn">🚪 登出</button>
-    </div>
-  </div>
-
-  <!-- ====== 菜单栏 ====== -->
-  <div class="menu-bar">
-    <div class="menu-item active" data-section="files">📂 文件列表</div>
-    <div class="menu-item" data-section="about">🌟 关于</div>
-  </div>
-
-  <!-- ====== 关于页面 ====== -->
-  <div id="aboutSection" class="hidden">
-    <div class="glass-card">
-      <h2>🌟 关于这个科技感网站</h2>
-      <p>专为初中生优化，保留了超酷的<strong>玻璃磨砂科技感</strong>！</p>
-      <p>关键技术：</p>
-      <ul>
-        <li><code>backdrop-filter: blur()</code> → 毛玻璃效果</li>
-        <li><code>rgba(颜色, 0.6)</code> → 半透明玻璃</li>
-        <li><code>box-shadow</code> → 发光边框</li>
-        <li><code>border: 1px solid rgba(255,255,255,0.1)</code> → 玻璃边缘</li>
-      </ul>
-      <p>你可以右键 → “查看网页源代码” 学习这些效果怎么做的！</p>
-    </div>
-  </div>
-
-  <!-- ====== 文件列表 ====== -->
-  <div id="filesSection">
-    <h2 style="color: #60a5fa; margin-bottom: 15px;">📂 Python 脚本文件</h2>
-
-    <div class="glass-card">
-      <h3 style="color: #60a5fa;">hello.py</h3>
-      <p style="color: #cbd5e1; margin: 10px 0;">打印“Hello, World!”的入门程序</p>
-      <div>
-        <button class="glass-btn-secondary">⬇️ 下载</button>
-        <button class="glass-btn-secondary">👁️ 预览</button>
+  <div class="container">
+    <header>
+      <div class="logo">Py</div>
+      <div class="title">
+        <h1 id="siteTitle">Python 分发站 · 专业下载</h1>
+        <p>融合 Windows7 手感、Apple 质感与开发者友好，单文件静态页面分发脚本/安装包。</p>
       </div>
+      <div class="tools" role="toolbar" aria-label="site tools">
+        <!-- 主题切换器 -->
+        <div class="theme-selector">
+          <div class="theme-btn light" data-theme="light" title="浅色主题"></div>
+          <div class="theme-btn dark active" data-theme="dark" title="深色主题"></div>
+          <div class="theme-btn high-contrast" data-theme="high-contrast" title="高对比度"></div>
+        </div>
+        
+        <button class="btn primary" id="downloadAllBtn">下载全部 (zip)</button>
+        <button class="btn" id="refreshBtn">刷新列表</button>
+        <button class="btn ghost" id="readmeBtn">说明</button>
+        <!-- User Authentication Buttons -->
+        <div id="authButtons">
+            <button class="btn" id="loginBtn">登录</button>
+            <button class="btn" id="registerBtn">注册</button>
+        </div>
+        <!-- User Info (shown when logged in) -->
+        <div id="userInfo" class="user-info" style="display: none;">
+            <span id="usernameDisplay"></span>
+            <button class="logout-btn" id="logoutBtn">登出</button>
+        </div>
+        <!-- 创建目录按钮 - 移动到这里 -->
+        <button class="btn" id="createDirBtnTop" style="display: none;">创建目录</button>
+      </div>
+    </header>
+
+    <!-- Menu Bar -->
+    <div class="menu-bar">
+      <div class="menu-item active" data-section="files">文件列表</div>
+      <div class="menu-item" data-section="about">关于</div>
     </div>
 
-    <div class="glass-card">
-      <h3 style="color: #60a5fa;">calculator.py</h3>
-      <p style="color: #cbd5e1; margin: 10px 0;">支持加减乘除的计算器</p>
-      <div>
-        <button class="glass-btn-secondary">⬇️ 下载</button>
-        <button class="glass-btn-secondary">👁️ 预览</button>
+    <!-- About Section -->
+    <section id="aboutSection" class="content-section">
+      <div class="card">
+        <h2>关于 Python 分发站</h2>
+        <p>这是一个增强科技感的Python文件分发站，支持目录管理和用户认证。</p>
+        <p>您可以在这里浏览、搜索、下载和预览Python脚本。</p>
+        <p>登录后，您可以创建目录来组织您的文件。</p>
       </div>
-    </div>
+    </section>
 
-    <div class="glass-card">
-      <h3 style="color: #60a5fa;">game.py</h3>
-      <p style="color: #cbd5e1; margin: 10px 0;">文字冒险小游戏</p>
-      <div>
-        <button class="glass-btn-secondary">⬇️ 下载</button>
-        <button class="glass-btn-secondary">👁️ 预览</button>
+    <!-- Files Section -->
+    <section id="filesSection" class="content-section active">
+      <!-- Directory Controls -->
+      <div class="directory-controls" id="directoryControls" style="display: none;">
+        <div class="directory-path" id="directoryPath">
+          <!-- Path will be populated by JS -->
+        </div>
+        <div class="directory-actions">
+          <!-- 原来的创建目录按钮被移除 -->
+          <button class="btn ghost" id="backToRootBtn">返回根目录</button>
+        </div>
       </div>
+
+      <div class="controls">
+        <div class="search">
+          <input type="search" id="search" placeholder="搜索文件名、描述或平台（回车搜索）" />
+        </div>
+        <select id="filter">
+          <option value="all">全部类型</option>
+          <option value="script">脚本 (.py)</option>
+          <option value="binary">二进制/安装包</option>
+        </select>
+        <select id="sort">
+          <option value="name">按名称</option>
+          <option value="size">按大小</option>
+          <option value="downloads">按下载量</option>
+        </select>
+      </div>
+
+      <main class="grid" id="grid" aria-live="polite"></main>
+    </section>
+
+    <footer>将此文件放到静态主机或 GitHub Pages。若需要真实二进制分发，请替换文件 url 指向实际文件。</footer>
+  </div>
+
+  <!-- modal preview -->
+  <div class="modal-wrap" id="modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modTitle">
+      <div class="meta">
+        <div>
+          <strong id="modTitle">预览</strong>
+          <span id="modName" class="pill" style="margin-left:8px"></span>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn" id="modDownload">下载</button>
+          <button class="btn" id="modCopy">复制</button>
+          <button class="close" id="modClose">关闭</button>
+        </div>
+      </div>
+      <pre id="modContent" tabindex="0"></pre>
     </div>
   </div>
 
-  <!-- ====== 说明弹窗 ====== -->
-  <div id="readmeModal" class="hidden">
-    <div class="modal-overlay">
-      <div class="modal-content">
-        <h3>📖 使用说明</h3>
-        <p>• 点击“打包下载”模拟下载所有文件</p>
-        <p>• 登录后可以管理你的文件（模拟）</p>
-        <p>• 点击主题小圆点切换不同风格</p>
-        <button class="glass-btn" id="closeReadmeBtn" style="width: 100%;">关闭</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ====== 登录弹窗 ====== -->
-  <div id="loginModal" class="hidden">
-    <div class="modal-overlay">
-      <div class="modal-content">
-        <h3>🔑 用户登录</h3>
-        <input type="text" id="loginUsername" placeholder="请输入用户名">
-        <input type="password" id="loginPassword" placeholder="请输入密码">
-        <button class="glass-btn" id="doLoginBtn" style="width: 100%;">登录</button>
-        <p style="text-align: center; margin-top: 15px; color: #94a3b8;">
-          没有账号？<a href="#" id="switchToRegister" style="color: #60a5fa; text-decoration: none;">立即注册</a>
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ====== 注册弹窗 ====== -->
-  <div id="registerModal" class="hidden">
-    <div class="modal-overlay">
-      <div class="modal-content">
-        <h3>📝 用户注册</h3>
-        <input type="text" id="regUsername" placeholder="设置用户名">
-        <input type="password" id="regPassword" placeholder="设置密码">
-        <button class="glass-btn" id="doRegisterBtn" style="width: 100%;">注册</button>
-        <p style="text-align: center; margin-top: 15px; color: #94a3b8;">
-          已有账号？<a href="#" id="switchToLogin" style="color: #60a5fa; text-decoration: none;">立即登录</a>
-        </p>
+  <!-- Login/Register Modal -->
+  <div id="authModal" class="auth-modal">
+    <div class="auth-modal-content">
+      <span class="close" id="authClose">&times;</span>
+      <h2 id="authModalTitle">用户登录</h2>
+      <form class="auth-form" id="authForm">
+        <input type="text" id="authUsername" placeholder="用户名" required>
+        <input type="password" id="authPassword" placeholder="密码" required>
+        <div id="authMessage" style="color: #f87171; font-size: 14px; min-height: 20px;"></div>
+        <button type="submit" id="authSubmitBtn">登录</button>
+      </form>
+      <div class="auth-toggle">
+        <span>还没有账户? <a id="toggleAuthMode">立即注册</a></span>
       </div>
     </div>
   </div>
 
-  <!-- ====== JavaScript 交互逻辑（带注释） ====== -->
-  <script>
-    // ========== 主题切换 ==========
-    document.querySelectorAll('.theme-dot').forEach(dot => {
-      dot.addEventListener('click', function() {
-        // 清除所有选中状态
-        document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
-        // 设置当前选中
-        this.classList.add('active');
+  <!-- Create Directory Modal -->
+  <div id="createDirModal" class="auth-modal">
+    <div class="auth-modal-content">
+      <span class="close" id="createDirClose">&times;</span>
+      <h2>创建新目录</h2>
+      <form class="auth-form" id="createDirForm">
+        <input type="text" id="dirName" placeholder="目录名称" required>
+        <div id="createDirMessage" style="color: #f87171; font-size: 14px; min-height: 20px;"></div>
+        <button type="submit">创建</button>
+      </form>
+    </div>
+  </div>
 
-        // 获取主题名
-        const theme = this.getAttribute('data-theme');
+  <div class="copy-toast" id="toast">已复制到剪贴板</div>
 
-        // 根据主题切换 body 背景色
-        if (theme === 'light') {
-          document.body.style.background = 'linear-gradient(135deg, #f8fafc, #e2e8f0)';
-          document.body.style.color = '#1e293b';
-        } else if (theme === 'high-contrast') {
-          document.body.style.background = 'linear-gradient(135deg, black, #333)';
-          document.body.style.color = 'cyan';
+<script>
+/* ---------------------- 简洁、模块化的数据与工具 ---------------------- */
+
+/* 内置资源：把脚本或小二进制元数据放上来。如果要分发真实的安装包，可把 url 指向托管好的文件 */
+const FILES = [
+  {
+    name: "绿梵AI.py",
+    type: "script",
+    platform: "Windows/Linux/macOS",
+    desc: "tkinter + selenium 自动化聊天脚本（含 webdriver 管理示例）。",
+    content: `import tkinter as tk
+from tkinter import ttk
+from selenium import webdriver  # 控制浏览器的核心模块
+from selenium.webdriver.chrome.service import Service  # 管理ChromDriver服务
+from webdriver_manager.chrome import ChromeDriverManager  # 自动下载并管理ChromeDriver
+from selenium.webdriver.common.by import By  # 定义元素定位方式
+from selenium.webdriver.support.ui import WebDriverWait  # 显示等待工具
+from selenium.webdriver.support import expected_conditions as EC  # 常用等待条件
+import time
+
+import threading
+from selenium.webdriver.common.keys import Keys
+
+main_版本 = '1.0.0'
+green_f = tk.Tk()
+green_f.title(f'绿梵AI [{main_版本}]')
+green_f.geometry('344x250')
+
+Label1 = tk.Label(green_f, text='初始化进程', font=('微软雅黑 Light', 17))
+Label1.place(x=20, y=25)
+Label2 = tk.Label(green_f, text='输入来自Google Chrame浏览器的地址', font=('微软雅黑', 13))
+Label2.place(x=20, y=65)
+entry1 = ttk.Entry(green_f, font=('微软雅黑', 13))
+entry1.place(x=20, y=145, height=32, width=220)
+style = ttk.Style()
+style.configure('TButton', font=('微软雅黑', 13), height=32, width=7)
+place = ''
+版本 = ''
+顺序 = 0
+word=''
+
+def main():
+   try:
+    global place, 版本, driver
+    green_AIf = tk.Tk()
+
+    def mu1():
+        green_AIf.geometry('344x250')
+        txt_edit.config(height=7,width=33)
+        entry3.place(x=22,y=175,width=250,height=46)
+        btnT.place(x=275,y=175,height=48,width=48)
+
+    def mu2():
+        green_AIf.geometry('544x450')
+        txt_edit.config(height=18,width=55)
+        entry3.place(x=22,y=390,width=445,height=52)
+        btnT.place(x=471,y=390,height=53,width=51)
+    def mu3():
+        green_AIf.geometry('744x650')
+        txt_edit.config(height=27,width=77)
+        entry3.place(x=22,y=573,width=635,height=56)
+        btnT.place(x=661,y=573,height=57,width=57)
+
+
+    green_AIf.title(f'绿梵AI [{main_版本}]')
+    entry3 = ttk.Entry(green_AIf, font=('微软雅黑', 13))
+    entry3.place(x=22, y=175, height=46, width=250)
+    txt_edit = tk.Text(green_AIf, wrap=tk.WORD, width=33, font=('微软雅黑', 13), height=7, undo=True)
+    txt_edit.place(x=22, y=13)
+
+
+    txt_edit.config(state=tk.NORMAL)
+    txt_edit.delete('1.0', tk.END)
+    txt_edit.config(state='disabled')
+    # 创建Scrollbar组件
+
+    scrollbar = tk.Scrollbar(green_AIf, orient=tk.VERTICAL, command=txt_edit.yview)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+    # 配置Text组件与Scrollbar的关系
+    txt_edit['yscrollcommand'] = scrollbar.set
+    chat_控制=0
+    chat_net_顺序=1
+    chat_版本='DeepSeek-R1'
+    def chat(value):
+            nonlocal chat_版本
+            # 点击思考部分按钮，使思考的部分也显示出来
+            try:
+
+
+
+                button = driver.find_element(By.CSS_SELECTOR, "[class*='cos-icon cos-icon-change']")
+                button.click()
+                wait = WebDriverWait(driver, 10)
+
+
+                # 定位所有class为"input-capsules-model-list-item"的元素
+                all_items = wait.until(
+                  EC.presence_of_all_elements_located(
+                      (By.CLASS_NAME, "input-capsules-model-list-item")
+                  )
+                )
+
+                # 遍历元素寻找目标按钮
+                for item in all_items:
+                  # 检查元素内是否包含"DeepSeek-V3最新版"标题
+                  title_element = item.find_element(
+                      By.CLASS_NAME, "input-capsules-model-list-item-title"
+                  )
+                  print('value'+str(value))
+                  
+                  版本=chat_版本
+                  print('版本'+str(版本))
+                  if title_element.text == value:
+
+                      # 点击目标按钮
+                      item.click()
+                      print(f"成功点击{value}")
+                      chat_版本=value
+                      button = driver.find_element(By.CSS_SELECTOR, "[class*='cos-icon cos-icon-change']")
+                      button.click()
+                      break
+
+
+                版本_List=['DeepSeek-R1','DeepSeek-V3']
+                for i in range(len(版本_List)):
+                  print(i)
+                  if(版本_List[i]==版本):
+                     file_menu2.entryconfig(i, label=f"${'{' }版本_List[i]}")
+                     print(str(版本)+f'    版本1    {i}')
+                     print(str(版本_List[i])+'     版本_List1')
+
+                  if(value==版本_List[i]):
+                     file_menu2.entryconfig(i, label=f"${'{' }版本_List[i]} √")
+                     print(str(value)+f'    版本2     {i}')
+                     print(str(版本_List[i])+'     版本_List2')
+
+            except Exception as e:
+                      print(f'Error:\\n{e}')
+
+
+
+    def net():
+       nonlocal chat_net_顺序
+       try:
+            button = driver.find_element(By.CSS_SELECTOR,"[class*='cos-icon cos-icon-change']")
+            button.click()
+            button = driver.find_element(By.CSS_SELECTOR, "[class*='cos-switcher cos-sm']")
+            button.click()
+            chat_net_顺序+=1
+            if(chat_net_顺序%2!=0):
+
+               file_menu2.entryconfig(3, label="联网模式")
+            else:
+              file_menu2.entryconfig(3, label="联网模式 √")
+            button = driver.find_element(By.CSS_SELECTOR, "[class*='cos-icon cos-icon-change']")
+            button.click()
+       except Exception as e:
+
+            print(f'Error:\\n{e}')
+            pass
+
+
+    def exchange():
+        global word
+        nonlocal chat_控制
+        try:
+            try:
+                txt_edit.config(state='normal')
+                btnT.config(state='disabled')
+
+                entry3.delete(0, tk.END)
+
+                #刷新网页
+                #driver.refresh()
+                chat_控制=1
+                ok()
+            except Exception as e:
+                txt_edit.insert(tk.END,f'无法重新回复，请稍后重试 \\n{e}')
+                green_AIf.update()
+            finally:
+                txt_edit.config(state='normal')
+                btnT.config(state='disabled')
+                green_AIf.update()
+
+
+        except Exception as e:
+            txt_edit.insert(tk.END,f'无法重新回复，请稍后重试 \\n{e}')
+            green_AIf.update()
+        finally:
+            btnT.config(state='normal')
+            txt_edit.config(state='disabled')
+            chat_控制=0
+    chat_thought_顺序=1
+    def thought():
+       nonlocal chat_thought_顺序
+       try:
+          button = driver.find_element(By.CSS_SELECTOR,"[class*='internet-search-icon']")
+          button.click()
+          chat_thought_顺序+=1
+          if(chat_thought_顺序%2!=0):
+
+            file_menu2.entryconfig(5, label="深度思考")
+          else:
+           file_menu2.entryconfig(5, label="深度思考 √")
+       except Exception as e:
+          print(f'{e}')
+
+
+    # 创建菜单栏
+    menu_bar = tk.Menu(green_AIf)
+    # 文件菜单
+    file_menu = tk.Menu(menu_bar, tearoff=0)
+    file_menu2 = tk.Menu(menu_bar, tearoff=0)
+    file_menu3 = tk.Menu(menu_bar, tearoff=0)
+    file_menu.add_command(label="🗘 重新回复", command=exchange)
+
+
+    file_menu2.add_command(label="DeepSeek-R1 √", command=lambda x='DeepSeek-R1': chat(x))
+    file_menu2.add_command(label="DeepSeek-V3",  command=lambda x='DeepSeek-V3': chat(x))
+
+
+    file_menu2.add_separator()
+    file_menu2.add_command(label="联网模式", command=net)
+
+    file_menu2.add_separator()
+    file_menu2.add_command(label="深度搜索", command=thought)
+
+
+    file_menu3.add_command(label="344x250", command=mu1)
+    file_menu3.add_command(label="644x450", command=mu2)
+    file_menu3.add_command(label="744x650", command=mu3)
+
+
+    file_menu.entryconfig('🗘 重新回复',  state='disabled')
+    menu_bar.add_cascade(label="编辑", menu=file_menu)
+    menu_bar.add_cascade(label="版本", menu=file_menu2)
+    menu_bar.add_cascade(label="窗口", menu=file_menu3)
+
+
+    # 设置菜单栏到窗口
+    green_AIf.config(menu=menu_bar)
+
+
+
+
+
+
+
+    ok_次=0
+    def ok_son():
+        nonlocal entry3,chat_控制,ok_次
+        global driver,word
+        try:
+            if(chat_控制)==0:
+               word = entry3.get()
+            print(chat_控制)
+            if word == '':
+                txt_edit.config(state='disabled')
+                btnT.config(state='normal')
+                return
+            
+            # 访问网址
+
+            if chat_控制==0:
+                print(1)
+                txt_edit.config(state='normal')
+                btnT.config(state='disabled')
+                
+                #txt_edit.delete('1.0', tk.END)
+                txt_edit.insert(tk.END, f'我提出的问题:\\n{word}\\n\\n')
+            else:
+                txt_edit.config(state='normal')
+                btnT.config(state='disabled')
+                txt_edit.insert(tk.END,'\\n\\n重新回答:\\n')
+            txt_edit.config(state='normal')
+            btnT.config(state='disabled')
+
+            entry3.delete(0, tk.END)
+
+
+            #使用after能解决无响应问题
+
+            green_AIf.update()
+
+            # 👇 关键：对 word 进行 URL 编码（写网址的时候可用）
+            ##                from urllib.parse import quote
+            ##                word = quote(word, safe='')
+            ##                url = f'https://chat.baidu.com/search?word={word}。&dyTabStr=MCwxMiwzLDEsMiwxMyw3LDYsNSw5&pd=csaitab&setype=csaitab&extParamsJson=%7B%22enter_type%22%3A%22search_a_tab%22%2C%22sa%22%3A%22vs_tab%22%2C%22apagelid%22%3A%229405376116451188355%22%2C%22ori_lid%22%3A%229405376116451188355%22%7D'
+            ##
+            ##                # 插入文本内容
+            ##                txt_edit.insert(tk.END, f'正在访问:{url}\\n')
+            txt_edit.insert(tk.END, f'正在写入:{word}\\n')
+            # 定位输入框元素（支持多种定位方式)
+            ok_次+=1
+            if(ok_次==1):
+               input_element = driver.find_element(By.ID,"chat-textarea")  # 通过ID定位
+            else:
+               input_element = driver.find_element(By.ID,"chat-input-box")
+            # input_element = driver.find_element_by_name("q")  # 通过name属性定位
+            # input_element = driver.find_element_by_xpath("//input[@class='search']")  # 通过XPath定位
+            print('检测OK')
+            # 在输入框中输入文字
+            input_element.send_keys(word)
+            print('输入OK')
+            # 模拟回车键提交
+            input_element.send_keys(Keys.RETURN)                # 刷新让其显示
+            green_AIf.update()
+            print('回撤OK')
+            #driver.get(url)  # 打开网页
+
+
+
+            try:
+                txt_edit.insert(tk.END, f'思考中~\\n')
+                green_AIf.update()
+                # 等待第一个AI段落出现
+                try:
+                    WebDriverWait(driver,25, 0.3).until(
+                        # 使用稳定的选择器
+                        # class=这种最精确，不是只要包含这个元素名就行
+                        EC.presence_of_element_located((By.CSS_SELECTOR, "[class*='marklang-paragraph']"))
+
+                    )
+                except:
+                    if(chat_控制!=0):
+                       txt_edit.insert(tk.END, f'窗口莫名出现了问题，请重新进入~\\n')
+                       return
+                    else:
+                       txt_edit.insert(tk.END, f'窗口莫名出现了问题，正在重试~\\n')
+
+                       green_AIf.update()
+                       exchange()
+                    
+
+                txt_edit.insert(tk.END, f'正在组织回答~\\n')
+                green_AIf.update()
+
+                # 等待至少2个段落出现（确保其内容完整，避免遗漏）使用最强大的python选择器
+                WebDriverWait(driver, 180, 0.3).until(
+                    lambda d: len(d.find_elements(By.CSS_SELECTOR, "[class*='marklang']")) >= 1
+
+                )
+            except Exception as e:
+                txt_edit.insert(tk.END, f'错误,请重试~\\n{e}\\n')
+                green_AIf.update()
+                return
+
+
+            # 检查是否全部生成出来
+            try:
+
+                WebDriverWait(driver, 180, 0.3).until(
+                    #until只能有一个等待值但是any_of/all_of可以有多个
+                   EC.all_of(
+                        # 使用稳定的选择器
+                        # class=这种最精确，不是只要包含这个元素名就行
+                        # class*=这种只要部分达标即可可以防止因网页代码更新造成的错误
+                        EC.presence_of_element_located((By.CSS_SELECTOR, "[class*='cos-icon cos-icon-thumbs-down']")),
+                        EC.presence_of_element_located((By.CSS_SELECTOR, "[class*='cos-icon cos-icon-exchange']")),
+                        EC.presence_of_element_located((By.CSS_SELECTOR, "[class*='cos-icon cos-icon-thumbs-up']"))
+                   )
+                )
+            except Exception as e:
+                txt_edit.insert(tk.END, f'系统超时~\\n{e}\\n')
+                green_AIf.update()
+            txt_edit.insert(tk.END, f'即将生成回复~\\n')
+            green_AIf.update()
+
+            time.sleep(1.5)  # 给 JavaScript 留出时间完成渲染
+
+
+            # 滚动到底部，触发所有内容渲染
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(1.5)
+            # 点击思考部分按钮，使思考的部分也显示出来
+            try:
+                button = driver.find_element(By.CSS_SELECTOR, "[class*='cos-icon cos-icon-down']")
+                button.click()
+            except:
+                print('无思考进程~')
+            # 使用 Selenium 直接查找所有 AI 段落
+            paragraphs = driver.find_elements(By.CSS_SELECTOR, "[class*='marklang-paragraph']")
+           # print(len(driver.find_elements(By.CSS_SELECTOR, "[class='marklang']")))
+
+            # 遍历并输出每一段内容
+
+            for i, p in enumerate(paragraphs, 0):
+                try:
+                    # 实时找最新的元素
+                    p = driver.find_elements(By.CSS_SELECTOR, "[class*='marklang-paragraph']")[i]
+                    text = p.text.strip()  # 去除首尾空白字符
+                    if text:  # 避免输出空段落
+                        txt_edit.insert(tk.END, f'{text}\\n')
+                        green_AIf.update()
+                except Exception as e:
+                    txt_edit.insert(tk.END, f'发生错误:{e}\\n')
+                    green_AIf.update()
+                else:
+                    file_menu.entryconfig('🗘 重新回复',  state='normal')
+        except Exception as e:
+            txt_edit.insert(tk.END, f'发生错误:{e}\\n')
+            green_AIf.update()
+        finally:
+            # 释放内存和系统资源
+            chat_控制=0
+            txt_edit.insert(tk.END, f'回答已结束~\\n\\n\\n')
+            btnT.config(state='normal')
+            file_menu.entryconfig('🗘 重新回复',  state='normal')
+            txt_edit.config(state='disabled')
+            green_AIf.update()
+
+    ##
+    def close():
+        # print(1)
+        try:
+            driver.quit()
+            green_AIf.destroy()
+        except:
+            pass
+    def ok():
+      threading.Thread(target=ok_son, daemon=True).start()
+    # 绑定窗口关闭事件到自定义函数
+    green_AIf.protocol("WM_DELETE_WINDOW", close)
+
+    btnT = ttk.Button(green_AIf, style='TButton', text='''发送''', command=ok)
+    btnT.place(x=275, y=175, height=48, width=48)
+    mu1()
+    green_AIf.mainloop()
+   except Exception as e:
+       print(f'Error:{e}')`
+  },
+  {
+    name: "非爬取方式.py",
+    type: "script",
+    platform: "Cross-platform",
+    desc: "轻量的关键字匹配本地问答脚本，适合离线测试与示例。",
+    content: `import time
+import random
+
+# 用户自定义问答库（可以不断扩展）
+qa_library = {
+    "你好": ["你好呀！", "您好，有什么想问的？"],
+    "你是谁": ["我是一个用Python做的简易AI助手。"],
+    "时间": [lambda: "现在时间是：" + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())],
+    "日期": [lambda: "今天是：" + time.strftime("%Y-%m-%d", time.localtime())],
+    "天气": ["今天天气不错！", "天气晴朗，适合学习Python！"],
+    "帮助": ["你可以问我：你好、时间、计算、天气等问题。"]
+}
+
+# 对话历史
+history = []
+
+def simple_math(sentence):
+    # 支持加法、减法、乘法、除法
+    try:
+        expression = sentence.replace('加', '+').replace('减', '-').replace('乘', '*').replace('除', '/')
+        result = eval(expression)
+        return f"计算结果是：{result}"
+    except:
+        return "抱歉，目前只支持简单的加减乘除运算。"
+
+def ai_answer(user_input):
+    user_input = user_input.strip().lower()
+    # 关键词匹配
+    for key in qa_library:
+        if key in user_input:
+            answer = random.choice(qa_library[key])
+            if callable(answer):
+                return answer()
+            return answer
+    # 数学计算
+    if any(op in user_input for op in ['加', '减', '乘', '除', '+', '-', '*', '/']):
+        return simple_math(user_input)
+    # 时间和日期
+    if "几点" in user_input or "时间" in user_input:
+        return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    if "日期" in user_input or "今天" in user_input:
+        return time.strftime("%Y-%m-%d", time.localtime())
+    # 输出历史
+    if "历史" in user_input or "对话" in user_input:
+        return "历史对话：" + "; ".join(history[-5:])
+    # 默认回答
+    return "抱歉，我还不太懂你的问题，可以问我时间、计算、天气、历史等~"
+
+if __name__ == "__main__":
+    print("欢迎体验Python简易AI助手！（输入 exit 结束）")
+    while True:
+        user_input = input("你说：")
+        if user_input.lower() in ("exit", "quit", "bye"):
+            print("AI助手：再见！")
+            break
+        history.append(user_input)
+        print("AI助手：", ai_answer(user_input))`
+  }
+];
+
+/* ---------------------- 小工具 ---------------------- */
+const $ = sel => document.querySelector(sel);
+const g = id => document.getElementById(id);
+
+async function sha1Hex(str){
+  const buf = new TextEncoder().encode(str);
+  const hash = await crypto.subtle.digest('SHA-1', buf);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+/* 下载统计保存在 localStorage */
+function getCounts(){ try { return JSON.parse(localStorage.getItem('dl_counts')||'{}') } catch { return {} } }
+function incCount(name){ const c=getCounts(); c[name]=(c[name]||0)+1; localStorage.setItem('dl_counts',JSON.stringify(c)); }
+
+/* ---------------------- 目录管理 ---------------------- */
+// 获取用户的目录结构
+function getUserDirectories(username) {
+  const key = `user_directories_${username}`;
+  try {
+    return JSON.parse(localStorage.getItem(key) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+// 保存用户的目录结构
+function saveUserDirectories(username, directories) {
+  const key = `user_directories_${username}`;
+  localStorage.setItem(key, JSON.stringify(directories));
+}
+
+// 获取当前目录路径
+function getCurrentDirectory() {
+  return JSON.parse(sessionStorage.getItem('current_directory') || '[]');
+}
+
+// 保存当前目录路径
+function setCurrentDirectory(path) {
+  sessionStorage.setItem('current_directory', JSON.stringify(path));
+}
+
+// 获取当前目录下的文件
+function getFilesInCurrentDirectory(files, directories, currentPath) {
+  if (currentPath.length === 0) {
+    // 根目录：显示所有未分类的文件和目录
+    const categorizedFiles = new Set();
+    Object.values(directories).forEach(dirFiles => {
+      dirFiles.forEach(file => categorizedFiles.add(file));
+    });
+    
+    const uncategorizedFiles = files.filter(file => !categorizedFiles.has(file.name));
+    return [...uncategorizedFiles, ...Object.keys(directories).map(name => ({ 
+      name, 
+      type: 'directory', 
+      platform: '目录', 
+      desc: `包含 ${directories[name].length} 个文件` 
+    }))];
+  } else {
+    // 子目录：显示该目录下的文件
+    const dirName = currentPath[currentPath.length - 1];
+    const fileNames = directories[dirName] || [];
+    return files.filter(file => fileNames.includes(file.name));
+  }
+}
+
+/* ---------------------- 渲染与交互 ---------------------- */
+
+function makeCard(f, idx){
+  const div = document.createElement('article');
+  div.className='card';
+  
+  if (f.type === 'directory') {
+    // 目录卡片
+    div.innerHTML = `
+      <div class="meta">
+        <div class="tag">目录</div>
+        <div style="flex:1">
+          <p class="name">${escapeHtml(f.name)}</p>
+          <div class="desc">${escapeHtml(f.desc)}</div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" data-enter-dir="${idx}">进入</button>
+        </div>
+      </div>
+    `;
+    div.querySelector('[data-enter-dir]').onclick = () => enterDirectory(f.name);
+  } else {
+    // 文件卡片
+    div.innerHTML = `
+      <div class="meta">
+        <div class="tag">${f.type.toUpperCase()}</div>
+        <div style="flex:1">
+          <p class="name">${escapeHtml(f.name)}</p>
+          <div class="desc">${escapeHtml(f.desc)}</div>
+          <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <span class="pill">${f.platform}</span>
+            <span class="small" id="size-${idx}">计算大小…</span>
+            <span class="count" id="count-${idx}"></span>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" data-download="${idx}">下载</button>
+          <button class="btn" data-view="${idx}">预览</button>
+        </div>
+      </div>
+    `;
+    // size & count
+    const sizeEl = div.querySelector(`#size-${idx}`);
+    const countEl = div.querySelector(`#count-${idx}`);
+    const blob = new Blob([f.content], {type:'text/plain;charset=utf-8'});
+    sizeEl.textContent = blob.size < 1024 ? `${blob.size} B` : `${(blob.size/1024).toFixed(1)} KB`;
+    const counts = getCounts(); countEl.textContent = `下载 ${counts[f.name]||0} 次`;
+    // handlers
+    div.querySelector('[data-download]').onclick = ()=>downloadFile(idx);
+    div.querySelector('[data-view]').onclick = ()=>openModal(idx);
+  }
+  
+  return div;
+}
+
+function render(list){
+  const grid = g('grid');
+  grid.innerHTML = '';
+  list.forEach((f,i)=> grid.appendChild(makeCard(f,i)));
+}
+
+/* filtering & search & sort */
+function applyFilters(){
+  const q = g('search').value.trim().toLowerCase();
+  const filter = g('filter').value;
+  const sort = g('sort').value;
+  
+  const currentUser = localStorage.getItem(CURRENT_USER_KEY);
+  let list = [];
+  
+  if (currentUser) {
+    const directories = getUserDirectories(currentUser);
+    const currentPath = getCurrentDirectory();
+    list = getFilesInCurrentDirectory(FILES, directories, currentPath);
+  } else {
+    list = [...FILES];
+  }
+  
+  list = list.filter(f=>{
+    if(filter!=='all' && f.type!==filter && f.type !== 'directory') return false;
+    if(!q) return true;
+    return (f.name+f.desc+f.platform).toLowerCase().includes(q);
+  });
+  
+  if(sort==='name') list.sort((a,b)=>a.name.localeCompare(b.name));
+  else if(sort==='size' && list.every(f => f.type !== 'directory')) 
+    list.sort((a,b)=> (new Blob([a.content]).size) - (new Blob([b.content]).size) );
+  else if(sort==='downloads' && list.every(f => f.type !== 'directory')){
+    const counts = getCounts();
+    list.sort((a,b)=>(counts[b.name]||0)-(counts[a.name]||0));
+  }
+  
+  render(list);
+}
+
+/* download single (supports content or url) */
+async function downloadFile(i){
+  const currentUser = localStorage.getItem(CURRENT_USER_KEY);
+  let f;
+  
+  if (currentUser) {
+    const directories = getUserDirectories(currentUser);
+    const currentPath = getCurrentDirectory();
+    const filesInDir = getFilesInCurrentDirectory(FILES, directories, currentPath);
+    f = filesInDir[i];
+  } else {
+    f = FILES[i];
+  }
+  
+  incCount(f.name);
+  applyFilters(); // update counts
+  if(f.url){
+    // external URL — direct navigate (good for large binaries)
+    const a = document.createElement('a');
+    a.href = f.url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
+    return;
+  }
+  const blob = new Blob([f.content], {type: f.type==='script' ? 'text/x-python;charset=utf-8' : 'application/octet-stream'});
+  // compute checksum async and show in console (nice-to-have)
+  sha1Hex(f.content).then(h=> console.log(`${f.name} SHA1: ${h}`)).catch(()=>{});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
+}
+
+/* preview modal */
+function openModal(i){
+  const currentUser = localStorage.getItem(CURRENT_USER_KEY);
+  let f;
+  
+  if (currentUser) {
+    const directories = getUserDirectories(currentUser);
+    const currentPath = getCurrentDirectory();
+    const filesInDir = getFilesInCurrentDirectory(FILES, directories, currentPath);
+    f = filesInDir[i];
+  } else {
+    f = FILES[i];
+  }
+  
+  g('modName').textContent = f.name;
+  g('modTitle').textContent = `${f.type.toUpperCase()} 预览`;
+  g('modContent').textContent = f.content;
+  g('modal').style.display = 'flex';
+  g('modDownload').onclick = ()=>downloadFile(i);
+  g('modCopy').onclick = ()=>{ navigator.clipboard.writeText(f.content).then(()=>showToast()) };
+}
+g('modClose').onclick = ()=> g('modal').style.display='none';
+
+/* zip all using JSZip */
+async function downloadAll(){
+  const currentUser = localStorage.getItem(CURRENT_USER_KEY);
+  let filesToZip = FILES;
+  
+  if (currentUser) {
+    const directories = getUserDirectories(currentUser);
+    const currentPath = getCurrentDirectory();
+    filesToZip = getFilesInCurrentDirectory(FILES, directories, currentPath)
+      .filter(f => f.type !== 'directory');
+  }
+  
+  const zip = new JSZip();
+  filesToZip.forEach(f=> zip.file(f.name, f.content));
+  const blob = await zip.generateAsync({type:'blob',compression:'DEFLATE'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'python-files.zip'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
+}
+
+/* 目录导航 */
+function enterDirectory(dirName) {
+  const currentPath = getCurrentDirectory();
+  currentPath.push(dirName);
+  setCurrentDirectory(currentPath);
+  updateDirectoryPath();
+  applyFilters();
+}
+
+function navigateToPath(pathIndex) {
+  const currentPath = getCurrentDirectory();
+  const newPath = currentPath.slice(0, pathIndex + 1);
+  setCurrentDirectory(newPath);
+  updateDirectoryPath();
+  applyFilters();
+}
+
+function backToRoot() {
+  setCurrentDirectory([]);
+  updateDirectoryPath();
+  applyFilters();
+}
+
+function updateDirectoryPath() {
+  const currentPath = getCurrentDirectory();
+  const pathElement = g('directoryPath');
+  pathElement.innerHTML = '';
+  
+  // 添加根目录链接
+  const rootSpan = document.createElement('span');
+  rootSpan.textContent = '根目录';
+  rootSpan.onclick = backToRoot;
+  pathElement.appendChild(rootSpan);
+  
+  // 添加路径中的每个目录
+  currentPath.forEach((dirName, index) => {
+    const separator = document.createElement('span');
+    separator.textContent = ' / ';
+    separator.style.color = 'var(--muted)';
+    pathElement.appendChild(separator);
+    
+    const dirSpan = document.createElement('span');
+    dirSpan.textContent = dirName;
+    if (index === currentPath.length - 1) {
+      dirSpan.classList.add('current');
+    } else {
+      dirSpan.onclick = () => navigateToPath(index);
+    }
+    pathElement.appendChild(dirSpan);
+  });
+  
+  // 显示/隐藏目录控件
+  g('directoryControls').style.display = currentPath.length > 0 ? 'flex' : 'none';
+  
+  // 更新站点标题
+  const siteTitle = g('siteTitle');
+  if (currentPath.length > 0) {
+    siteTitle.textContent = `Python 分发站 · ${currentPath[currentPath.length - 1]}`;
+  } else {
+    siteTitle.textContent = 'Python 分发站 · 专业下载';
+  }
+}
+
+/* helpers */
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+function showToast(){ const t=g('toast'); t.style.display='block'; setTimeout(()=>t.style.display='none',1300) }
+
+/* ---------------------- 用户认证 ---------------------- */
+// 模拟用户数据存储 (在实际应用中，这应该在服务器端)
+const USERS_KEY = 'registered_users';
+const CURRENT_USER_KEY = 'current_user';
+
+// 初始化用户数据
+function initUsers() {
+    if (!localStorage.getItem(USERS_KEY)) {
+        localStorage.setItem(USERS_KEY, JSON.stringify({}));
+    }
+}
+initUsers();
+
+// 显示/隐藏认证模态框
+function showAuthModal(isLogin = true) {
+    const modal = g('authModal');
+    const title = g('authModalTitle');
+    const submitBtn = g('authSubmitBtn');
+    const toggleLink = g('toggleAuthMode');
+    const messageEl = g('authMessage');
+    
+    messageEl.textContent = ''; // 清空消息
+    g('authUsername').value = '';
+    g('authPassword').value = '';
+    
+    if (isLogin) {
+        title.textContent = '用户登录';
+        submitBtn.textContent = '登录';
+        toggleLink.textContent = '立即注册';
+        toggleLink.onclick = () => showAuthModal(false);
+    } else {
+        title.textContent = '用户注册';
+        submitBtn.textContent = '注册';
+        toggleLink.textContent = '立即登录';
+        toggleLink.onclick = () => showAuthModal(true);
+    }
+    modal.style.display = 'block';
+}
+
+function hideAuthModal() {
+    g('authModal').style.display = 'none';
+}
+
+// 切换认证模式
+g('toggleAuthMode').addEventListener('click', function() {
+    const isLogin = g('authModalTitle').textContent === '用户登录';
+    showAuthModal(!isLogin);
+});
+
+// 处理认证表单提交
+g('authForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = g('authUsername').value.trim();
+    const password = g('authPassword').value;
+    const isLogin = g('authModalTitle').textContent === '用户登录';
+    const messageEl = g('authMessage');
+    
+    if (!username || !password) {
+        messageEl.textContent = '用户名和密码不能为空';
+        return;
+    }
+    
+    const users = JSON.parse(localStorage.getItem(USERS_KEY));
+    
+    if (isLogin) {
+        // 登录逻辑
+        if (users[username] && users[username] === password) {
+            // 登录成功
+            localStorage.setItem(CURRENT_USER_KEY, username);
+            updateAuthUI();
+            hideAuthModal();
+            messageEl.textContent = '';
         } else {
-          // 默认深色
-          document.body.style.background = 'linear-gradient(135deg, #0f172a, #1e40af)';
-          document.body.style.color = 'white';
+            messageEl.textContent = '用户名或密码错误';
         }
-      });
+    } else {
+        // 注册逻辑
+        if (users[username]) {
+            messageEl.textContent = '用户名已存在';
+        } else {
+            // 注册新用户
+            users[username] = password;
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+            messageEl.style.color = '#34d399'; // 绿色成功消息
+            messageEl.textContent = '注册成功，请登录';
+            // 自动切换到登录
+            setTimeout(() => showAuthModal(true), 1500);
+        }
+    }
+});
+
+// 登出
+function logout() {
+    localStorage.removeItem(CURRENT_USER_KEY);
+    // 登出时返回根目录
+    backToRoot();
+    updateAuthUI();
+}
+
+// 更新认证UI (显示登录/注册按钮 或 用户信息)
+function updateAuthUI() {
+    const currentUser = localStorage.getItem(CURRENT_USER_KEY);
+    const authButtons = g('authButtons');
+    const userInfo = g('userInfo');
+    const usernameDisplay = g('usernameDisplay');
+    const directoryControls = g('directoryControls');
+    const createDirBtnTop = g('createDirBtnTop'); // 获取顶部创建目录按钮
+    
+    if (currentUser) {
+        authButtons.style.display = 'none';
+        userInfo.style.display = 'flex';
+        usernameDisplay.textContent = currentUser;
+        directoryControls.style.display = 'flex';
+        createDirBtnTop.style.display = 'inline-flex'; // 登录后显示顶部按钮
+    } else {
+        authButtons.style.display = 'flex';
+        userInfo.style.display = 'none';
+        usernameDisplay.textContent = '';
+        directoryControls.style.display = 'none';
+        createDirBtnTop.style.display = 'none'; // 未登录时隐藏顶部按钮
+    }
+    
+    // 更新目录路径显示
+    updateDirectoryPath();
+    applyFilters();
+}
+
+// ---------------------- 主题切换功能 ----------------------
+function setTheme(theme) {
+    const body = document.body;
+    
+    // 移除所有主题类
+    body.classList.remove('light-theme', 'dark-theme', 'high-contrast-theme');
+    
+    // 添加新主题类
+    if (theme === 'light') {
+        body.classList.add('light-theme');
+    } else if (theme === 'high-contrast') {
+        body.classList.add('high-contrast-theme');
+    }
+    // dark theme is default (no class needed or 'dark-theme')
+    else if (theme === 'dark') {
+        body.classList.add('dark-theme'); // Explicitly add for clarity if needed, though default styles apply
+    }
+    
+    // 更新按钮状态
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`.theme-btn[data-theme="${theme}"]`).classList.add('active');
+    
+    // 保存主题选择到 localStorage
+    localStorage.setItem('theme', theme);
+    
+    // 动态更新 body 和 footer 的 background 样式以匹配 CSS 变量
+    // 这样可以确保背景渐变和纹理也能随主题切换
+    requestAnimationFrame(() => { // 确保 DOM 已更新
+        const computedStyle = getComputedStyle(body);
+        const bgStart = computedStyle.getPropertyValue('--bg-start').trim();
+        const bgEnd = computedStyle.getPropertyValue('--bg-end').trim();
+        
+        // 更新 body 的 background-image 以匹配主题
+        let bgImage = 'none';
+        if (theme !== 'high-contrast') {
+            // 重新应用渐变和纹理
+            bgImage = `radial-gradient(circle at 10% 20%, rgba(96, 165, 250, 0.05) 0%, transparent 20%), radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 20%)`;
+        }
+        
+        body.style.background = `linear-gradient(180deg, ${bgStart}, ${bgEnd})`;
+        body.style.backgroundImage = bgImage;
+
+        // 更新 footer 的背景样式以匹配主题
+        const footer = document.querySelector('footer');
+        if (footer) {
+             footer.style.background = `linear-gradient(180deg, ${bgStart}, ${bgEnd})`;
+             footer.style.backgroundImage = bgImage;
+             // 高对比度主题特殊处理
+             if (theme === 'high-contrast') {
+                 footer.style.background = bgStart;
+                 footer.style.backgroundImage = 'none';
+             }
+        }
+    });
+}
+
+// ---------------------- 目录创建功能 ----------------------
+function showCreateDirModal() {
+    const modal = g('createDirModal');
+    const messageEl = g('createDirMessage');
+    
+    messageEl.textContent = ''; // 清空消息
+    g('dirName').value = '';
+    
+    modal.style.display = 'block';
+}
+
+function hideCreateDirModal() {
+    g('createDirModal').style.display = 'none';
+}
+
+// 处理创建目录表单提交
+g('createDirForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const currentUser = localStorage.getItem(CURRENT_USER_KEY);
+    if (!currentUser) return;
+    
+    const dirName = g('dirName').value.trim();
+    const messageEl = g('createDirMessage');
+    
+    if (!dirName) {
+        messageEl.textContent = '目录名称不能为空';
+        return;
+    }
+    
+    // 获取当前用户的目录结构
+    const directories = getUserDirectories(currentUser);
+    
+    // 检查目录是否已存在
+    if (directories[dirName]) {
+        messageEl.textContent = '目录已存在';
+        return;
+    }
+    
+    // 创建新目录 (空数组表示该目录下的文件名列表)
+    directories[dirName] = [];
+    
+    // 保存更新后的目录结构
+    saveUserDirectories(currentUser, directories);
+    
+    // 关闭模态框
+    hideCreateDirModal();
+    
+    // 刷新文件列表
+    applyFilters();
+});
+
+// ---------------------- 页面初始化 ----------------------
+document.addEventListener('DOMContentLoaded', function() {
+    // 初始化主题
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    setTheme(savedTheme);
+    
+    // 绑定主题切换按钮事件
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const theme = btn.getAttribute('data-theme');
+            setTheme(theme);
+        });
     });
 
-    // ========== 菜单切换 ==========
+    // 绑定其他按钮事件
+    g('downloadAllBtn').addEventListener('click', downloadAll);
+    g('refreshBtn').addEventListener('click', applyFilters);
+    g('readmeBtn').addEventListener('click', () => {
+        alert('说明：这是一个增强科技感的Python文件分发站，支持目录管理和用户认证。\n您可以在这里浏览、搜索、下载和预览Python脚本。\n登录后，您可以创建目录来组织您的文件。');
+    });
+    g('loginBtn').addEventListener('click', () => showAuthModal(true));
+    g('registerBtn').addEventListener('click', () => showAuthModal(false));
+    g('logoutBtn').addEventListener('click', logout);
+    g('authClose').addEventListener('click', hideAuthModal);
+    g('createDirBtnTop').addEventListener('click', showCreateDirModal); // 绑定顶部按钮
+    g('createDirClose').addEventListener('click', hideCreateDirModal);
+    g('backToRootBtn').addEventListener('click', backToRoot);
+
+    // 绑定搜索和筛选事件
+    g('search').addEventListener('input', applyFilters);
+    g('search').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') applyFilters();
+    });
+    g('filter').addEventListener('change', applyFilters);
+    g('sort').addEventListener('change', applyFilters);
+
+    // 绑定菜单切换事件
     document.querySelectorAll('.menu-item').forEach(item => {
-      item.addEventListener('click', function() {
-        // 清除所有激活状态
-        document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-        // 激活当前
-        this.classList.add('active');
-
-        // 获取要显示的区域
-        const section = this.getAttribute('data-section');
-
-        // 隐藏所有内容
-        document.getElementById('filesSection').classList.add('hidden');
-        document.getElementById('aboutSection').classList.add('hidden');
-
-        // 显示选中内容
-        document.getElementById(section + 'Section').classList.remove('hidden');
-      });
+        item.addEventListener('click', function() {
+            const section = this.getAttribute('data-section');
+            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            g(`${section}Section`).classList.add('active');
+        });
     });
 
-    // ========== 弹窗控制 ==========
-    function openModal(modalId) {
-      document.getElementById(modalId).classList.remove('hidden');
-    }
+    // 初始化UI和文件列表
+    updateAuthUI();
+    updateDirectoryPath();
+    applyFilters();
+});
 
-    function closeModal(modalId) {
-      document.getElementById(modalId).classList.add('hidden');
-    }
-
-    // 说明弹窗
-    document.getElementById('readmeBtn').addEventListener('click', () => openModal('readmeModal'));
-    document.getElementById('closeReadmeBtn').addEventListener('click', () => closeModal('readmeModal'));
-
-    // 登录弹窗
-    document.getElementById('loginBtn').addEventListener('click', () => openModal('loginModal'));
-    document.getElementById('switchToRegister').addEventListener('click', (e) => {
-      e.preventDefault();
-      closeModal('loginModal');
-      openModal('registerModal');
-    });
-
-    // 注册弹窗
-    document.getElementById('registerBtn').addEventListener('click', () => openModal('registerModal'));
-    document.getElementById('switchToLogin').addEventListener('click', (e) => {
-      e.preventDefault();
-      closeModal('registerModal');
-      openModal('loginModal');
-    });
-
-    // 点击遮罩层关闭所有弹窗
-    document.querySelectorAll('.modal-overlay').forEach(overlay => {
-      overlay.addEventListener('click', function(e) {
-        if (e.target === this) { // 只有点击遮罩层本身才关闭
-          this.parentElement.classList.add('hidden');
-        }
-      });
-    });
-
-    // ========== 登录功能（模拟） ==========
-    document.getElementById('doLoginBtn').addEventListener('click', function() {
-      const username = document.getElementById('loginUsername').value;
-      if (username) {
-        alert('✅ 登录成功！欢迎 ' + username);
-        
-        // 显示用户信息
-        document.getElementById('usernameDisplay').innerText = username;
-        document.getElementById('authButtons').classList.add('hidden');
-        document.getElementById('userInfo').classList.remove('hidden');
-        
-        // 关闭弹窗
-        closeModal('loginModal');
-        
-        // 清空输入框
-        document.getElementById('loginUsername').value = '';
-        document.getElementById('loginPassword').value = '';
-      } else {
-        alert('请输入用户名！');
-      }
-    });
-
-    // ========== 注册功能（模拟） ==========
-    document.getElementById('doRegisterBtn').addEventListener('click', function() {
-      const username = document.getElementById('regUsername').value;
-      if (username) {
-        alert('🎉 注册成功！请登录');
-        closeModal('registerModal');
-        openModal('loginModal');
-        document.getElementById('regUsername').value = '';
-        document.getElementById('regPassword').value = '';
-      } else {
-        alert('请输入用户名！');
-      }
-    });
-
-    // ========== 登出 ==========
-    document.getElementById('logoutBtn').addEventListener('click', function() {
-      alert('👋 已登出');
-      document.getElementById('userInfo').classList.add('hidden');
-      document.getElementById('authButtons').classList.remove('hidden');
-    });
-
-    // ========== 其他按钮（模拟功能） ==========
-    document.getElementById('refreshBtn').addEventListener('click', function() {
-      alert('🔄 文件列表已刷新');
-    });
-
-    document.getElementById('downloadAllBtn').addEventListener('click', function() {
-      alert('💾 正在打包下载所有文件...');
-    });
-  </script>
-
+</script>
 </body>
 </html>
+
+
