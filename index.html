@@ -1,957 +1,694 @@
 <html>
-  <head>
-    <title>PET 便利贴OFFICE 代码仓库</title>
-    
-  </head>
-  <body>
-    <p>
-      import tkinter as tk<br>
-      from tkinter import ttk<br>
-      from tkinter.scrolledtext import ScrolledText<br>
-      from selenium import webdriver  # 控制浏览器的核心模块<br>
-      from selenium.webdriver.chrome.service import Service  # 管理ChromDriver服务<br>
-      from webdriver_manager.chrome import ChromeDriverManager  # 自动下载并管理ChromeDriver<br>
-      import webbrowser<br>
-      from selenium.webdriver.common.by import By  # 定义元素定位方式<br>
-      from selenium.webdriver.support.ui import WebDriverWait  # 显示等待工具<br>
-      from selenium.webdriver.support import expected_conditions as EC  # 常用等待条件<br>
-      import time<br>
-      import threading<br>
-      from selenium.webdriver.common.keys import Keys<br>
-      from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance, ImageTk<br>
-      import requests<br>
-      from io import BytesIO<br>
-      
-      main_版本 = '3.3.0'<br>
-      green_f = tk.Tk()<br>
-      green_f.title(f'绿梵AI [{main_版本}]')<br>
-      green_f.geometry('355x250')<br>
-      green_f.resizable(False, False)  # 禁止<br>
-      
-      Label1 = tk.Label(green_f, text='初始化进程', font=('微软雅黑 Light', 17))<br>
-      Label1.place(x=20, y=25)<br>
-      Label2 = tk.Label(green_f, text='输入来自Google Chrame浏览器地址', font=('微软雅黑 Light', 14))<br>
-      Label2.place(x=20, y=72)<br>
-      entry1 = ttk.Entry(green_f, font=('微软雅黑', 13))<br>
-      entry1.place(x=20, y=155, height=34, width=205)<br>
-      style = ttk.Style()<br>
-      style.configure('TButton', font=('微软雅黑', 13))<br>
-      
-      place = ''<br>
-      版本 = ''<br>
-      顺序 = 0<br>
-      word = ''<br>
-      word_code = ''<br>
-      chat_控制 = 0<br>
-      chat_控制_control = 0<br>
-      
-      
-      def main():<br>
-         try:<br>
-              global place, 版本, driver<br>
-              green_AIf = tk.Tk()<br>
-      
-              模式_deepseek_版本 = 'DeepSeek-R1'<br>
-              模式_deepseek_深度思考 = 1<br>
-              模式_deepseek_联网搜索 = 1<br>
-              模式_deepseekthink_see=1<br>
-              btnT_x = 275<br>
-              btnT_y = 175<br>
-              btnT_height = 48<br>
-              btnT_width = 48<br>
-              btnT_image_height = 38<br>
-              btnT_image_width = 37<br>
-      
-              def mu():<br>
-                  global chat_控制_control<br>
-                  try:<br>
-                      if chat_控制_control == 0:<br>
-                          NORMAL()<br>
-                      else:<br>
-                          DISABLED()<br>
-                  except:<br>
-                      mu()<br>
-              def mu1():<br>
-                  nonlocal btnT_x, btnT_y, btnT_height, btnT_width, btnT_image_height, btnT_image_width<br>
-                  green_AIf.geometry('344x250')<br>
-                  txt_edit.config(height=7, width=33)<br>
-                  entry3.place(x=22, y=175, width=250, height=46)<br>
-                  btnT.place(x=275, y=175, height=48, width=48)<br>
-                  btnT_x = 275<br>
-                  btnT_y = 175<br>
-                  btnT_height = 48<br>
-                  btnT_width = 48<br>
-                  btnT_image_height = 38<br>
-                  btnT_image_width = 37<br>
-                  mu()<br>
-              def mu2():<br>
-                  nonlocal btnT_x, btnT_y, btnT_height, btnT_width, btnT_image_height, btnT_image_width<br>
-                  green_AIf.geometry('544x450')<br>
-                  txt_edit.config(height=18, width=55)<br>
-                  entry3.place(x=22, y=390, width=445, height=52)<br>
-                  btnT.place(x=472, y=390, height=53, width=51)<br>
-                  btnT_x = 472<br>
-                  btnT_y = 390<br>
-                  btnT_height = 53<br>
-                  btnT_width = 51<br>
-                  btnT_image_height = 42<br>
-                  btnT_image_width = 43<br>
-                  mu()<br>
-              def mu3():<br>
-                  nonlocal btnT_x, btnT_y, btnT_height, btnT_width, btnT_image_height, btnT_image_width<br>
-                  green_AIf.geometry('744x650')<br>
-                  txt_edit.config(height=27, width=77)<br>
-                  entry3.place(x=22, y=573, width=635, height=56)<br>
-                  btnT.place(x=663, y=573, height=57, width=57)<br>
-                  btnT_x = 663<br>
-                  btnT_y = 573<br>
-                  btnT_height = 57<br>
-                  btnT_width = 57<br>
-                  btnT_image_height = 47<br>
-                  btnT_image_width = 47<br>
-                  mu()<br>
-      
-              green_AIf.title(f'绿梵AI [{main_版本}]')<br>
-              green_AIf.geometry('344x250')<br>
-              green_AIf.resizable(False, False)  # 禁止<br>
-              entry3 = ttk.Entry(green_AIf, font=('微软雅黑', 13))<br>
-              entry3.place(x=22, y=175, height=46, width=250)<br>
-              txt_edit = tk.Text(green_AIf, wrap=tk.WORD, width=33, font=('微软雅黑', 11), height=7, undo=True)<br>
-              txt_edit.place(x=22, y=13)<br>
-              txt_edit.config(state=tk.NORMAL)<br>
-              txt_edit.delete('1.0', tk.END)<br>
-              txt_edit.config(state='disabled')<br>
-              txt_edit.tag_config('error', foreground='#FF6A6A')<br>
-      
-              # 创建Scrollbar组件<br>
-              scrollbar = tk.Scrollbar(green_AIf, orient=tk.VERTICAL, command=txt_edit.yview)<br>
-              scrollbar.pack(side=tk.RIGHT, fill=tk.Y)<br>
-      
-              # 配置Text组件与Scrollbar的关系<br>
-              txt_edit['yscrollcommand'] = scrollbar.set<br>
-      
-              chat_net_顺序 = 1<br>
-              chat_版本 = 'DeepSeek-R1'<br>
-              chat_index = 0<br>
-      
-              def change_版本(版本):<br>
-                  nonlocal chat_index<br>
-                  if 版本 == 'DeepSeek-R1':<br>
-                      chat_index = 0<br>
-                      return '绿梵-R1'<br>
-                  elif 版本 == 'DeepSeek-V3.2':<br>
-                      chat_index = 1<br>
-                      return '绿梵-V3.2'<br>
-                  else:<br>
-                      chat_index = 2<br>
-                      return '网页检索-C1'<br>
-              def change_chat_版本(chat_版本):<br>
-                  return change_版本(chat_版本)<br>
-      
-              def chat_son(value):<br>
-                  nonlocal 模式_deepseek_版本, chat_版本, chat_net_顺序, chat_thought_顺序, btnT_close,模式_deepseek_深度思考,模式_deepseek_联网搜索<br>
-                  global 版本<br>
-                  global chat_控制<br>
-                  try:<br>
-                      btnT_close = 1<br>
-                      menu_bar.entryconfig('版本', state='disabled')<br>
-                      btnT.config(state='disabled')<br>
-                      if value == '网页检索-C1':<br>
-                          btnT_close = 1<br>
-                          # 访问网址<br>
-                          url = 'https://www.baidu.com'<br>
-                          driver.get(url)<br>
-                          chat_控制 = 2<br>
-                          版本 = chat_版本<br>
-      
-                          file_menu2.entryconfig(4, label="联网模式", state='disabled')<br>
-                          file_menu2.entryconfig(6, label="深度思考", state='disabled')<br>
-                          chat_版本 = value<br>
-                          模式_deepseek_版本 = value<br>
-      
-                          # 刷新列表<br>
-                          change_版本(版本)<br>
-                          file_menu2.entryconfig(f"{chat_index}", label=f"{change_版本(版本)}")<br>
-                          change_chat_版本(chat_版本)<br>
-                          file_menu2.entryconfig(f"{chat_index}", label=f"{change_chat_版本(chat_版本)} √")<br>
-                          btnT.close = 0<br>
-                          btnT.config(state='normal')<br>
-                          menu_bar.entryconfig('版本', state='normal')<br>
-                          file_menu.entryconfig(1, state='disabled')<br>
-                          return<br>
-                      版本 = chat_版本<br>
-                      if chat_控制!=1:chat_控制 = 0<br>
-                      if 版本 == '网页检索-C1':<br>
-                          if chat_控制==0:<br>
-                              chat_net_顺序=1<br>
-                              chat_thought_顺序=1<br>
-                              模式_deepseek_联网搜索=1<br>
-                              模式_deepseek_深度思考=1<br>
-                          file_menu.entryconfig(1, state='normal')<br>
-                          url = f'https://chat.baidu.com/search?&dyTabStr=MCwxMiwzLDEsMiwxMyw3LDYsNSw5&pd=csaitab&setype=csaitab&extParamsJson=%7B%22enter_type%22%3A%22search_a_tab%22%2C%22sa%22%3A%22vs_tab%22%2C%22apagelid%22%3A%229405376116451188355%22%2C%22ori_lid%22%3A%229405376116451188355%22%7D'<br>
-                          driver.get(url)  # 打开网页<br>
-      
-                      file_menu2.entryconfig(4, state='normal')<br>
-                      file_menu2.entryconfig(6, state='normal')<br>
-                      button = driver.find_element(By.CSS_SELECTOR, "[class*='model-select-toggle']")<br>
-                      button.click()<br>
-                      wait = WebDriverWait(driver, 60)<br>
-      
-                      # 定位所有class为"input-capsules-model-list-item"的元素<br>
-                      all_items = wait.until(<br>
-                          EC.presence_of_all_elements_located(<br>
-                              (By.CLASS_NAME, "ci-capsules-model-list-item-text")<br>
-                          )<br>
-                      )<br>
-                      # 遍历元素寻找目标按钮<br>
-                      for item in all_items:<br>
-                          green_AIf.after(500)<br>
-                          # 检查元素内是否包含"DeepSeek-V3最新版"标题<br>
-                          title_element = item.find_element(<br>
-                              By.CLASS_NAME, "ci-capsules-model-list-item-title"<br>
-                          )<br>
-      
-                          版本 = chat_版本<br>
-                          if title_element.text == value:<br>
-                              # 点击目标按钮<br>
-                              item.click()<br>
-                              chat_版本 = value<br>
-                              模式_deepseek_版本 = value<br>
-                              button = driver.find_element(By.CSS_SELECTOR, "[class*='model-select-toggle")<br>
-                              button.click()<br>
-                              break<br>
-                      # 刷新列表<br>
-                      change_版本(版本)<br>
-                      file_menu2.entryconfig(f"{chat_index}", label=f"{change_版本(版本)}")<br>
-                      change_chat_版本(chat_版本)<br>
-                      file_menu2.entryconfig(f"{chat_index}", label=f"{change_chat_版本(chat_版本)} √")<br>
-                      btnT.config(state='normal')<br>
-                      menu_bar.entryconfig('版本', state='normal')<br>
-                  except Exception as e:<br>
-                      txt_edit.insert(tk.END, f'发生错误:\n{e}', 'error')<br>
-                  finally:<br>
-                      btnT_close = 0<br>
-      
-              def chat(value):<br>
-                  threading.Thread(target=chat_son(value), daemon=True).start()<br>
-      
-              def net():<br>
-                  nonlocal chat_net_顺序, 模式_deepseek_联网搜索, btnT_close,模式_deepseek_深度思考,chat_thought_顺序<br>
-                  try:<br>
-                      btnT_close = 1<br>
-                      btnT.config(state='disabled')<br>
-                      menu_bar.entryconfig('版本', state='disabled')<br>
-                      button = driver.find_element(By.CSS_SELECTOR, "[class*='model-select-toggle']")<br>
-                      button.click()<br>
-                      green_AIf.after(300)<br>
-                      button = driver.find_element(By.CSS_SELECTOR, "[class*='ci-switcher ci-sm']")<br>
-                      button.click()<br>
-                      chat_net_顺序 += 1<br>
-      
-                      if (chat_net_顺序 % 2 != 0):<br>
-                          模式_deepseek_联网搜索 = 1<br>
-                          file_menu2.entryconfig(4, label="联网模式")<br>
-                      else:<br>
-                          模式_deepseek_联网搜索 = 0<br>
-                          file_menu2.entryconfig(4, label="联网模式 √")<br>
-                      button = driver.find_element(By.CSS_SELECTOR, "[class*='model-select-toggle']")<br>
-                      button.click()<br>
-      
-                      btnT.config(state='normal')<br>
-                      menu_bar.entryconfig('版本', state='normal')<br>
-                  except Exception as e:<br>
-                      txt_edit.insert(tk.END, f'发生错误:\n{e}', 'error')<br>
-                      pass<br>
-                  finally:<br>
-                      btnT_close = 0<br>
-                      btnT.config(state='normal')<br>
-                      menu_bar.entryconfig('版本', state='normal')<br>
-      
-              def thought():<br>
-                  nonlocal chat_thought_顺序, 模式_deepseek_深度思考, btnT_close<br>
-                  try:<br>
-                      btnT_close = 1<br>
-                      btnT.config(state='disabled')<br>
-                      menu_bar.entryconfig('版本', state='disabled')<br>
-                      button = driver.find_element(By.CSS_SELECTOR, "[class*='internet-search-icon']")<br>
-                      button.click()<br>
-                      green_AIf.after(300)<br>
-                      chat_thought_顺序 += 1<br>
-                      if (chat_thought_顺序 % 2 != 0):<br>
-                          模式_deepseek_深度思考 = 1<br>
-                          file_menu2.entryconfig(6, label="深度思考")<br>
-                      else:<br>
-                          模式_deepseek_深度思考 = 0<br>
-                          file_menu2.entryconfig(6, label="深度思考 √")<br>
-                      btnT.config(state='normal')<br>
-                      menu_bar.entryconfig('版本', state='normal')<br>
-      
-                  except Exception as e:<br>
-                      txt_edit.insert(tk.END, f'发生错误:{e}', 'error')<br>
-                  finally:<br>
-                      btnT_close = 0<br>
-      
-              def exchange():<br>
-                  global word, chat_控制<br>
-                  nonlocal collect_continue, collect_exchange, chat_net_顺序, chat_thought_顺序<br>
-                  global 版本<br>
-                  try:<br>
-                      txt_edit.config(state='normal')<br>
-                      # 保存当前输入的内容<br>
-                      current_input = word_code if word_code else entry3.get()<br>
-                      # 清空输入框<br>
-                      entry3.delete(0, tk.END)<br>
-                      # 设置重新回答标志<br>
-                      word = current_input<br>
-                      if collect_continue == 1:<br>
-                          chat_控制 = 2<br>
-                          chat('网页检索-C1')<br>
-                          collect_continue = 0<br>
-                          collect_exchange = 1<br>
-                      else:<br>
-                          chat_控制 = 1<br>
-                          collect_exchange = 2<br>
-                      ok()<br>
-                  except Exception as e:<br>
-                      txt_edit.insert(tk.END, f'无法重新回复，请稍后重试 \n{e}\n', 'error')<br>
-                      green_AIf.update()<br>
-                  finally:<br>
-                      # 确保按钮状态恢复正常<br>
-                      NORMAL()<br>
-                      txt_edit.config(state='disabled')<br>
-      
-              chat_thought_顺序 = 1<br>
-      
-              def AI_text():<br>
-                  entry3.delete(0, tk.END)<br>
-                  entry3.insert(tk.END, '写一篇_____，内容关于 _____ ，字数 xxx字')<br>
-              def AI_program():<br>
-                  entry3.delete(0, tk.END)<br>
-                  entry3.insert(tk.END, '给我编一个关于____的程序，用xxx语言')<br>
-              def AI_picture():<br>
-                  entry3.delete(0, tk.END)<br>
-                  entry3.insert(tk.END, '给我生成一个关于____的图片')<br>
-              def AI_ftalk():<br>
-                  entry3.delete(0, tk.END)<br>
-                  entry3.insert(tk.END, '翻译xxx的中文意思')<br>
-      
-              collect_continue = 0<br>
-              collect_link = 0<br>
-              collect_exchange = 0<br>
-      
-              def open_link(link):<br>
-                  try:<br>
-                      webbrowser.open(link)<br>
-                  except:<br>
-                      return<br>
-      
-              def collect():<br>
-                  nonlocal entry3, ok_次, collect_continue, collect_link, collect_exchange<br>
-                  global driver, word, word_code, chat_控制, chat_控制_control<br>
-                  nonlocal 模式_deepseek_深度思考, 模式_deepseek_联网搜索, 模式_deepseek_版本<br>
-                  try:<br>
-                      menu_bar.entryconfig('版本', state='disabled')<br>
-                      file_menu2.entryconfig(4, label="联网模式", state='disabled')<br>
-                      file_menu2.entryconfig(6, label="深度思考", state='disabled')<br>
-                      chat_控制_control = 1<br>
-                      DISABLED()<br>
-                      if collect_exchange == 0:<br>
-                          word = entry3.get()<br>
-      
-                      url = 'https://www.baidu.com'<br>
-                      driver.get(url)<br>
-      
-                      word_code = word<br>
-                      entry3.delete(0, tk.END)<br>
-                      input_element_find = driver.find_element(By.ID, "chat-textarea")<br>
-                      # 输入问题<br>
-                      word_find_text = word<br>
-                      input_element_find.send_keys(word)<br>
-                      # 模拟回车键提交<br>
-                      input_element_find.send_keys(Keys.RETURN)<br>
-                      try:<br>
-                          txt_edit.config(state='normal')<br>
-                          # 设置颜色标签<br>
-                          txt_edit.tag_config('blue', foreground='#3487FF')<br>
-                          txt_edit.insert(tk.END, f'{模式_deepseek_版本}\n我要检索的内容:\n{word}\n', 'blue')<br>
-                          green_AIf.after(300)<br>
-                          txt_edit.insert(tk.END, '检索中~\n')<br>
-                          # 等待第一个检索段落出现<br>
-                          try:<br>
-                              WebDriverWait(driver, 25, 0.3).until(<br>
-                                  # 使用稳定的选择器<br>
-                                  # class=这种最精确，不是只要包含这个元素名就行<br>
-                                  EC.presence_of_element_located((By.ID, "content_left"))<br>
-                              )<br>
-                          except:<br>
-                              txt_edit.insert(tk.END, f'窗口莫名出现了问题，请重新进入~\n', 'error')<br>
-                      except Exception as e:<br>
-                          txt_edit.insert(tk.END, f'发生错误:{e}')<br>
-                      # 检查是否全部生成出来<br>
-                      try:<br>
-                          txt_edit.insert(tk.END, '检查中~\n')<br>
-                          WebDriverWait(driver, 180, 0.3).until(<br>
-                              # until只能有一个等待值但是any_of/all_of可以有多个<br>
-                              EC.all_of(<br>
-                                  # 使用稳定的选择器<br>
-                                  # class=这种最精确，不是只要包含这个元素名就行<br>
-                                  # class*=这种只要部分达标即可可以防止因网页代码更新造成的错误<br>
-                                  EC.presence_of_element_located((By.ID, "content_left")),<br>
-                              )<br>
-                          )<br>
-                      except Exception as e:<br>
-                          txt_edit.insert(tk.END, f'系统超时~\n{e}\n', 'error')<br>
-                          green_AIf.update()<br>
-                      # 滚动到底部，触发所有内容渲染<br>
-                      driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")<br>
-                      time.sleep(1.5)<br>
-                      # 查找所有class为xxx的项目<br>
-                      paragraphs_find = driver.find_elements(By.CSS_SELECTOR, '.result.new-pmd')<br>
-      
-                      for i, p in enumerate(paragraphs_find, 0):<br>
-                          try:<br>
-                              # 实时找最新的元素<br>
-                              p = driver.find_elements(By.CSS_SELECTOR, '.result.new-pmd') [<br>
-                                  i]  # 提取只需包含这三个特定的class就行了,不必完全相同(.后补空格)<br>
-                              text = p.text.strip()<br>
-                              url_p = p.get_attribute("href")<br>
-                              try:<br>
-                                  link_element = p.find_element(By.CSS_SELECTOR, "h3 a")  # 百度标题通常在 h3 > a 中(' '空格表示包含)<br>
-                                  url_p = link_element.get_attribute("href")<br>
-                                  url_p_text = p.text.strip()<br>
-                                  if url_p and url_p_text:<br>
-                                      collect_link += 1<br>
-                                      txt_edit.tag_config(f'{collect_link}', foreground='#3282F6', underline=True)<br>
-                                      txt_edit.insert(tk.END, f'{url_p_text}: \n{url_p}', f'{collect_link}')<br>
-                                      txt_edit.tag_bind(f"{collect_link}", "<Button-1>", lambda e: open_link(f"{url_p}"))<br>
-                              except:<br>
-                                  txt_edit.insert(tk.END, "\n")<br>
-      
-                              # 3. 提取图片（如果有缩略图）<br>
-                              try:<br>
-                                  # element 元素<br>
-                                  img_element = p.find_element(By.CSS_SELECTOR, "img")  # 查找容器内的 img<br>
-                                  # attribute属性<br>
-                                  img_src = img_element.get_attribute("src")<br>
-                                  if img_src and not img_src.startswith("data:"):  # 过滤 base64 占位图<br>
-                                      response = requests.get(img_src, timeout=10)<br>
-                                      #  response.raise_for_status()  # 抛出 HTTP 错误（如 404、500）<br>
-                                      img_data = BytesIO(response.content)  # 将内容载入内存流<br>
-                                      img = Image.open(img_data)<br>
-                                      # 调整图片大小（可选，避免过大）<br>
-                                      img.thumbnail((150, 250))  # 最大宽高 400px<br>
-                                      img_tk = ImageTk.PhotoImage(img)<br>
-                                      # 在 Tkinter 文本框中显示图片<br>
-                                      collect_link += 1<br>
-                                      txt_edit.tag_config(f'{collect_link}', foreground='#2DC9B4', underline=True)<br>
-                                      txt_edit.insert(tk.END, f"\n图片:\n{img_src}\n\n", f'{collect_link}')<br>
-                                      txt_edit.tag_bind(f"{collect_link}", "<Button-1>", lambda e: open_link(f"{img_src}"))<br>
-      
-                                      txt_edit.image_create(tk.END, image=img_tk)<br>
-                                      txt_edit.insert(tk.END, "\n\n")<br>
-                                      # 修正：使用列表保存所有图片引用，而不是覆盖单个变量<br>
-                                      if not hasattr(txt_edit, 'image_list'):<br>
-                                          txt_edit.image_list = []<br>
-                                      txt_edit.image_list.append(img_tk)  # 保存引用到列表，防止垃圾回收<br>
-      
-                              except:<br>
-                                  txt_edit.insert(tk.END, "\n")<br>
-                              finally:<br>
-                                  txt_edit.insert(tk.END, '\n\n')<br>
-                          except Exception as e:<br>
-                              txt_edit.insert(tk.END, f'发生错误:{e}', 'error')<br>
-                  except Exception as e:<br>
-                      txt_edit.insert(tk.END, f'发生错误:{e}\n''error')<br>
-                      green_AIf.update()<br>
-                  finally:<br>
-                      # 释放内存和系统资源<br>
-                      collect_exchange = 0<br>
-                      collect_continue = 1<br>
-                      txt_edit.insert(tk.END, f'检索完成~\n-------------------------\n\n','blue')<br>
-                      green_AIf.bind('<Return>', lambda event: ok())<br>
-      
-                      chat_控制_control = 0<br>
-                      menu_bar.entryconfig('版本', state='normal')<br>
-                      NORMAL()<br>
-                      file_menu.entryconfig('重新回复 🗘', state='normal')<br>
-                      txt_edit.config(state='disabled')<br>
-                      green_AIf.update()<br>
-      
-              def introduce():<br>
-                  wordd = tk.Tk()<br>
-                  wordd.title("绿梵AI 介绍")<br>
-                  wordd.geometry("340x340")<br>
-                  wordd.resizable(False, False)<br>
-      
-                  # 创建文本编辑框并设置布局<br>
-                  txt_edit = tk.Text(wordd, wrap=tk.WORD, width=46, height=25, undo=True)<br>
-                  txt_edit.place(x=0, y=0)<br>
-      
-                  # 创建垂直滚动条并与文本编辑框关联<br>
-                  v_scrollbar = tk.Scrollbar(wordd, orient=tk.VERTICAL, command=txt_edit.yview)<br>
-                  v_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)<br>
-                  txt_edit.config(yscrollcommand=v_scrollbar.set)<br>
-                  txt_edit.delete('1.0', tk.END)<br>
-                  # 插入文本并设置字体<br>
-                  s = open('绿梵AI介绍.txt', 'r', encoding='utf-8')<br>
-                  s = s.read()<br>
-      
-                  # 插入文本并设置字体<br>
-                  txt_edit.insert(tk.END, s, 'custom_font')<br>
-                  txt_edit.config(state=tk.DISABLED)<br>
-              def think_see():<br>
-                  nonlocal 模式_deepseekthink_see<br>
-                  if 模式_deepseekthink_see==1:<br>
-                      file_menu.entryconfig(1,label='与思考一并回答 √')<br>
-                      模式_deepseekthink_see=0<br>
-                  else:<br>
-                      file_menu.entryconfig(1,label='与思考一并回答')<br>
-                      模式_deepseekthink_see=1<br>
-      
-              # 创建菜单栏<br>
-              menu_bar = tk.Menu(green_AIf)<br>
-              # 文件菜单<br>
-              file_menu = tk.Menu(menu_bar, tearoff=0)<br>
-              file_menu2 = tk.Menu(menu_bar, tearoff=0)<br>
-              file_menu3 = tk.Menu(menu_bar, tearoff=0)<br>
-              file_menu4 = tk.Menu(menu_bar, tearoff=0)<br>
-              file_menu5 = tk.Menu(menu_bar, tearoff=0)<br>
-              file_menu.add_command(label="重新回复 🗘", command=exchange)<br>
-              file_menu.add_command(label="与思考一并回答", command=think_see)<br>
-      
-              file_menu2.add_command(label="绿梵-R1 √", command=lambda x='DeepSeek-R1': chat(x))<br>
-              file_menu2.add_command(label="绿梵-V3.2", command=lambda x='DeepSeek-V3.2': chat(x))<br>
-              file_menu2.add_command(label="网页检索-C1", command=lambda x='网页检索-C1': chat(x))<br>
-      
-              file_menu2.add_separator()<br>
-              file_menu2.add_command(label="联网模式", command=net)<br>
-      
-              file_menu2.add_separator()<br>
-              file_menu2.add_command(label="深度思考", command=thought)<br>
-      
-              file_menu3.add_command(label="344x250", command=mu1)<br>
-              file_menu3.add_command(label="644x450", command=mu2)<br>
-              file_menu3.add_command(label="744x650", command=mu3)<br>
-      
-              file_menu4.add_command(label="AI作文", command=AI_text)<br>
-              file_menu4.add_command(label="AI编程", command=AI_program)<br>
-              file_menu4.add_command(label="AI图片", command=AI_picture)<br>
-              file_menu4.add_command(label="AI翻译", command=AI_ftalk)<br>
-      
-              file_menu5.add_command(label="介绍", command=introduce)<br>
-      
-              file_menu.entryconfig('重新回复 🗘', state='disabled')<br>
-              menu_bar.add_cascade(label="编辑", menu=file_menu)<br>
-              menu_bar.add_cascade(label="版本", menu=file_menu2)<br>
-              menu_bar.add_cascade(label="窗口", menu=file_menu3)<br>
-              menu_bar.add_cascade(label="更多", menu=file_menu4)<br>
-              menu_bar.add_cascade(label="关于", menu=file_menu5)<br>
-              # 设置菜单栏到窗口<br>
-              green_AIf.config(menu=menu_bar)<br>
-      
-              ok_次 = 0<br>
-              ok_son_exchange = None<br>
-      
-              def ok_son():<br>
-                  nonlocal entry3, ok_次<br>
-                  global driver, word, word_code, chat_控制, chat_控制_control<br>
-                  nonlocal 模式_deepseek_深度思考, 模式_deepseek_联网搜索, 模式_deepseekthink_see,chat_net_顺序,chat_thought_顺序,模式_deepseek_版本, collect_link, btnT_close, ok_son_exchange<br>
-                  try:<br>
-                      menu_bar.entryconfig('版本', state='disabled')<br>
-                      file_menu.entryconfig(1,state='normal')<br>
-                      chat_控制_control = 1<br>
-                      btnT_close = 1<br>
-                      if chat_控制 == 0:<br>
-                          txt_edit.tag_config('blue', foreground='#3487FF')<br>
-                          word = str(entry3.get())<br>
-                          word_code = word  # 保存问题到word_code<br>
-                          ok_son_exchange = 模式_deepseek_版本<br>
-                          txt_edit.config(state='normal')<br>
-                          DISABLED()<br>
-                          txt_edit.insert(tk.END, f'{模式_deepseek_版本}\n', 'blue')<br>
-                          if 模式_deepseek_深度思考 == 0:<br>
-                              if 模式_deepseek_联网搜索 == 0:<br>
-                                  txt_edit.insert(tk.END, f'深度思考 联网模式\n', 'blue')<br>
-                              else:<br>
-                                  txt_edit.insert(tk.END, f'深度思考\n', 'blue')<br>
-                          else:<br>
-                              if 模式_deepseek_联网搜索 == 0:<br>
-                                  txt_edit.insert(tk.END, f'联网模式\n', 'blue')<br>
-                          txt_edit.insert(tk.END,f'我提出的问题:\n{word}\n\n','blue')<br>
-                      else:<br>
-                          word = word_code  # 使用保存的问题<br>
-                          txt_edit.config(state='normal')<br>
-                          模式_deepseek_版本 = ok_son_exchange<br>
-                          DISABLED()<br>
-                          txt_edit.insert(tk.END, f'{模式_deepseek_版本}\n', 'blue')<br>
-                          if 模式_deepseek_深度思考 == 0:<br>
-                              if 模式_deepseek_联网搜索 == 0:<br>
-                                  txt_edit.insert(tk.END, f'深度思考 联网模式\n', 'blue')<br>
-                              else:<br>
-                                  txt_edit.insert(tk.END, f'深度思考\n', 'blue')<br>
-                          else:<br>
-                              if 模式_deepseek_联网搜索 == 0:<br>
-                                  txt_edit.insert(tk.END, f'联网模式\n', 'blue')<br>
-                          txt_edit.insert(tk.END, f'重新回答:\n{word}\n\n', 'blue')<br>
-      
-                      # 解绑指定事件<br>
-                      green_AIf.unbind('<Return>')<br>
-                      txt_edit.config(state='normal')<br>
-                      DISABLED()<br>
-                      entry3.delete(0, tk.END)<br>
-                      # 使用after能解决无响应问题<br>
-                      # 刷新<br>
-                      green_AIf.update()<br>
-                      # 👇 关键：对 word 进行 URL 编码（写网址的时候可用）<br>
-                      # from urllib.parse import quote<br>
-                      # word = quote(word, safe='')<br>
-                      url = f'https://chat.baidu.com/search?&dyTabStr=MCwxMiwzLDEsMiwxMyw3LDYsNSw5&pd=csaitab&setype=csaitab&extParamsJson=%7B%22enter_type%22%3A%22search_a_tab%22%2C%22sa%22%3A%22vs_tab%22%2C%22apagelid%22%3A%229405376116451188355%22%2C%22ori_lid%22%3A%229405376116451188355%22%7D'<br>
-                      # 插入文本内容<br>
-                      driver.get(url)  # 打开网页<br>
-                      chat(模式_deepseek_版本)<br>
-      
-                      if (模式_deepseek_联网搜索 == 0):<br>
-                          chat_net_顺序-=1<br>
-                          net()<br>
-                      if (模式_deepseek_深度思考 == 0):<br>
-                          chat_thought_顺序-=1<br>
-                          thought()<br>
-                      DISABLED()<br>
-                      menu_bar.entryconfig('版本', state='disabled')<br>
-                      # 手动模式：对AI爬取输入信息的另一中方式（较复杂）<br>
-                      # 定位输入框元素（支持多种定位方式）<br>
-                      input_element = driver.find_element(By.ID, "chat-textarea")<br>
-                      input_element.send_keys('请仅以纯文本形式回复，不要使用任何格式化语法，每段至少有一行纯文本回答。' + str(word))<br>
-      
-                      # 模拟回车键提交<br>
-                      input_element.send_keys(Keys.RETURN)  # 刷新让其显示<br>
-                      green_AIf.update()<br>
-                      try:<br>
-                          txt_edit.insert(tk.END, f'思考中~\n')<br>
-                          DISABLED()<br>
-                          green_AIf.update()<br>
-                          # 等待第一个AI段落出现<br>
-                          try:<br>
-                              WebDriverWait(driver, 25, 0.3).until(<br>
-                                  # 使用稳定的选择器<br>
-                                  # class=这种最精确，不是只要包含这个元素名就行<br>
-                                  EC.presence_of_element_located((By.CSS_SELECTOR, "[class*='marklang-paragraph']"))<br>
-                              )<br>
-                          except:<br>
-                              if (chat_控制 != 0):<br>
-                                  txt_edit.insert(tk.END, f'窗口莫名出现了问题，请重新进入~\n', 'error')<br>
-                                  return<br>
-                              else:<br>
-                                  txt_edit.insert(tk.END, f'窗口莫名出现了问题，正在重试~\n', 'error')<br>
-                                  green_AIf.update()<br>
-                                  # 重新执行重新回答逻辑<br>
-                                  chat_控制 = 1<br>
-                                  ok()<br>
-                                  return<br>
-                          # txt_edit.insert(tk.END, f'正在组织回答~\n')<br>
-                          green_AIf.update()<br>
-                          # 等待至少2个段落出现（确保其内容完整，避免遗漏）使用最强大的python选择器<br>
-                          WebDriverWait(driver, 180, 0.3).until(<br>
-                              lambda d: len(d.find_elements(By.CSS_SELECTOR, "[class*='marklang']")) >= 1<br>
-                          )<br>
-                          DISABLED()<br>
-                      except Exception as e:<br>
-                          txt_edit.insert(tk.END, f'错误,请重试~\n{e}\n', 'error')<br>
-                          green_AIf.update()<br>
-                          return<br>
-      
-                      # 检查是否全部生成出来<br>
-                      try:<br>
-                          WebDriverWait(driver, 180, 0.3).until(<br>
-                              # until只能有一个等待值但是any_of/all_of可以有多个<br>
-                              EC.all_of(<br>
-                                  # 使用稳定的选择器<br>
-                                  # class=这种最精确，不是只要包含这个元素名就行<br>
-                                  # class*=这种只要部分达标即可可以防止因网页代码更新造成的错误<br>
-                                  EC.presence_of_element_located((By.CSS_SELECTOR, "[class*='cos-icon cos-icon-exchange']")),<br>
-                              )<br>
-                          )<br>
-                      except Exception as e:<br>
-                          txt_edit.insert(tk.END, f'系统超时~\n{e}\n', 'error')<br>
-                          green_AIf.update()<br>
-                      txt_edit.insert(tk.END, f'即将生成回复~\n\n')<br>
-                      green_AIf.update()<br>
-                      DISABLED()<br>
-      
-                      green_AIf.after(1500)  # 给 JavaScript 留出时间完成渲染<br>
-                      # 滚动到底部，触发所有内容渲染<br>
-                      driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")<br>
-                      green_AIf.after(1500)<br>
-                      # 使用 Selenium 直接查找所有 AI 段落<br>
-                      if 模式_deepseekthink_see!=0:<br>
-                          #关闭深度思考打印部分<br>
-                          parent_elements = driver.find_elements(By.CSS_SELECTOR, "[class*='ai-entry-block adjust-layout ai-markdown']")<br>
-                          #div中提取为列表形式<br>
-                          paragraphs = []<br>
-                          # 遍历每个父元素，从中查找段落<br>
-                          for parent in parent_elements:<br>
-                              try:<br>
-                                  child_paragraphs = parent.find_elements(By.CSS_SELECTOR, "[class*='marklang-paragraph']")<br>
-                                  paragraphs.extend(child_paragraphs)#将所有元素组合到一起<br>
-                              except:<br>
-                                  continue<br>
-                      else:<br>
-                          paragraphs = driver.find_elements(By.CSS_SELECTOR, "[class*='marklang-paragraph']")<br>
-                      # 遍历并输出每一段内容<br>
-                      for i, p in enumerate(paragraphs, 0):<br>
-                          try:<br>
-                              # 实时找最新的元素<br>
-                              # p = driver.find_elements(By.CSS_SELECTOR, "[class*='marklang-paragraph']")[i]  #重复查找可能导致元素丢失<br>
-                              text = p.text.strip()  # 去除首尾空白字符<br>
-                              if text:  # 避免输出空段落<br>
-                                  txt_edit.config(font=('微软雅黑', 11, 'bold'))<br>
-                                  txt_edit.insert(tk.END, f'{text}\n\n')<br>
-                                  txt_edit.config(font=('微软雅黑', 11))<br>
-                                  green_AIf.update()<br>
-                          except Exception as e:<br>
-                              txt_edit.insert(tk.END, f'发生错误:{e}\n', 'error')<br>
-                              green_AIf.update()<br>
-                          else:<br>
-                              file_menu.entryconfig('重新回复 🗘', state='normal')<br>
-                      DISABLED()<br>
-                      try:<br>
-                          # 有多张class=x的图片<br>
-                          images = driver.find_elements(By.CSS_SELECTOR, "[class*='_chat-guide-tooltip']")<br>
-                          # 遍历并输出每一张图片<br>
-                          for j, image in enumerate(images, 0):<br>
-                              # 有多张class=x的图片<br>
-                              image = image.find_elements(By.CSS_SELECTOR, "img[class*='_image-visible']")<br>
-                              # 防止元素过期<br>
-                              for z, img in enumerate(image, 0):<br>
-                                  # attribute属性<br>
-                                  img_src = img.get_attribute("src")<br>
-                                  if img_src and not img_src.startswith("data:"):  # 过滤 base64 占位图<br>
-                                      try:<br>
-                                          response = requests.get(img_src, timeout=10)<br>
-                                          img_data = BytesIO(response.content)  # 将内容载入内存流<br>
-                                          img = Image.open(img_data)<br>
-                                          # 调整图片大小（可选，避免过大）<br>
-                                          img.thumbnail((270, 270))  # 最大宽高 270px<br>
-                                          img_tk = ImageTk.PhotoImage(img)<br>
-                                          # 在 Tkinter 文本框中显示图片<br>
-                                          collect_link += 1<br>
-                                          txt_edit.tag_config(f'{collect_link}', foreground='#2DC9B4', underline=True)<br>
-                                          txt_edit.insert(tk.END, f"\n图片:\n{img_src}\n\n", f'{collect_link}')<br>
-                                          txt_edit.tag_bind(f"{collect_link}", "<Button-1>",lambda e: open_link(f"{img_src}"))<br>
-      
-                                          txt_edit.image_create(tk.END, image=img_tk)<br>
-                                          txt_edit.insert(tk.END, "\n\n")<br>
-                                          # 修正：使用列表保存所有图片引用，而不是覆盖单个变量<br>
-                                          if not hasattr(txt_edit, 'image_list'):<br>
-                                              txt_edit.image_list = []<br>
-                                          txt_edit.image_list.append(img_tk)  # 保存引用到列表，防止垃圾回收<br>
-                                      except:<br>
-                                          ERROR = response.raise_for_status()  # 抛出 HTTP 错误（如 404、500）<br>
-                                          txt_edit.insert(tk.END, f'发生错误:{ERROR}', 'error')<br>
-                      except:<br>
-                          # print('无图片')<br>
-                          green_AIf.update()<br>
-                  except Exception as e:<br>
-                      txt_edit.insert(tk.END, f'发生错误:{e}\n', 'error')<br>
-                      # print(f"发生错误: {e}")<br>
-                      green_AIf.update()<br>
-                  finally:<br>
-                      # 释放内存和系统资源<br>
-                      chat_控制 = 0<br>
-                      chat_控制_control = 0<br>
-                      btnT_close = 0<br>
-                      collect_exchange = 0<br>
-                      menu_bar.entryconfig('版本', state='normal')<br>
-                      #txt_edit.insert(tk.END, f'回答已结束~\n\n\n')<br>
-                      txt_edit.insert(tk.END,'--------------------------\n\n','blue')<br>
-                      green_AIf.bind('<Return>', lambda event: ok())<br>
-                      NORMAL()<br>
-                      file_menu.entryconfig('重新回复 🗘', state='normal')<br>
-                      txt_edit.config(state='disabled')<br>
-                      green_AIf.update()<br>
-      
-              def close():<br>
-                  try:<br>
-                      driver.quit()<br>
-                      green_AIf.destroy()<br>
-                  except:<br>
-                      pass<br>
-      
-              def ok():<br>
-                  global chat_控制, chat_控制_control<br>
-                  nonlocal collect_continue, btnT_close<br>
-                  if btnT_close == 1:<br>
-                      return<br>
-                  #print('chat_控制(ok):' + str(chat_控制))<br>
-                  try:<br>
-                      if entry3.get() == '' and collect_exchange == 0:<br>
-                          return<br>
-                      menu_bar.entryconfig('版本', state='disabled')<br>
-                      if chat_控制 == 2:<br>
-                          threading.Thread(target=collect, daemon=True).start()<br>
-                      else:<br>
-                          collect_continue = 0<br>
-                          threading.Thread(target=ok_son, daemon=True).start()<br>
-                  finally:<br>
-                      return<br>
-      
-              # 绑定窗口关闭事件到自定义函数<br>
-              green_AIf.protocol("WM_DELETE_WINDOW", close)<br>
-      
-              try:<br>
-                  full_image_path = '发送-绿梵AI-9.png'<br>
-                  # 使用Pillow加载图片并调整大小（如果需要）<br>
-                  original_image = Image.open(full_image_path)<br>
-                  resized_image = original_image.resize((38, 37), Image.Resampling.LANCZOS)  # 调整大小<br>
-      
-                  # 将PIL图像转换为Tkinter兼容的图像<br>
-                  img = ImageTk.PhotoImage(resized_image)<br>
-      
-                  btnT = ttk.Button(green_AIf, style='TButton', image=img, text='''发送''', command=ok)<br>
-                  btnT.place(x=275, y=175, height=48, width=48)<br>
-              except:<br>
-      
-                  txt_edit.insert(tk.END, '按钮初始化异常~', 'error')<br>
-              # 用于存储图片引用，防止被删除<br>
-              stored_images = {}<br>
-              def IMAGE(full_image_path):<br>
-                  nonlocal btnT<br>
-                  # 使用Pillow加载图片并调整大小（如果需要）<br>
-                  original_image = Image.open(full_image_path)<br>
-                  resized_image = original_image.resize((btnT_image_height, btnT_image_width),Image.Resampling.LANCZOS)  # 调整大小<br>
-                  # 将PIL图像转换为Tkinter兼容的图像<br>
-                  img = ImageTk.PhotoImage(resized_image)<br>
-                  btnT.destroy()<br>
-                  btnT = ttk.Button(green_AIf, style='TButton', image=img, command=ok)<br>
-                  btnT.place(x=btnT_x, y=btnT_y, height=btnT_height, width=btnT_width)<br>
-                  return img<br>
-              def NORMAL():<br>
-                  nonlocal btnT, btnT_x, btnT_y, btnT_height, btnT_width, btnT_image_height, btnT_image_width, btnT_close<br>
-                  try:<br>
-                      btnT_close = 0<br>
-                      # ！！！关键：保存图片引用，防止被删除！！！<br>
-                      stored_images['normal_btn']=IMAGE('发送-绿梵AI-9.png')<br>
-                  except:<br>
-                      txt_edit.insert(tk.END, '按钮初始化异常~', 'error')<br>
-                  finally:<br>
-                      btnT_close = 0<br>
-              btnT_close = 0<br>
-              def DISABLED():<br>
-                  nonlocal btnT, btnT_x, btnT_y, btnT_height, btnT_width, btnT_image_height, btnT_image_width, btnT_close<br>
-                  try:<br>
-                      btnT_close = 1<br>
-                      # ！！！关键：保存图片引用，防止被删除！！！<br>
-                      stored_images['disabled_btn'] =IMAGE('生成-绿梵AI-3.png')<br>
-                      btnT.configure(state='disabled')<br>
-                  except:<br>
-                      txt_edit.insert(tk.END, '按钮初始化异常~\n', 'error')<br>
-                  finally:<br>
-                      btnT_close = 1<br>
-      
-              green_AIf.bind('<Return>', lambda event: ok())<br>
-              mu1()<br>
-              green_AIf.mainloop()<br>
-         except Exception as e:<br>
-              txt_edit.insert(tk.END, f'发生错误:{e}', 'error')<br>
-      
-      def destroy_window():<br>
-          green_f.destroy()<br>
-          main()<br>
-      
-      driver = ''<br>
-      nex_son_close=0<br>
-      
-      def nex_son():<br>
-          global place, 版本, 顺序, driver,nex_son_close<br>
-          if 顺序 == 0:<br>
-              place = entry1.get()<br>
-              # 添加浏览器启动参数(命令参数)<br>
-              place = 'C:\Program Files\Google\Chrome Dev\Application\chrome.exe'<br>
-              if place=='':<br>
-                  return<br>
-              entry1.delete(0, 'end')<br>
-              Label2.config(text='输入Google Chrome的版本号')<br>
-              btn1.configure(text='完成')<br>
-              顺序 += 1<br>
-              return<br>
-          else:<br>
-              版本 = entry1.get()<br>
-              # 需定期更换<br>
-              版本 = '146.0.7655.3'<br>
-              if 版本=='':<br>
-                  return<br>
-              nex_son_close=1<br>
-              btn1.config(state='disabled')<br>
-              # 配置Chrome浏览器选项<br>
-              try:<br>
-      
-                  options = webdriver.ChromeOptions()<br>
-                  options.binary_location = rf'{place}'<br>
-      
-                  # options.add_argument('--headless')  # 部分环境对新版无头模式兼容性不佳<br>
-                  options.add_argument('--disable-dev-shm-usage')  # 解决容器环境内存问题<br>
-                  options.add_argument('--headless=new')  # 启用新版无头模式（后台运行，不显示窗口）<br>
-                  options.add_argument('--no-sandbox')  # 禁用沙盒（提高兼容性）<br>
-                  options.add_argument('--disable-gpu')  # 禁用 GPU 加速（避免某些环境崩溃）<br>
-                  options.add_argument('--window-size=1920,1080')  # 设置窗口大小<br>
-                  options.add_experimental_option("excludeSwitches", ["enable-automation"])  # 隐藏"自动化控制"提示<br>
-                  options.add_argument('--disable-blink-features=AutomationControlled')  # 防止网站检测自动化<br>
-                  options.add_argument('disk-cache-size=1')  # 缓存限制1MB<br>
-                  # 初始化浏览器驱动<br>
-                  service = Service(ChromeDriverManager(版本).install())<br>
-                  # service: 驱动服务；options: 浏览器配置<br>
-                  # 此时会启动一个 Chrome 浏览器（无头模式下不可见）<br>
-                  # 这个就是将浏览器的驱动和配置告诉driver这个假装用户的东西让他代替他们去执行对浏览器的操作<br>
-                  driver = webdriver.Chrome(service=service, options=options)<br>
-                  entry1.place_forget()<br>
-                  btn1.place_forget()<br>
-                  Label2.place_forget()<br>
-                  Label1.config(text='完成设置,正准备启动...')<br>
-                  url = 'https://chat.baidu.com/search?&dyTabStr=MCwxMiwzLDEsMiwxMyw3LDYsNSw5&pd=csaitab&setype=csaitab&extParamsJson=%7B%22enter_type%22%3A%22search_a_tab%22%2C%22sa%22%3A%22vs_tab%22%2C%22apagelid%22%3A%229405376116451188355%22%2C%22ori_lid%22%3A%229405376116451188355%22%7D'<br>
-                  driver.get(url)<br>
-                  green_f.after(1000, destroy_window)<br>
-              except Exception as e:<br>
-                  entry1.place_forget()<br>
-                  btn1.place_forget()<br>
-                  Label2.place_forget()<br>
-                  Label1.config(text=f'发生错误，请重试...', font=('微软雅黑 Light', 17))<br>
-                  btn11 = ''<br>
-                  wrong_answer = f'{e}'<br>
-      
-                  def wrong():<br>
-                      nonlocal btn11, wrong_answer<br>
-                      # 多行文本框区域<br>
-                      text_frame = tk.LabelFrame(green_f, text='详细信息:', font=('微软雅黑', 11))<br>
-                      text_frame.place(x=17, y=75)<br>
-                      text_box = ScrolledText(text_frame, state=tk.NORMAL, wrap=tk.WORD, font=("微软雅黑", 11), borderwidth=1,relief="groove", height=6, width=32)<br>
-                      text_box.pack(fill=tk.BOTH, padx=5, pady=5)<br>
-                      text_box.insert('1.0', f'{wrong_answer}')<br>
-                      text_box.config(state=tk.DISABLED)<br>
-                      btn.place_forget()<br>
-                      def up():<br>
-                          nonlocal btn11, wrong_answer<br>
-                          text_frame.destroy()<br>
-                          text_box.destroy()<br>
-                          btn11.destroy()<br>
-                          btn.place(x=250, y=28)<br>
-      
-                      btn11 = tk.Button(green_f, text="收起信息", font=("微软雅黑 Light", 13, 'bold'), borderwidth=0,fg="#FFB348", command=up)<br>
-                      btn11.place(x=250, y=28)<br>
-                  btn = tk.Button(green_f, text="详细信息", font=("微软雅黑 Light", 13, 'bold'), borderwidth=0, fg="#FFB348",command=wrong)<br>
-                  btn.place(x=250, y=28)<br>
-      
-      def nex():<br>
-          global nex_son_close<br>
-          if nex_son_close==1:<br>
-              return<br>
-          threading.Thread(target=nex_son, daemon=True).start()<br>
-      btn1 = ttk.Button(green_f, style='TButton', text='下一步', command=nex)<br>
-      btn1.place(x=250, y=155, height=34, width=86)<br>
-      green_f.bind('<Return>', lambda event: nex())<br>
-      green_f.mainloop()<br>
-          
-    </p>
+	<head>
+		<style>
+			.code-table td {
+  			font-family: Consolas, Courier, monospace;
+  			background: #f9f9f9;
+  			white-space: pre;
+  			padding-left: 1em;
+  			border: none;
+  			font-size: 14px;
+			}
+		</style>
+	</head>
+	<body>
+            <table class="code-table">
+            <tr><td>import tkinter as tk</td></tr>
+            <tr><td>from tkinter import ttk</td></tr>
+            <tr><td>from tkinter.scrolledtext import ScrolledText</td></tr>
+            <tr><td>from selenium import webdriver  # 控制浏览器的核心模块</td></tr>
+            <tr><td>from selenium.webdriver.chrome.service import Service  # 管理ChromDriver服务</td></tr>
+            <tr><td>from webdriver_manager.chrome import ChromeDriverManager  # 自动下载并管理ChromeDriver</td></tr>
+            <tr><td>import webbrowser</td></tr>
+            <tr><td>from selenium.webdriver.common.by import By  # 定义元素定位方式</td></tr>
+            <tr><td>from selenium.webdriver.support.ui import WebDriverWait  # 显示等待工具</td></tr>
+            <tr><td>from selenium.webdriver.support import expected_conditions as EC  # 常用等待条件</td></tr>
+            <tr><td>import time</td></tr>
+            <tr><td>import threading</td></tr>
+            <tr><td>from selenium.webdriver.common.keys import Keys</td></tr>
+            <tr><td>from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance, ImageTk</td></tr>
+            <tr><td>import requests</td></tr>
+            <tr><td>from io import BytesIO</td></tr>
+            <tr><td></td></tr>
+            <tr><td>main_版本 = '3.3.0'</td></tr>
+            <tr><td>green_f = tk.Tk()</td></tr>
+            <tr><td>green_f.title(f'绿梵AI [{main_版本}]')</td></tr>
+            <tr><td>green_f.geometry('355x250')</td></tr>
+            <tr><td>green_f.resizable(False, False)  # 禁止</td></tr>
+            <tr><td></td></tr>
+            <tr><td>Label1 = tk.Label(green_f, text='初始化进程', font=('微软雅黑 Light', 17))</td></tr>
+            <tr><td>Label1.place(x=20, y=25)</td></tr>
+            <tr><td>Label2 = tk.Label(green_f, text='输入来自Google Chrame浏览器地址', font=('微软雅黑 Light', 14))</td></tr>
+            <tr><td>Label2.place(x=20, y=72)</td></tr>
+            <tr><td>entry1 = ttk.Entry(green_f, font=('微软雅黑', 13))</td></tr>
+            <tr><td>entry1.place(x=20, y=155, height=34, width=205)</td></tr>
+            <tr><td>style = ttk.Style()</td></tr>
+            <tr><td>style.configure('TButton', font=('微软雅黑', 13))</td></tr>
+            <tr><td></td></tr>
+            <tr><td>place = ''</td></tr>
+            <tr><td>版本 = ''</td></tr>
+            <tr><td>顺序 = 0</td></tr>
+            <tr><td>word = ''</td></tr>
+            <tr><td>word_code = ''</td></tr>
+            <tr><td>chat_控制 = 0</td></tr>
+            <tr><td>chat_控制_control = 0</td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td>def main():</td></tr>
+            <tr><td>    try:</td></tr>
+            <tr><td>        global place, 版本, driver</td></tr>
+            <tr><td>        green_AIf = tk.Tk()</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        模式_deepseek_版本 = 'DeepSeek-R1'</td></tr>
+            <tr><td>        模式_deepseek_深度思考 = 1</td></tr>
+            <tr><td>        模式_deepseek_联网搜索 = 1</td></tr>
+            <tr><td>        模式_deepseekthink_see=1</td></tr>
+            <tr><td>        btnT_x = 275</td></tr>
+            <tr><td>        btnT_y = 175</td></tr>
+            <tr><td>        btnT_height = 48</td></tr>
+            <tr><td>        btnT_width = 48</td></tr>
+            <tr><td>        btnT_image_height = 38</td></tr>
+            <tr><td>        btnT_image_width = 37</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        def mu():</td></tr>
+            <tr><td>            global chat_控制_control</td></tr>
+            <tr><td>            try:</td></tr>
+            <tr><td>                if chat_控制_control == 0:</td></tr>
+            <tr><td>                    NORMAL()</td></tr>
+            <tr><td>                else:</td></tr>
+            <tr><td>                    DISABLED()</td></tr>
+            <tr><td>            except:</td></tr>
+            <tr><td>                mu()</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        def mu1():</td></tr>
+            <tr><td>            nonlocal btnT_x, btnT_y, btnT_height, btnT_width, btnT_image_height, btnT_image_width</td></tr>
+            <tr><td>            green_AIf.geometry('344x250')</td></tr>
+            <tr><td>            txt_edit.config(height=7, width=33)</td></tr>
+            <tr><td>            entry3.place(x=22, y=175, width=250, height=46)</td></tr>
+            <tr><td>            btnT.place(x=275, y=175, height=48, width=48)</td></tr>
+            <tr><td>            btnT_x = 275</td></tr>
+            <tr><td>            btnT_y = 175</td></tr>
+            <tr><td>            btnT_height = 48</td></tr>
+            <tr><td>            btnT_width = 48</td></tr>
+            <tr><td>            btnT_image_height = 38</td></tr>
+            <tr><td>            btnT_image_width = 37</td></tr>
+            <tr><td>            mu()</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        def mu2():</td></tr>
+            <tr><td>            nonlocal btnT_x, btnT_y, btnT_height, btnT_width, btnT_image_height, btnT_image_width</td></tr>
+            <tr><td>            green_AIf.geometry('544x450')</td></tr>
+            <tr><td>            txt_edit.config(height=18, width=55)</td></tr>
+            <tr><td>            entry3.place(x=22, y=390, width=445, height=52)</td></tr>
+            <tr><td>            btnT.place(x=472, y=390, height=53, width=51)</td></tr>
+            <tr><td>            btnT_x = 472</td></tr>
+            <tr><td>            btnT_y = 390</td></tr>
+            <tr><td>            btnT_height = 53</td></tr>
+            <tr><td>            btnT_width = 51</td></tr>
+            <tr><td>            btnT_image_height = 42</td></tr>
+            <tr><td>            btnT_image_width = 43</td></tr>
+            <tr><td>            mu()</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        def mu3():</td></tr>
+            <tr><td>            nonlocal btnT_x, btnT_y, btnT_height, btnT_width, btnT_image_height, btnT_image_width</td></tr>
+            <tr><td>            green_AIf.geometry('744x650')</td></tr>
+            <tr><td>            txt_edit.config(height=27, width=77)</td></tr>
+            <tr><td>            entry3.place(x=22, y=573, width=635, height=56)</td></tr>
+            <tr><td>            btnT.place(x=663, y=573, height=57, width=57)</td></tr>
+            <tr><td>            btnT_x = 663</td></tr>
+            <tr><td>            btnT_y = 573</td></tr>
+            <tr><td>            btnT_height = 57</td></tr>
+            <tr><td>            btnT_width = 57</td></tr>
+            <tr><td>            btnT_image_height = 47</td></tr>
+            <tr><td>            btnT_image_width = 47</td></tr>
+            <tr><td>            mu()</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        green_AIf.title(f'绿梵AI [{main_版本}]')</td></tr>
+            <tr><td>        green_AIf.geometry('344x250')</td></tr>
+            <tr><td>        green_AIf.resizable(False, False)  # 禁止</td></tr>
+            <tr><td>        entry3 = ttk.Entry(green_AIf, font=('微软雅黑', 13))</td></tr>
+            <tr><td>        entry3.place(x=22, y=175, height=46, width=250)</td></tr>
+            <tr><td>        txt_edit = tk.Text(green_AIf, wrap=tk.WORD, width=33, font=('微软雅黑', 11), height=7, undo=True)</td></tr>
+            <tr><td>        txt_edit.place(x=22, y=13)</td></tr>
+            <tr><td>        txt_edit.config(state=tk.NORMAL)</td></tr>
+            <tr><td>        txt_edit.delete('1.0', tk.END)</td></tr>
+            <tr><td>        txt_edit.config(state='disabled')</td></tr>
+            <tr><td>        txt_edit.tag_config('error', foreground='#FF6A6A')</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        scrollbar = tk.Scrollbar(green_AIf, orient=tk.VERTICAL, command=txt_edit.yview)</td></tr>
+            <tr><td>        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)</td></tr>
+            <tr><td>        txt_edit['yscrollcommand'] = scrollbar.set</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        chat_net_顺序 = 1</td></tr>
+            <tr><td>        chat_版本 = 'DeepSeek-R1'</td></tr>
+            <tr><td>        chat_index = 0</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        def change_版本(版本):</td></tr>
+            <tr><td>            nonlocal chat_index</td></tr>
+            <tr><td>            if 版本 == 'DeepSeek-R1':</td></tr>
+            <tr><td>                chat_index = 0</td></tr>
+            <tr><td>                return '绿梵-R1'</td></tr>
+            <tr><td>            elif 版本 == 'DeepSeek-V3.2':</td></tr>
+            <tr><td>                chat_index = 1</td></tr>
+            <tr><td>                return '绿梵-V3.2'</td></tr>
+            <tr><td>            else:</td></tr>
+            <tr><td>                chat_index = 2</td></tr>
+            <tr><td>                return '网页检索-C1'</td></tr>
+            <tr><td>        def change_chat_版本(chat_版本):</td></tr>
+            <tr><td>            return change_版本(chat_版本)</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        def chat_son(value):</td></tr>
+            <tr><td>            nonlocal 模式_deepseek_版本, chat_版本, chat_net_顺序, chat_thought_顺序, btnT_close,模式_deepseek_深度思考,模式_deepseek_联网搜索</td></tr>
+            <tr><td>            global 版本</td></tr>
+            <tr><td>            global chat_控制</td></tr>
+            <tr><td>            try:</td></tr>
+            <tr><td>                btnT_close = 1</td></tr>
+            <tr><td>                menu_bar.entryconfig('版本', state='disabled')</td></tr>
+            <tr><td>                btnT.config(state='disabled')</td></tr>
+            <tr><td>                if value == '网页检索-C1':</td></tr>
+            <tr><td>                    btnT_close = 1</td></tr>
+            <tr><td>                    # 访问网址</td></tr>
+            <tr><td>                    url = 'https://www.baidu.com'</td></tr>
+            <tr><td>                    driver.get(url)</td></tr>
+            <tr><td>                    chat_控制 = 2</td></tr>
+            <tr><td>                    版本 = chat_版本</td></tr>
+            <tr><td></td></tr>
+            <tr><td>                    file_menu2.entryconfig(4, label="联网模式", state='disabled')</td></tr>
+            <tr><td>                    file_menu2.entryconfig(6, label="深度思考", state='disabled')</td></tr>
+            <tr><td>                    chat_版本 = value</td></tr>
+            <tr><td>                    模式_deepseek_版本 = value</td></tr>
+            <tr><td></td></tr>
+            <tr><td>                    # 刷新列表</td></tr>
+            <tr><td>                    change_版本(版本)</td></tr>
+            <tr><td>                    file_menu2.entryconfig(f"{chat_index}", label=f"{change_版本(版本)}")</td></tr>
+            <tr><td>                    change_chat_版本(chat_版本)</td></tr>
+            <tr><td>                    file_menu2.entryconfig(f"{chat_index}", label=f"{change_chat_版本(chat_版本)} √")</td></tr>
+            <tr><td>                    btnT.close = 0</td></tr>
+            <tr><td>                    btnT.config(state='normal')</td></tr>
+            <tr><td>                    menu_bar.entryconfig('版本', state='normal')</td></tr>
+            <tr><td>                    file_menu.entryconfig(1, state='disabled')</td></tr>
+            <tr><td>                    return</td></tr>
+            <tr><td>                版本 = chat_版本</td></tr>
+            <tr><td>                if chat_控制!=1:chat_控制 = 0</td></tr>
+            <tr><td>                if 版本 == '网页检索-C1':</td></tr>
+            <tr><td>                    if chat_控制==0:</td></tr>
+            <tr><td>                        chat_net_顺序=1</td></tr>
+            <tr><td>                        chat_thought_顺序=1</td></tr>
+            <tr><td>                        模式_deepseek_联网搜索=1</td></tr>
+            <tr><td>                        模式_deepseek_深度思考=1</td></tr>
+            <tr><td>                    file_menu.entryconfig(1, state='normal')</td></tr>
+            <tr><td>                    url = f'https://chat.baidu.com/search?&dyTabStr=MCwxMiwzLDEsMiwxMyw3LDYsNSw5&pd=csaitab&setype=csaitab&extParamsJson=%7B%22enter_type%22%3A%22search_a_tab%22%2C%22sa%22%3A%22vs_tab%22%7D'</td></tr>
+            <tr><td>                    driver.get(url)  # 打开网页</td></tr>
+            <tr><td></td></tr>
+            <tr><td>                file_menu2.entryconfig(4, state='normal')</td></tr>
+            <tr><td>                file_menu2.entryconfig(6, state='normal')</td></tr>
+            <tr><td>                button = driver.find_element(By.CSS_SELECTOR, "[class*='model-select-toggle']")</td></tr>
+            <tr><td>                button.click()</td></tr>
+            <tr><td>                wait = WebDriverWait(driver, 60)</td></tr>
+            <tr><td></td></tr>
+            <tr><td>                # 定位所有class为"input-capsules-model-list-item"的元素</td></tr>
+            <tr><td>                all_items = wait.until(</td></tr>
+            <tr><td>                    EC.presence_of_all_elements_located(</td></tr>
+            <tr><td>                        (By.CLASS_NAME, "ci-capsules-model-list-item-text")</td></tr>
+            <tr><td>                    )</td></tr>
+            <tr><td>                )</td></tr>
+            <tr><td>                # 遍历元素寻找目标按钮</td></tr>
+            <tr><td>                for item in all_items:</td></tr>
+            <tr><td>                    green_AIf.after(500)</td></tr>
+            <tr><td>                    # 检查元素内是否包含"DeepSeek-V3最新版"标题</td></tr>
+            <tr><td>                    title_element = item.find_element(</td></tr>
+            <tr><td>                        By.CLASS_NAME, "ci-capsules-model-list-item-title"</td></tr>
+            <tr><td>                    )</td></tr>
+            <tr><td></td></tr>
+            <tr><td>                    版本 = chat_版本</td></tr>
+            <tr><td>                    if title_element.text == value:</td></tr>
+            <tr><td>                        # 点击目标按钮</td></tr>
+            <tr><td>                        item.click()</td></tr>
+            <tr><td>                        chat_版本 = value</td></tr>
+            <tr><td>                        模式_deepseek_版本 = value</td></tr>
+            <tr><td>                        button = driver.find_element(By.CSS_SELECTOR, "[class*='model-select-toggle")</td></tr>
+            <tr><td>                        button.click()</td></tr>
+            <tr><td>                        break</td></tr>
+            <tr><td>                # 刷新列表</td></tr>
+            <tr><td>                change_版本(版本)</td></tr>
+            <tr><td>                file_menu2.entryconfig(f"{chat_index}", label=f"{change_版本(版本)}")</td></tr>
+            <tr><td>                change_chat_版本(chat_版本)</td></tr>
+            <tr><td>                file_menu2.entryconfig(f"{chat_index}", label=f"{change_chat_版本(chat_版本)} √")</td></tr>
+            <tr><td>                btnT.config(state='normal')</td></tr>
+            <tr><td>                menu_bar.entryconfig('版本', state='normal')</td></tr>
+            <tr><td>            except Exception as e:</td></tr>
+            <tr><td>                txt_edit.insert(tk.END, f'发生错误:\n{e}', 'error')</td></tr>
+            <tr><td>            finally:</td></tr>
+            <tr><td>                btnT_close = 0</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        def chat(value):</td></tr>
+            <tr><td>            threading.Thread(target=chat_son(value), daemon=True).start()</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        def net():</td></tr>
+            <tr><td>            nonlocal chat_net_顺序, 模式_deepseek_联网搜索, btnT_close,模式_deepseek_深度思考,chat_thought_顺序</td></tr>
+            <tr><td>            try:</td></tr>
+            <tr><td>                btnT_close = 1</td></tr>
+            <tr><td>                btnT.config(state='disabled')</td></tr>
+            <tr><td>                menu_bar.entryconfig('版本', state='disabled')</td></tr>
+            <tr><td>                button = driver.find_element(By.CSS_SELECTOR, "[class*='model-select-toggle']")</td></tr>
+            <tr><td>                button.click()</td></tr>
+            <tr><td>                green_AIf.after(300)</td></tr>
+            <tr><td>                button = driver.find_element(By.CSS_SELECTOR, "[class*='ci-switcher ci-sm']")</td></tr>
+            <tr><td>                button.click()</td></tr>
+            <tr><td>                chat_net_顺序 += 1</td></tr>
+            <tr><td></td></tr>
+            <tr><td>                if (chat_net_顺序 % 2 != 0):</td></tr>
+            <tr><td>                    模式_deepseek_联网搜索 = 1</td></tr>
+            <tr><td>                    file_menu2.entryconfig(4, label="联网模式")</td></tr>
+            <tr><td>                else:</td></tr>
+            <tr><td>                    模式_deepseek_联网搜索 = 0</td></tr>
+            <tr><td>                    file_menu2.entryconfig(4, label="联网模式 √")</td></tr>
+            <tr><td>                button = driver.find_element(By.CSS_SELECTOR, "[class*='model-select-toggle']")</td></tr>
+            <tr><td>                button.click()</td></tr>
+            <tr><td></td></tr>
+            <tr><td>                btnT.config(state='normal')</td></tr>
+            <tr><td>                menu_bar.entryconfig('版本', state='normal')</td></tr>
+            <tr><td>            except Exception as e:</td></tr>
+            <tr><td>                txt_edit.insert(tk.END, f'发生错误:\n{e}', 'error')</td></tr>
+            <tr><td>                pass</td></tr>
+            <tr><td>            finally:</td></tr>
+            <tr><td>                btnT_close = 0</td></tr>
+            <tr><td>                btnT.config(state='normal')</td></tr>
+            <tr><td>                menu_bar.entryconfig('版本', state='normal')</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        def thought():</td></tr>
+            <tr><td>            nonlocal chat_thought_顺序, 模式_deepseek_深度思考, btnT_close</td></tr>
+            <tr><td>            try:</td></tr>
+            <tr><td>                btnT_close = 1</td></tr>
+            <tr><td>                btnT.config(state='disabled')</td></tr>
+            <tr><td>                menu_bar.entryconfig('版本', state='disabled')</td></tr>
+            <tr><td>                button = driver.find_element(By.CSS_SELECTOR, "[class*='internet-search-icon']")</td></tr>
+            <tr><td>                button.click()</td></tr>
+            <tr><td>                green_AIf.after(300)</td></tr>
+            <tr><td>                chat_thought_顺序 += 1</td></tr>
+            <tr><td>                if (chat_thought_顺序 % 2 != 0):</td></tr>
+            <tr><td>                    模式_deepseek_深度思考 = 1</td></tr>
+            <tr><td>                    file_menu2.entryconfig(6, label="深度思考")</td></tr>
+            <tr><td>                else:</td></tr>
+            <tr><td>                    模式_deepseek_深度思考 = 0</td></tr>
+            <tr><td>                    file_menu2.entryconfig(6, label="深度思考 √")</td></tr>
+            <tr><td>                btnT.config(state='normal')</td></tr>
+            <tr><td>                menu_bar.entryconfig('版本', state='normal')</td></tr>
+            <tr><td></td></tr>
+            <tr><td>            except Exception as e:</td></tr>
+            <tr><td>                txt_edit.insert(tk.END, f'发生错误:{e}', 'error')</td></tr>
+            <tr><td>            finally:</td></tr>
+            <tr><td>                btnT_close = 0</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        def exchange():</td></tr>
+            <tr><td>            global word, chat_控制</td></tr>
+            <tr><td>            nonlocal collect_continue, collect_exchange, chat_net_顺序, chat_thought_顺序</td></tr>
+            <tr><td>            global 版本</td></tr>
+            <tr><td>            try:</td></tr>
+            <tr><td>                txt_edit.config(state='normal')</td></tr>
+            <tr><td>                # 保存当前输入的内容</td></tr>
+            <tr><td>                current_input = word_code if word_code else entry3.get()</td></tr>
+            <tr><td>                # 清空输入框</td></tr>
+            <tr><td>                entry3.delete(0, tk.END)</td></tr>
+            <tr><td>                # 设置重新回答标志</td></tr>
+            <tr><td>                word = current_input</td></tr>
+            <tr><td>                if collect_continue == 1:</td></tr>
+            <tr><td>                    chat_控制 = 2</td></tr>
+            <tr><td>                    chat('网页检索-C1')</td></tr>
+            <tr><td>                    collect_continue = 0</td></tr>
+            <tr><td>                    collect_exchange = 1</td></tr>
+            <tr><td>                else:</td></tr>
+            <tr><td>                    chat_控制 = 1</td></tr>
+            <tr><td>                    collect_exchange = 2</td></tr>
+            <tr><td>                ok()</td></tr>
+            <tr><td>            except Exception as e:</td></tr>
+            <tr><td>                txt_edit.insert(tk.END, f'无法重新回复，请稍后重试 \n{e}\n', 'error')</td></tr>
+            <tr><td>                green_AIf.update()</td></tr>
+            <tr><td>            finally:</td></tr>
+            <tr><td>                # 确保按钮状态恢复正常</td></tr>
+            <tr><td>                NORMAL()</td></tr>
+            <tr><td>                txt_edit.config(state='disabled')</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        chat_thought_顺序 = 1</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        def AI_text():</td></tr>
+            <tr><td>            entry3.delete(0, tk.END)</td></tr>
+            <tr><td>            entry3.insert(tk.END, '写一篇_____，内容关于 _____ ，字数 xxx字')</td></tr>
+            <tr><td>        def AI_program():</td></tr>
+            <tr><td>            entry3.delete(0, tk.END)</td></tr>
+            <tr><td>            entry3.insert(tk.END, '给我编一个关于____的程序，用xxx语言')</td></tr>
+            <tr><td>        def AI_picture():</td></tr>
+            <tr><td>            entry3.delete(0, tk.END)</td></tr>
+            <tr><td>            entry3.insert(tk.END, '给我生成一个关于____的图片')</td></tr>
+            <tr><td>        def AI_ftalk():</td></tr>
+            <tr><td>            entry3.delete(0, tk.END)</td></tr>
+            <tr><td>            entry3.insert(tk.END, '翻译xxx的中文意思')</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        collect_continue = 0</td></tr>
+            <tr><td>        collect_link = 0</td></tr>
+            <tr><td>        collect_exchange = 0</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        def open_link(link):</td></tr>
+            <tr><td>            try:</td></tr>
+            <tr><td>                webbrowser.open(link)</td></tr>
+            <tr><td>            except:</td></tr>
+            <tr><td>                return</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        def collect():</td></tr>
+            <tr><td>            nonlocal entry3, ok_次, collect_continue, collect_link, collect_exchange</td></tr>
+            <tr><td>            global driver, word, word_code, chat_控制, chat_控制_control</td></tr>
+            <tr><td>            nonlocal 模式_deepseek_深度思考, 模式_deepseek_联网搜索, 模式_deepseek_版本</td></tr>
+            <tr><td>            try:</td></tr>
+            <tr><td>                menu_bar.entryconfig('版本', state='disabled')</td></tr>
+            <tr><td>                file_menu2.entryconfig(4, label="联网模式", state='disabled')</td></tr>
+            <tr><td>                file_menu2.entryconfig(6, label="深度思考", state='disabled')</td></tr>
+            <tr><td>                chat_控制_control = 1</td></tr>
+            <tr><td>                DISABLED()</td></tr>
+            <tr><td>                if collect_exchange == 0:</td></tr>
+            <tr><td>                    word = entry3.get()</td></tr>
+            <tr><td></td></tr>
+            <tr><td>                url = 'https://www.baidu.com'</td></tr>
+            <tr><td>                driver.get(url)</td></tr>
+            <tr><td></td></tr>
+            <tr><td>                word_code = word</td></tr>
+            <tr><td>                entry3.delete(0, tk.END)</td></tr>
+            <tr><td>                input_element_find = driver.find_element(By.ID, "chat-textarea")</td></tr>
+            <tr><td>                # 输入问题</td></tr>
+            <tr><td>                word_find_text = word</td></tr>
+            <tr><td>                input_element_find.send_keys(word)</td></tr>
+            <tr><td>                # 模拟回车键提交</td></tr>
+            <tr><td>                input_element_find.send_keys(Keys.RETURN)</td></tr>
+            <tr><td>                try:</td></tr>
+            <tr><td>                    txt_edit.config(state='normal')</td></tr>
+            <tr><td>                    # 设置颜色标签</td></tr>
+            <tr><td>                    txt_edit.tag_config('blue', foreground='#3487FF')</td></tr>
+            <tr><td>                    txt_edit.insert(tk.END, f'{模式_deepseek_版本}\n我要检索的内容:\n{word}\n', 'blue')</td></tr>
+            <tr><td>                    green_AIf.after(300)</td></tr>
+            <tr><td>                    txt_edit.insert(tk.END, '检索中~\n')</td></tr>
+            <tr><td>                    # 等待第一个检索段落出现</td></tr>
+            <tr><td>                    try:</td></tr>
+            <tr><td>                        WebDriverWait(driver, 25, 0.3).until(</td></tr>
+            <tr><td>                            EC.presence_of_element_located((By.ID, "content_left"))</td></tr>
+            <tr><td>                        )</td></tr>
+            <tr><td>                    except:</td></tr>
+            <tr><td>                        txt_edit.insert(tk.END, f'窗口莫名出现了问题，请重新进入~\n', 'error')</td></tr>
+            <tr><td>                except Exception as e:</td></tr>
+            <tr><td>                    txt_edit.insert(tk.END, f'发生错误:{e}')</td></tr>
+            <tr><td>                # 检查是否全部生成出来</td></tr>
+            <tr><td>                try:</td></tr>
+            <tr><td>                    txt_edit.insert(tk.END, '检查中~\n')</td></tr>
+            <tr><td>                    WebDriverWait(driver, 180, 0.3).until(</td></tr>
+            <tr><td>                        EC.all_of(</td></tr>
+            <tr><td>                            EC.presence_of_element_located((By.ID, "content_left")),</td></tr>
+            <tr><td>                        )</td></tr>
+            <tr><td>                    )</td></tr>
+            <tr><td>                except Exception as e:</td></tr>
+            <tr><td>                    txt_edit.insert(tk.END, f'系统超时~\n{e}\n', 'error')</td></tr>
+            <tr><td>                    green_AIf.update()</td></tr>
+            <tr><td>                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")</td></tr>
+            <tr><td>                time.sleep(1.5)</td></tr>
+            <tr><td>                paragraphs_find = driver.find_elements(By.CSS_SELECTOR, '.result.new-pmd')</td></tr>
+            <tr><td></td></tr>
+            <tr><td>                for i, p in enumerate(paragraphs_find, 0):</td></tr>
+            <tr><td>                    try:</td></tr>
+            <tr><td>                        p = driver.find_elements(By.CSS_SELECTOR, '.result.new-pmd')[i]</td></tr>
+            <tr><td>                        text = p.text.strip()</td></tr>
+            <tr><td>                        url_p = p.get_attribute("href")</td></tr>
+            <tr><td>                        try:</td></tr>
+            <tr><td>                            link_element = p.find_element(By.CSS_SELECTOR, "h3 a")</td></tr>
+            <tr><td>                            url_p = link_element.get_attribute("href")</td></tr>
+            <tr><td>                            url_p_text = p.text.strip()</td></tr>
+            <tr><td>                            if url_p and url_p_text:</td></tr>
+            <tr><td>                                collect_link += 1</td></tr>
+            <tr><td>                                txt_edit.tag_config(f'{collect_link}', foreground='#3282F6', underline=True)</td></tr>
+            <tr><td>                                txt_edit.insert(tk.END, f'{url_p_text}: \n{url_p}', f'{collect_link}')</td></tr>
+            <tr><td>                                txt_edit.tag_bind(f"{collect_link}", "<Button-1>", lambda e: open_link(f"{url_p}"))</td></tr>
+            <tr><td>                        except:</td></tr>
+            <tr><td>                            txt_edit.insert(tk.END, "\n")</td></tr>
+            <tr><td>                        try:</td></tr>
+            <tr><td>                            img_element = p.find_element(By.CSS_SELECTOR, "img")</td></tr>
+            <tr><td>                            img_src = img_element.get_attribute("src")</td></tr>
+            <tr><td>                            if img_src and not img_src.startswith("data:"):</td></tr>
+            <tr><td>                                response = requests.get(img_src, timeout=10)</td></tr>
+            <tr><td>                                img_data = BytesIO(response.content)</td></tr>
+            <tr><td>                                img = Image.open(img_data)</td></tr>
+            <tr><td>                                img.thumbnail((150, 250))</td></tr>
+            <tr><td>                                img_tk = ImageTk.PhotoImage(img)</td></tr>
+            <tr><td>                                collect_link += 1</td></tr>
+            <tr><td>                                txt_edit.tag_config(f'{collect_link}', foreground='#2DC9B4', underline=True)</td></tr>
+            <tr><td>                                txt_edit.insert(tk.END, f"\n图片:\n{img_src}\n\n", f'{collect_link}')</td></tr>
+            <tr><td>                                txt_edit.tag_bind(f"{collect_link}", "<Button-1>", lambda e: open_link(f"{img_src}"))</td></tr>
+            <tr><td>                                txt_edit.image_create(tk.END, image=img_tk)</td></tr>
+            <tr><td>                                txt_edit.insert(tk.END, "\n\n")</td></tr>
+            <tr><td>                                if not hasattr(txt_edit, 'image_list'):</td></tr>
+            <tr><td>                                    txt_edit.image_list = []</td></tr>
+            <tr><td>                                txt_edit.image_list.append(img_tk)</td></tr>
+            <tr><td>                        except:</td></tr>
+            <tr><td>                            txt_edit.insert(tk.END, "\n")</td></tr>
+            <tr><td>                        finally:</td></tr>
+            <tr><td>                            txt_edit.insert(tk.END, '\n\n')</td></tr>
+            <tr><td>                    except Exception as e:</td></tr>
+            <tr><td>                        txt_edit.insert(tk.END, f'发生错误:{e}', 'error')</td></tr>
+            <tr><td>            except Exception as e:</td></tr>
+            <tr><td>                txt_edit.insert(tk.END, f'发生错误:{e}\n''error')</td></tr>
+            <tr><td>                green_AIf.update()</td></tr>
+            <tr><td>            finally:</td></tr>
+            <tr><td>                collect_exchange = 0</td></tr>
+            <tr><td>                collect_continue = 1</td></tr>
+            <tr><td>                txt_edit.insert(tk.END, f'检索完成~\n-------------------------\n\n','blue')</td></tr>
+            <tr><td>                green_AIf.bind('&lt;Return&gt;', lambda event: ok())</td></tr>
+            <tr><td></td></tr>
+            <tr><td>                chat_控制_control = 0</td></tr>
+            <tr><td>                menu_bar.entryconfig('版本', state='normal')</td></tr>
+            <tr><td>                NORMAL()</td></tr>
+            <tr><td>                file_menu.entryconfig('重新回复 🗘', state='normal')</td></tr>
+            <tr><td>                txt_edit.config(state='disabled')</td></tr>
+            <tr><td>                green_AIf.update()</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        def introduce():</td></tr>
+            <tr><td>            wordd = tk.Tk()</td></tr>
+            <tr><td>            wordd.title("绿梵AI 介绍")</td></tr>
+            <tr><td>            wordd.geometry("340x340")</td></tr>
+            <tr><td>            wordd.resizable(False, False)</td></tr>
+            <tr><td>            txt_edit = tk.Text(wordd, wrap=tk.WORD, width=46, height=25, undo=True)</td></tr>
+            <tr><td>            txt_edit.place(x=0, y=0)</td></tr>
+            <tr><td>            v_scrollbar = tk.Scrollbar(wordd, orient=tk.VERTICAL, command=txt_edit.yview)</td></tr>
+            <tr><td>            v_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)</td></tr>
+            <tr><td>            txt_edit.config(yscrollcommand=v_scrollbar.set)</td></tr>
+            <tr><td>            txt_edit.delete('1.0', tk.END)</td></tr>
+            <tr><td>            s = open('绿梵AI介绍.txt', 'r', encoding='utf-8')</td></tr>
+            <tr><td>            s = s.read()</td></tr>
+            <tr><td>            txt_edit.insert(tk.END, s, 'custom_font')</td></tr>
+            <tr><td>            txt_edit.config(state=tk.DISABLED)</td></tr>
+            <tr><td>        def think_see():</td></tr>
+            <tr><td>            nonlocal 模式_deepseekthink_see</td></tr>
+            <tr><td>            if 模式_deepseekthink_see==1:</td></tr>
+            <tr><td>                file_menu.entryconfig(1,label='与思考一并回答 √')</td></tr>
+            <tr><td>                模式_deepseekthink_see=0</td></tr>
+            <tr><td>            else:</td></tr>
+            <tr><td>                file_menu.entryconfig(1,label='与思考一并回答')</td></tr>
+            <tr><td>                模式_deepseekthink_see=1</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        # 创建菜单栏</td></tr>
+            <tr><td>        menu_bar = tk.Menu(green_AIf)</td></tr>
+            <tr><td>        # 文件菜单</td></tr>
+            <tr><td>        file_menu = tk.Menu(menu_bar, tearoff=0)</td></tr>
+            <tr><td>        file_menu2 = tk.Menu(menu_bar, tearoff=0)</td></tr>
+            <tr><td>        file_menu3 = tk.Menu(menu_bar, tearoff=0)</td></tr>
+            <tr><td>        file_menu4 = tk.Menu(menu_bar, tearoff=0)</td></tr>
+            <tr><td>        file_menu5 = tk.Menu(menu_bar, tearoff=0)</td></tr>
+            <tr><td>        file_menu.add_command(label="重新回复 🗘", command=exchange)</td></tr>
+            <tr><td>        file_menu.add_command(label="与思考一并回答", command=think_see)</td></tr>
+            <tr><td>        file_menu2.add_command(label="绿梵-R1 √", command=lambda x='DeepSeek-R1': chat(x))</td></tr>
+            <tr><td>        file_menu2.add_command(label="绿梵-V3.2", command=lambda x='DeepSeek-V3.2': chat(x))</td></tr>
+            <tr><td>        file_menu2.add_command(label="网页检索-C1", command=lambda x='网页检索-C1': chat(x))</td></tr>
+            <tr><td>        file_menu2.add_separator()</td></tr>
+            <tr><td>        file_menu2.add_command(label="联网模式", command=net)</td></tr>
+            <tr><td>        file_menu2.add_separator()</td></tr>
+            <tr><td>        file_menu2.add_command(label="深度思考", command=thought)</td></tr>
+            <tr><td>        file_menu3.add_command(label="344x250", command=mu1)</td></tr>
+            <tr><td>        file_menu3.add_command(label="644x450", command=mu2)</td></tr>
+            <tr><td>        file_menu3.add_command(label="744x650", command=mu3)</td></tr>
+            <tr><td>        file_menu4.add_command(label="AI作文", command=AI_text)</td></tr>
+            <tr><td>        file_menu4.add_command(label="AI编程", command=AI_program)</td></tr>
+            <tr><td>        file_menu4.add_command(label="AI图片", command=AI_picture)</td></tr>
+            <tr><td>        file_menu4.add_command(label="AI翻译", command=AI_ftalk)</td></tr>
+            <tr><td>        file_menu5.add_command(label="介绍", command=introduce)</td></tr>
+            <tr><td>        file_menu.entryconfig('重新回复 🗘', state='disabled')</td></tr>
+            <tr><td>        menu_bar.add_cascade(label="编辑", menu=file_menu)</td></tr>
+            <tr><td>        menu_bar.add_cascade(label="版本", menu=file_menu2)</td></tr>
+            <tr><td>        menu_bar.add_cascade(label="窗口", menu=file_menu3)</td></tr>
+            <tr><td>        menu_bar.add_cascade(label="更多", menu=file_menu4)</td></tr>
+            <tr><td>        menu_bar.add_cascade(label="关于", menu=file_menu5)</td></tr>
+            <tr><td>        green_AIf.config(menu=menu_bar)</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        ok_次 = 0</td></tr>
+            <tr><td>        ok_son_exchange = None</td></tr>
+            <tr><td></td></tr>
+            <tr><td>        def ok_son():</td></tr>
+            <tr><td>            nonlocal entry3, ok_次</td></tr>
+            <tr><td>            global driver, word, word_code, chat_控制, chat_控制_control</td></tr>
+            <tr><td>            nonlocal 模式_deepseek_深度思考, 模式_deepseek_联网搜索, 模式_deepseekthink_see,chat_net_顺序,chat_thought_顺序,模式_deepseek_版本, collect_link, btnT_close, ok_son_exchange</td></tr>
+            <tr><td>            try:</td></tr>
+            <tr><td>                menu_bar.entryconfig('版本', state='disabled')</td></tr>
+            <tr><td>                file_menu.entryconfig(1,state='normal')</td></tr>
+            <tr><td>                chat_控制_control = 1</td></tr>
+            <tr><td>                btnT_close = 1</td></tr>
+            <<tr><td>                btnT_close = 0</td></tr>
+            <tr><td>                collect_exchange = 0</td></tr>
+            <tr><td>                menu_bar.entryconfig('版本', state='normal')</td></tr>
+            <tr><td>                txt_edit.insert(tk.END,'--------------------------\n\n','blue')</td></tr>
+            <tr><td>                green_AIf.bind('&lt;Return&gt;', lambda event: ok())</td></tr>
+            <tr><td>                NORMAL()</td></tr>
+            <tr><td>                file_menu.entryconfig('重新回复 🗘', state='normal')</td></tr>
+            <tr><td>                txt_edit.config(state='disabled')</td></tr>
+            <tr><td>                green_AIf.update()</td></tr>
+            <tr><td>        def close():</td></tr>
+            <tr><td>            try:</td></tr>
+            <tr><td>                driver.quit()</td></tr>
+            <tr><td>                green_AIf.destroy()</td></tr>
+            <tr><td>            except:</td></tr>
+            <tr><td>                pass</td></tr>
+            <tr><td>        def ok():</td></tr>
+            <tr><td>            global chat_控制, chat_控制_control</td></tr>
+            <tr><td>            nonlocal collect_continue, btnT_close</td></tr>
+            <tr><td>            if btnT_close == 1:</td></tr>
+            <tr><td>                return</td></tr>
+            <tr><td>            try:</td></tr>
+            <tr><td>                if entry3.get() == '' and collect_exchange == 0:</td></tr>
+            <tr><td>                    return</td></tr>
+            <tr><td>                menu_bar.entryconfig('版本', state='disabled')</td></tr>
+            <tr><td>                if chat_控制 == 2:</td></tr>
+            <tr><td>                    threading.Thread(target=collect, daemon=True).start()</td></tr>
+            <tr><td>                else:</td></tr>
+            <tr><td>                    collect_continue = 0</td></tr>
+            <tr><td>                    threading.Thread(target=ok_son, daemon=True).start()</td></tr>
+            <tr><td>            finally:</td></tr>
+            <tr><td>                return</td></tr>
+            <tr><td>        green_AIf.protocol("WM_DELETE_WINDOW", close)</td></tr>
+            <tr><td>        try:</td></tr>
+            <tr><td>            full_image_path = '发送-绿梵AI-9.png'</td></tr>
+            <tr><td>            original_image = Image.open(full_image_path)</td></tr>
+            <tr><td>            resized_image = original_image.resize((38, 37), Image.Resampling.LANCZOS)</td></tr>
+            <tr><td>            img = ImageTk.PhotoImage(resized_image)</td></tr>
+            <tr><td>            btnT = ttk.Button(green_AIf, style='TButton', image=img, text='''发送''', command=ok)</td></tr>
+            <tr><td>            btnT.place(x=275, y=175, height=48, width=48)</td></tr>
+            <tr><td>        except:</td></tr>
+            <tr><td>            txt_edit.insert(tk.END, '按钮初始化异常~', 'error')</td></tr>
+            <tr><td>        stored_images = {}</td></tr>
+            <tr><td>        def IMAGE(full_image_path):</td></tr>
+            <tr><td>            nonlocal btnT</td></tr>
+            <tr><td>            original_image = Image.open(full_image_path)</td></tr>
+            <tr><td>            resized_image = original_image.resize((btnT_image_height, btnT_image_width),Image.Resampling.LANCZOS)</td></tr>
+            <tr><td>            img = ImageTk.PhotoImage(resized_image)</td></tr>
+            <tr><td>            btnT.destroy()</td></tr>
+            <tr><td>            btnT = ttk.Button(green_AIf, style='TButton', image=img, command=ok)</td></tr>
+            <tr><td>            btnT.place(x=btnT_x, y=btnT_y, height=btnT_height, width=btnT_width)</td></tr>
+            <tr><td>            return img</td></tr>
+            <tr><td>        def NORMAL():</td></tr>
+            <tr><td>            nonlocal btnT, btnT_x, btnT_y, btnT_height, btnT_width, btnT_image_height, btnT_image_width, btnT_close</td></tr>
+            <tr><td>            try:</td></tr>
+            <tr><td>                btnT_close = 0</td></tr>
+            <tr><td>                stored_images['normal_btn']=IMAGE('发送-绿梵AI-9.png')</td></tr>
+            <tr><td>            except:</td></tr>
+            <tr><td>                txt_edit.insert(tk.END, '按钮初始化异常~', 'error')</td></tr>
+            <tr><td>            finally:</td></tr>
+            <tr><td>                btnT_close = 0</td></tr>
+            <tr><td>        btnT_close = 0</td></tr>
+            <tr><td>        def DISABLED():</td></tr>
+            <tr><td>            nonlocal btnT, btnT_x, btnT_y, btnT_height, btnT_width, btnT_image_height, btnT_image_width, btnT_close</td></tr>
+            <tr><td>            try:</td></tr>
+            <tr><td>                btnT_close = 1</td></tr>
+            <tr><td>                stored_images['disabled_btn'] =IMAGE('生成-绿梵AI-3.png')</td></tr>
+            <tr><td>                btnT.configure(state='disabled')</td></tr>
+            <tr><td>            except:</td></tr>
+            <tr><td>                txt_edit.insert(tk.END, '按钮初始化异常~\n', 'error')</td></tr>
+            <tr><td>            finally:</td></tr>
+            <tr><td>                btnT_close = 1</td></tr>
+            <tr><td>        green_AIf.bind('&lt;Return&gt;', lambda event: ok())</td></tr>
+            <tr><td>        mu1()</td></tr>
+            <tr><td>        green_AIf.mainloop()</td></tr>
+            <tr><td>    except Exception as e:</td></tr>
+            <tr><td>        txt_edit.insert(tk.END, f'发生错误:{e}', 'error')</td></tr>
+            <tr><td>def destroy_window():</td></tr>
+            <tr><td>    green_f.destroy()</td></tr>
+            <tr><td>    main()</td></tr>
+            <tr><td>driver = ''</td></tr>
+            <tr><td>nex_son_close=0</td></tr>
+            <tr><td>def nex_son():</td></tr>
+            <tr><td>    global place, 版本, 顺序, driver,nex_son_close</td></tr>
+            <tr><td>    if 顺序 == 0:</td></tr>
+            <tr><td>        place = entry1.get()</td></tr>
+            <tr><td>        place = 'C:\Program Files\Google\Chrome Dev\Application\chrome.exe'</td></tr>
+            <tr><td>        if place=='':</td></tr>
+            <tr><td>            return</td></tr>
+            <tr><td>        entry1.delete(0, 'end')</td></tr>
+            <tr><td>        Label2.config(text='输入Google Chrome的版本号')</td></tr>
+            <tr><td>        btn1.configure(text='完成')</td></tr>
+            <tr><td>        顺序 += 1</td></tr>
+            <tr><td>        return</td></tr>
+            <tr><td>    else:</td></tr>
+            <tr><td>        版本 = entry1.get()</td></tr>
+            <tr><td>        版本 = '146.0.7655.3'</td></tr>
+            <tr><td>        if 版本=='':</td></tr>
+            <tr><td>            return</td></tr>
+            <tr><td>        nex_son_close=1</td></tr>
+            <tr><td>        btn1.config(state='disabled')</td></tr>
+            <tr><td>        try:</td></tr>
+            <tr><td>            options = webdriver.ChromeOptions()</td></tr>
+            <tr><td>            options.binary_location = rf'{place}'</td></tr>
+            <tr><td>            options.add_argument('--disable-dev-shm-usage')</td></tr>
+            <tr><td>            options.add_argument('--headless=new')</td></tr>
+            <tr><td>            options.add_argument('--no-sandbox')</td></tr>
+            <tr><td>            options.add_argument('--disable-gpu')</td></tr>
+            <tr><td>            options.add_argument('--window-size=1920,1080')</td></tr>
+            <tr><td>            options.add_experimental_option("excludeSwitches", ["enable-automation"])</td></tr>
+            <tr><td>            options.add_argument('--disable-blink-features=AutomationControlled')</td></tr>
+            <tr><td>            options.add_argument('disk-cache-size=1')</td></tr>
+            <tr><td>            service = Service(ChromeDriverManager(版本).install())</td></tr>
+            <tr><td>            driver = webdriver.Chrome(service=service, options=options)</td></tr>
+            <tr><td>            entry1.place_forget()</td></tr>
+            <tr><td>            btn1.place_forget()</td></tr>
+            <tr><td>            Label2.place_forget()</td></tr>
+            <tr><td>            Label1.config(text='完成设置,正准备启动...')</td></tr>
+            <tr><td>            url = 'https://chat.baidu.com/search?&dyTabStr=MCwxMiwzLDEsMiwxMyw3LDYsNSw5&pd=csaitab&setype=csaitab&extParamsJson=%7B%22enter_type%22%3A%22search_a_tab%22%2C%22sa%22%3A%22vs_tab%22%7D'</td></tr>
+            <tr><td>            driver.get(url)</td></tr>
+            <tr><td>            green_f.after(1000, destroy_window)</td></tr>
+            <tr><td>        except Exception as e:</td></tr>
+            <tr><td>            entry1.place_forget()</td></tr>
+            <tr><td>            btn1.place_forget()</td></tr>
+            <tr><td>            Label2.place_forget()</td></tr>
+            <tr><td>            Label1.config(text=f'发生错误，请重试...', font=('微软雅黑 Light', 17))</td></tr>
+            <tr><td>            btn11 = ''</td></tr>
+            <tr><td>            wrong_answer = f'{e}'</td></tr>
+            <tr><td>            def wrong():</td></tr>
+            <tr><td>                nonlocal btn11, wrong_answer</td></tr>
+            <tr><td>                text_frame = tk.LabelFrame(green_f, text='详细信息:', font=('微软雅黑', 11))</td></tr>
+            <tr><td>                text_frame.place(x=17, y=75)</td></tr>
+            <tr><td>                text_box = ScrolledText(text_frame, state=tk.NORMAL, wrap=tk.WORD, font=("微软雅黑", 11), borderwidth=1,relief="groove", height=6, width=32)</td></tr>
+            <tr><td>                text_box.pack(fill=tk.BOTH, padx=5, pady=5)</td></tr>
+            <tr><td>                text_box.insert('1.0', f'{wrong_answer}')</td></tr>
+            <tr><td>                text_box.config(state=tk.DISABLED)</td></tr>
+            <tr><td>                btn.place_forget()</td></tr>
+            <tr><td>                def up():</td></tr>
+            <tr><td>                    nonlocal btn11, wrong_answer</td></tr>
+            <tr><td>                    text_frame.destroy()</td></tr>
+            <tr><td>                    text_box.destroy()</td></tr>
+            <tr><td>                    btn11.destroy()</td></tr>
+            <tr><td>                    btn.place(x=250, y=28)</td></tr>
+            <tr><td>                btn11 = tk.Button(green_f, text="收起信息", font=("微软雅黑 Light", 13, 'bold'), borderwidth=0,fg="#FFB348", command=up)</td></tr>
+            <tr><td>                btn11.place(x=250, y=28)</td></tr>
+            <tr><td>            btn = tk.Button(green_f, text="详细信息", font=("微软雅黑 Light", 13, 'bold'), borderwidth=0, fg="#FFB348",command=wrong)</td></tr>
+            <tr><td>            btn.place(x=250, y=28)</td></tr>
+            <tr><td>def nex():</td></tr>
+            <tr><td>    global nex_son_close</td></tr>
+            <tr><td>    if nex_son_close==1:</td></tr>
+            <tr><td>        return</td></tr>
+            <tr><td>    threading.Thread(target=nex_son, daemon=True).start()</td></tr>
+            <tr><td>btn1 = ttk.Button(green_f, style='TButton', text='下一步', command=nex)</td></tr>
+            <tr><td>btn1.place(x=250, y=155, height=34, width=86)</td></tr>
+            <tr><td>green_f.bind('&lt;Return&gt;', lambda event: nex())</td></tr>
+            <tr><td>green_f.mainloop()</td></tr>
 
-    
-  </body>
-</html>
+
+        </body>
+<html>
