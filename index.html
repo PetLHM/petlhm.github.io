@@ -13,37 +13,37 @@
 	</head>
 	<body>
             <table class="LvfanAI_options">
-                    <pre><code>
-					import tkinter as tk
-					from tkinter import ttk
-					from PIL import ImageTk, Image
-					greenf_choose=tk.Tk()
-					greenf_choose.title('绿梵AI[选项页]')
-					greenf_choose.geometry('355x250')
-					full_image_path_chrome = 'Chrome图标.png'
-					original_image = Image.open(full_image_path_chrome)
-					resized_image = original_image.resize((75, 75), Image.Resampling.LANCZOS)  
-					img_chrome = ImageTk.PhotoImage(resized_image)
-					full_image_path_edge = 'Edge图标.png'
-					original_image = Image.open(full_image_path_edge)
-					resized_image = original_image.resize((75, 75), Image.Resampling.LANCZOS)
-					img_edge = ImageTk.PhotoImage(resized_image)
-					def choose_chrome():
-					    greenf_choose.destroy()
-					    import LvfanAI_Chrome_version
-					def choose_edge():
-					    greenf_choose.destroy()
-					    import LvfanAI_Edge_version
-					label_choose=tk.Label(greenf_choose, text='选择可调用的浏览器',font=('微软雅黑 Light',17))
-					label_choose.place(x=20,y=25)
-					btn_chrome_frame=tk.LabelFrame(greenf_choose,text='推荐')
-					btn_chrome_frame.place(x=25, y=80, height=130, width=155)
-					btn_chrome = ttk.Button(btn_chrome_frame, style='TButton',image=img_chrome, command=choose_chrome)
-					btn_chrome.place(x=3,y=1,height=105,width=145)
-					btn_edge = ttk.Button(greenf_choose, style='TButton', image=img_edge, command=choose_edge)
-					btn_edge.place(x=185, y=100, height=105, width=145)
-					greenf_choose.mainloop()
-					</pre></code>
+				<pre><code>
+				import tkinter as tk
+				from tkinter import ttk
+				from PIL import ImageTk, Image
+				greenf_choose=tk.Tk()
+				greenf_choose.title('绿梵AI[选项页]')
+				greenf_choose.geometry('355x250')
+				full_image_path_chrome = 'Chrome图标.png'
+				original_image = Image.open(full_image_path_chrome)
+				resized_image = original_image.resize((75, 75), Image.Resampling.LANCZOS)  
+				img_chrome = ImageTk.PhotoImage(resized_image)
+				full_image_path_edge = 'Edge图标.png'
+				original_image = Image.open(full_image_path_edge)
+				resized_image = original_image.resize((75, 75), Image.Resampling.LANCZOS)
+				img_edge = ImageTk.PhotoImage(resized_image)
+				def choose_chrome():
+					greenf_choose.destroy()
+					import LvfanAI_Chrome_version
+				def choose_edge():
+					greenf_choose.destroy()
+					import LvfanAI_Edge_version
+				label_choose=tk.Label(greenf_choose, text='选择可调用的浏览器',font=('微软雅黑 Light',17))
+				label_choose.place(x=20,y=25)
+				btn_chrome_frame=tk.LabelFrame(greenf_choose,text='推荐')
+				btn_chrome_frame.place(x=25, y=80, height=130, width=155)
+				btn_chrome = ttk.Button(btn_chrome_frame, style='TButton',image=img_chrome, command=choose_chrome)
+				btn_chrome.place(x=3,y=1,height=105,width=145)
+				btn_edge = ttk.Button(greenf_choose, style='TButton', image=img_edge, command=choose_edge)
+				btn_edge.place(x=185, y=100, height=105, width=145)
+				greenf_choose.mainloop()
+				</pre></code>
 			</table>
 			<table class="LvfanAI_Chrome_version">
 				<pre><code>
