@@ -374,7 +374,7 @@
 				                    url = f'https://www.baidu.com/s?wd={word}&pn={collect_next}&oq=1&ie=utf-8&usm=5&fenlei=256&rsv_idx=1&rsv_pq=a2995bfd0004dc91&rsv_t=e431s0JybNpd3%2BBZLc7fkUZwFUNRsZVlu%2BtwSHLoO8jjiKTlOPSs6dzCOcE&topic_pn=&rsv_page=1'
 				                    driver.get(url)
 				                except:
-				                    txt_edit.insert(tk.END,'没有更多内容啦~\n-------------------------\n\n','blue')
+				                    txt_edit.insert(tk.END,'\n没有更多内容啦~\n-------------------------\n\n','blue')
 				                    return
 				                if collect_next_yn==0:
 				                    collect_next=0
@@ -481,7 +481,7 @@
 				                collect_link += 1
 				                txt_edit.tag_config(f'{collect_link}', foreground='#3282F6', underline=True)
 				                txt_edit.insert(tk.END, '继续\n', f'{collect_link}')
-				                txt_edit.insert(tk.END,'-------------------------\n\n','blue')
+				                txt_edit.insert(tk.END,'\n-------------------------\n\n','blue')
 				                txt_edit.tag_bind(f"{collect_link}", "<Button-1>", lambda e: open_link('继续'))
 				                green_AIf.bind('<Return>', lambda event: ok())
 				                chat_控制_control = 0
@@ -729,7 +729,7 @@
 				                collect_exchange = 0
 				                file_menu.entryconfig(0, state='disabled')
 				                menu_bar.entryconfig('版本', state='normal')             
-				                txt_edit.insert(tk.END, '--------------------------\n\n', 'blue')
+				                txt_edit.insert(tk.END, '\n--------------------------\n\n', 'blue')
 				                green_AIf.bind('<Return>', lambda event: ok())
 				                NORMAL()
 				                file_menu.entryconfig('重新回复 🗘', state='normal')
@@ -1212,7 +1212,7 @@
 				                    url = f'https://www.baidu.com/s?wd={word}&pn={collect_next}&oq=1&ie=utf-8&usm=5&fenlei=256&rsv_idx=1&rsv_pq=a2995bfd0004dc91&rsv_t=e431s0JybNpd3%2BBZLc7fkUZwFUNRsZVlu%2BtwSHLoO8jjiKTlOPSs6dzCOcE&topic_pn=&rsv_page=1'
 				                    driver.get(url)
 				                except:
-				                    txt_edit.insert(tk.END,'没有更多内容啦~\n-------------------------\n\n','blue')
+				                    txt_edit.insert(tk.END,'\n没有更多内容啦~\n-------------------------\n\n','blue')
 				                    return
 				                if collect_next_yn==0:
 				                    collect_next=0
@@ -1312,7 +1312,7 @@
 				                collect_link += 1
 				                txt_edit.tag_config(f'{collect_link}', foreground='#3282F6', underline=True)
 				                txt_edit.insert(tk.END, '继续\n', f'{collect_link}')
-				                txt_edit.insert(tk.END,'-------------------------\n\n','blue')
+				                txt_edit.insert(tk.END,'\n-------------------------\n\n','blue')
 				                txt_edit.tag_bind(f"{collect_link}", "<Button-1>", lambda e: open_link('继续'))
 				                green_AIf.bind('<Return>', lambda event: ok())
 				                chat_控制_control = 0
@@ -1560,7 +1560,7 @@
 				                collect_exchange = 0
 				                file_menu.entryconfig(0, state='disabled')
 				                menu_bar.entryconfig('版本', state='normal')
-				                txt_edit.insert(tk.END, '--------------------------\n\n', 'blue')
+				                txt_edit.insert(tk.END, '\n--------------------------\n\n', 'blue')
 				                green_AIf.bind('<Return>', lambda event: ok())
 				                NORMAL()
 				                file_menu.entryconfig('重新回复 🗘', state='normal')
