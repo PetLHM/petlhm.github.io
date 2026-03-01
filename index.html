@@ -432,6 +432,7 @@
 				                                            collect_link += 1
 				                                            txt_edit.tag_config(f'{collect_link}', foreground='#3282F6', underline=True)
 				                                            txt_edit.insert(tk.END, f'{url_p_title}: \n{url_p}\n', f'{collect_link}')
+															txt_edit.see(tk.END)  # 滚至底部
 				                                            txt_edit.tag_bind(f"{collect_link}", "<Button-1>",lambda e, link=url_p_complete: open_link(link))
 				                                    except Exception as e:
 				                                        continue
@@ -454,6 +455,7 @@
 				                                            img_src=img_src[0:33]+'...'
 				                                        txt_edit.tag_config(f'{collect_link}', foreground='#2DC9B4', underline=True)
 				                                        txt_edit.insert(tk.END, f"\n图片:\n{img_src}\n", f'{collect_link}')
+														txt_edit.see(tk.END)  # 滚至底部
 				                                        txt_edit.tag_bind(f'{collect_link}', "<Button-1>", lambda e, src=img_src_complete: open_link(src))
 				                                        txt_edit.image_create(tk.END, image=img_tk)
 				                                        txt_edit.insert(tk.END, "\n\n")
@@ -672,6 +674,7 @@
 				                        if text:  
 				                            txt_edit.config(font=('微软雅黑', 11, 'bold'))
 				                            txt_edit.insert(tk.END, f'{text}\n\n')
+											txt_edit.see(tk.END)  # 滚至底部
 				                            txt_edit.config(font=('微软雅黑', 11))
 				                            green_AIf.update()
 				                    except Exception as e:
@@ -686,6 +689,7 @@
 				                    for i, li in enumerate(list_items, 1):
 				                        text = li.text.strip()  
 				                        txt_edit.insert(tk.END,f'{text}')
+										txt_edit.see(tk.END)  # 滚至底部
 				                except:
 				                     pass
 				                DISABLED()
@@ -708,6 +712,7 @@
 				                                        img_src=img_src[0:33]
 				                                    txt_edit.tag_config(unique_img_id, foreground='#2DC9B4', underline=True)
 				                                    txt_edit.insert(tk.END, f"\n图片:\n{img_src}\n\n", unique_img_id)
+													txt_edit.see(tk.END)  # 滚至底部
 				                                    txt_edit.tag_bind(unique_img_id, "<Button-1>",lambda e, src=img_src_complete: open_link(src))
 				                                    txt_edit.image_create(tk.END, image=img_tk)
 				                                    txt_edit.insert(tk.END, "\n\n")                                   
@@ -1263,6 +1268,7 @@
 				                                            collect_link += 1
 				                                            txt_edit.tag_config(f'{collect_link}', foreground='#3282F6', underline=True)
 				                                            txt_edit.insert(tk.END, f'{url_p_title}: \n{url_p}\n', f'{collect_link}')
+															txt_edit.see(tk.END)  # 滚至底部
 				                                            txt_edit.tag_bind(f"{collect_link}", "<Button-1>",lambda e, link=url_p_complete: open_link(link))
 				                                    except Exception as e:
 				                                        continue
@@ -1285,6 +1291,7 @@
 				                                            img_src=img_src[0:33]+'...'
 				                                        txt_edit.tag_config(f'{collect_link}', foreground='#2DC9B4', underline=True)
 				                                        txt_edit.insert(tk.END, f"\n图片:\n{img_src}\n", f'{collect_link}')
+														txt_edit.see(tk.END)  # 滚至底部
 				                                        txt_edit.tag_bind(f'{collect_link}', "<Button-1>", lambda e, src=img_src_complete: open_link(src))
 				                                        txt_edit.image_create(tk.END, image=img_tk)
 				                                        txt_edit.insert(tk.END, "\n\n")                                     
@@ -1503,6 +1510,7 @@
 				                        if text: 
 				                            txt_edit.config(font=('微软雅黑', 11, 'bold'))
 				                            txt_edit.insert(tk.END, f'{text}\n\n')
+											txt_edit.see(tk.END)  # 滚至底部
 				                            txt_edit.config(font=('微软雅黑', 11))
 				                            green_AIf.update()
 				                    except Exception as e:
@@ -1517,6 +1525,7 @@
 				                    for i, li in enumerate(list_items, 1):
 				                        text = li.text.strip() 
 				                        txt_edit.insert(tk.END,f'{text}')
+										txt_edit.see(tk.END)  # 滚至底部
 				                except:
 				                     pass
 				                DISABLED()
@@ -1539,6 +1548,7 @@
 				                                        img_src=img_src[0:33]
 				                                    txt_edit.tag_config(unique_img_id, foreground='#2DC9B4', underline=True)
 				                                    txt_edit.insert(tk.END, f"\n图片:\n{img_src}\n\n", unique_img_id)
+													txt_edit.see(tk.END)  # 滚至底部
 				                                    txt_edit.tag_bind(unique_img_id, "<Button-1>",lambda e, src=img_src_complete: open_link(src))
 				                                    txt_edit.image_create(tk.END, image=img_tk)
 				                                    txt_edit.insert(tk.END, "\n\n")
