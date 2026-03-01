@@ -65,6 +65,11 @@
 				from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance, ImageTk
 				import requests
 				from io import BytesIO
+				import os
+				#高DPI感知代码
+				if os.name == 'nt':
+				 from ctypes import windll
+				 windll.shcore.SetProcessDpiAwareness(2)
 				main_版本 = 'Chrome 3.3.0'
 				green_f = tk.Tk()
 				green_f.title(f'绿梵AI [{main_版本}]')
@@ -907,6 +912,11 @@
 				from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance, ImageTk
 				import requests
 				from io import BytesIO
+				import os
+				#高DPI感知代码
+				if os.name == 'nt':
+				 from ctypes import windll
+				 windll.shcore.SetProcessDpiAwareness(2)
 				main_版本 = 'Edge 3.3.0'
 				green_f = tk.Tk()
 				green_f.title(f'绿梵AI [{main_版本}]')
